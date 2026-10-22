@@ -1,5 +1,3 @@
-.env
-.env.*
 working/
 backup/
 backups/
@@ -20,5 +18,10 @@ __pycache__/
 *.bin
 *.zip
 *.log
+.env
+.env.*
 assets/Mikasa*
 installation-status.json
+
+make_texture.py
+assets/caioba/*.png
