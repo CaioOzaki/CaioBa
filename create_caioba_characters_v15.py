@@ -49,7 +49,7 @@ def face(n,emoji=False):
         d.rectangle((0,0,512,72),fill=hair)
         for x in range(16,512,48):d.ellipse((x-33,23,x+39,101+(x%3)*4),fill=hair)
     elif n==3:d.rectangle((0,0,512,65),fill=hair);d.rectangle((0,0,55,480),fill=hair);d.rectangle((457,0,512,480),fill=hair)
-    elif n in (4,5):d.arc((-90,-190,602,248),0,180,fill=hair,width=65)
+    elif n in (4,5):pass # White hair is geometry; no painted arc across the face.
     else:d.polygon([(0,0),(512,0),(512,76),(344,50),(103,116),(0,79)],fill=hair)
     for x in (171,341):
         if n==4:d.arc((x-32,192,x+32,239),180,355,fill=ink,width=7)
@@ -281,3 +281,4 @@ def build_assets():
     report={'bot_renderers_replaced':replaced,'bot_mesh_ids':meshes,'player_atlas_texture':texid,'models':[{'vertices':len(m.v),'triangles':len(m.tri)} for m in MODELS]}
     (OUT/'characters.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))
 if __name__=='__main__':build_assets()
+
