@@ -10,7 +10,7 @@ p=pefile.PE(str(R/'working/GameAssembly.dll'))
 manifest=json.loads((R/'analysis/native-patch-manifest.json').read_text())
 patches={x['name']:x for x in manifest['patches']}
 B=0x180000000; HEAP=0x300000000; STACK=0x400000000; STOP=HEAP+0xf000; RETURN=HEAP+0xe000
-def run(offline=True,hand=(3,0,0),accepted=True,base=B,frames=90,fps=90):
+def run(offline=True,hand=(3,0,0),accepted=True,base=B,frames=90,fps=90,mod_online=False,format=2,received=None):
     u=Uc(UC_ARCH_X86,UC_MODE_64);u.mem_map(base,(p.OPTIONAL_HEADER.SizeOfImage+4095)//4096*4096)
     u.mem_write(base,p.get_memory_mapped_image())
     # Simulate Windows ASLR, including the new helper pointer relocation.
@@ -20,6 +20,8 @@ def run(offline=True,hand=(3,0,0),accepted=True,base=B,frames=90,fps=90):
                 if entry.type==10:
                     val=struct.unpack('<Q',u.mem_read(base+entry.rva,8))[0]
                     u.mem_write(base+entry.rva,struct.pack('<Q',val+base-B))
+    u.mem_write(base+manifest['exports']['online_version_ready'],struct.pack('<i',int(mod_online)))
+    u.mem_write(base+manifest['exports']['online_format'],struct.pack('<i',format))
     u.mem_map(HEAP,0x10000);u.mem_map(STACK,0x100000)
     body=HEAP+0x100;part=HEAP+0x500;ball=HEAP+0x1000;collision=HEAP+0x2000;contacts=HEAP+0x2500;rb=HEAP+0x3000;local=HEAP+0x3500
     def ptr(a,v):u.mem_write(a,struct.pack('<Q',v))
@@ -49,7 +51,10 @@ def run(offline=True,hand=(3,0,0),accepted=True,base=B,frames=90,fps=90):
         elif rva==0xec5cd0:state['omega'][rcx]=rv(rdx);state['angular_writes']+=1;ret()
         elif rva==0xec60d0:state['vel'][rcx]=rv(rdx);state['velocity_writes']+=1;ret()
         elif rva==0xec5ea0:state['max'][rcx]=u.reg_read(UC_X86_REG_XMM1)&0xffffffff;ret()
-        elif rva==0x77e5c0:state['motion']+=1;ret()
+        elif rva==0x77e5c0:
+            state['motion']+=1;state['wire_context']=struct.unpack('<I',u.mem_read(u.reg_read(UC_X86_REG_RSP)+0x40,4))[0];ret()
+        elif rva==patches['client_motion']['trampoline']:
+            state['decoded_context']=struct.unpack('<I',u.mem_read(u.reg_read(UC_X86_REG_RSP)+0x38,4))[0];ret()
         elif rva==patches['collision']['trampoline']:
             state['original']+=1
             if not accepted:ret();return
@@ -62,12 +67,15 @@ def run(offline=True,hand=(3,0,0),accepted=True,base=B,frames=90,fps=90):
     def call(rva,args):
         sp=STACK+0x80008;u.reg_write(UC_X86_REG_RSP,sp);ptr(sp,STOP)
         for reg,value in zip([UC_X86_REG_RCX,UC_X86_REG_RDX,UC_X86_REG_R8,UC_X86_REG_R9],args):u.reg_write(reg,value)
-        ptr(sp+0x28,0)
+        for i,value in enumerate(list(args)[4:]+[0]*6):ptr(sp+0x28+i*8,value)
         u.emu_start(base+rva,STOP,count=100000)
         assert u.reg_read(UC_X86_REG_RIP)==STOP,'Hook did not return normally'
-    call(0xeeb3b0,[body,part,ball,collision]);spin=state['omega'][rb]
+    if received is None:call(0xeeb3b0,[body,part,ball,collision])
+    else:
+        v=HEAP+0x4000;vec(v,(10,0,0));call(0x77de30,[ball,v,v,1,0,0,received,0])
+    spin=state['omega'][rb]
     count=state['engine_calls'];angular=state['angular_writes']
-    state['vel'][rb]=(10,0,0)
+    state['vel'][rb]=(10,0,0);state['vel'][local]=(10,0,0)
     for frame in range(frames):call(0x77ec30,[ball,0])
     state['frame_engine_calls']=state['engine_calls']-count
     assert state['angular_writes']==angular,'Must not write angular velocity per frame'
@@ -85,3 +93,16 @@ for rate in [30,10]:
     assert max(abs(a-b) for a,b in zip(at90,s['vel'][HEAP+0x3000]))<0.001,'Trajectory should be consistent across frame rates'
 report={'passed':9,'cases':['accepted local brush','opposite brush','normal hit','online original behavior','rejected hit unchanged','ASLR relocated image','30 Hz cadence','trajectory at 30 FPS','trajectory at 10 FPS'],'spin_rad_s':spin,'engine_calls_per_second_at_90_fps':calls90,'v1_engine_calls_same_case':630,'reduction_percent':100*(1-calls90/630),'scope':'Real patched machine code in CPU emulator with engine stubs. Does not replace VR playtesting.'}
 (R/'analysis/hook-test-results.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))
+
+for fmt in (2,4):
+ for addr in (B,0x190000000):
+  hit,a=run(offline=False,mod_online=True,format=fmt,base=addr)
+  remote,b=run(offline=False,mod_online=True,format=fmt,base=addr,received=a['wire_context'])
+  assert hit==remote and hit[2]>16
+  assert b['decoded_context']==0
+  for rb in (HEAP+0x3000,HEAP+0x3500):
+   assert a['vel'][rb]==b['vel'][rb] and a['vel'][rb][1]>0
+  assert a['velocity_writes']==60 and b['velocity_writes']==60
+  _,rejected=run(offline=False,mod_online=True,format=fmt,base=addr,accepted=False)
+  assert not rejected['angular_writes'] and not rejected['velocity_writes']
+print('PASS: v13 spin encoded/decoded between peers, both bodies, 2v2/4v4, ASLR and rejected hits')

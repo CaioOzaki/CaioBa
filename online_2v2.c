@@ -8,6 +8,8 @@ TRAMP(void,online_awake,(void* page,void* m))
 TRAMP(void,client_motion,(void* ball,V3 pos,V3 velocity,_Bool hit,int touch,int team,int context,void* m))
 TRAMP(void,client_end,(void* rules,int team,V3 pos,void* m))
 static int net_first_touch=0,net_serve_team=-1;
+static int net_touch_team=-1,net_touch_count=0,net_rally_active=0;
+static int network_physics(void){return online_version_ready&&!offline();}
 static void* network_player_statics(void){
  /* NetworkPlayer class metadata is initialized by the original lobby. */
  void* klass=*(void**)(base()+0x1542650);
@@ -17,7 +19,7 @@ static void* online_local_player(void){void* s=network_player_statics();return s
 static void* online_players(void){void* s=network_player_statics();return s?PTR(s,8):0;}
 static int player_is_airborne(void* player){
  if(player_airborne&&rooted(jumping_player_root)==player)return 1;
- if(!online_mode()||!player||player==online_local_player())return 0;
+ if(!network_physics()||!player||player==online_local_player())return 0;
  void* body=PTR(player,0x80);if(!body)return 0;
  /* CapturePlayerPose serializes the InputSystem transform position.
   * The game's jump raises that transform; room-scale head height does
@@ -26,7 +28,7 @@ static int player_is_airborne(void* player){
  return __builtin_isfinite(y)&&y-floor>0.08f;
 }
 static int bot_has_human_mate(void* bot){
- if(!bot)return 0;if(!online_mode())return INT(bot,0x28)==0;
+ if(!bot)return 0;if(!network_physics())return INT(bot,0x28)==0;
  void* rules=rooted(rules_root);int team=INT(bot,0x28);if(!rules||team<0||team>1)return 0;
  void* teams=PTR(rules,0x60);void* side=teams?PTR(teams,0x20+team*8):0;
  void* players=side?PTR(side,0x38):0;return players&&INT(players,0x18)>0;
@@ -37,7 +39,7 @@ static int online_reception(void* player){
 static void set_mod_version(void* app){
  online_version_ready=0;
  if(app){
-  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"CaioBa-2v2-v10":"CaioBa-4v4-v10");
+  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"CaioBa-2v2-v14":"CaioBa-4v4-v14");
   managed_field(app,0x28,version);online_version_ready=1;
  }
 }
@@ -60,7 +62,7 @@ EXPORT _Bool connect_default_hook(void* m){
 }
 EXPORT void clear_teams_hook(void* rules,void* m){
  clear_teams_trampoline(rules,m);
- if(online_version_ready&&!offline()){prepare_match(rules);net_first_touch=0;net_serve_team=-1;}
+ if(online_version_ready&&!offline()){prepare_match(rules);net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;}
 }
 static int team_population(int team,void* exclude){
  void* list=online_players();void* items=list?PTR(list,0x10):0;
@@ -98,16 +100,24 @@ EXPORT void online_awake_hook(void* page,void* m){
 /* Client_NewRally originally only tail-calls RefreshUI. Replace its exact
  * seven bytes instead of relocating that short relative jump. */
 EXPORT void net_new_rally_hook(void* rules,int team,void* m){
- if(online_mode()){net_first_touch=1;net_serve_team=-1;}
+ if(network_physics()){net_first_touch=1;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=1;}
  FN(0x253e30,void(*)(void*,void*))(rules,0);
 }
 EXPORT void client_motion_hook(void* ball,V3 pos,V3 velocity,_Bool hit,int touch,int team,int context,void* m){
+ int encoded=network_physics()&&hit&&((unsigned)context&0xf8000000u)==0x50000000u;
+ V3 spin=encoded?decode_spin(context):(V3){0,0,0};
+ if(encoded)context&=7;
  client_motion_trampoline(ball,pos,velocity,hit,touch,team,context,m);
- if(online_mode()&&hit&&team>=0&&team<2){
+ if(network_physics()){
+  if(encoded)activate_spin(ball,spin);
+  else {if(spinning_ball==ball)spinning_ball=0;setspin(ball,(V3){0,0,0});}
+ }
+ if(network_physics()&&hit&&team>=0&&team<2){
+  net_touch_count=net_touch_team==team?net_touch_count+1:1;net_touch_team=team;
   net_serve_team=net_first_touch?team:-1;net_first_touch=0;
  }
 }
 EXPORT void client_end_hook(void* rules,int team,V3 pos,void* m){
- if(online_mode()){net_first_touch=0;net_serve_team=-1;}
+ if(network_physics()){net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;}
  client_end_trampoline(rules,team,pos,m);
 }

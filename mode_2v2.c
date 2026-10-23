@@ -171,7 +171,7 @@ static int receiving_serve(void* bot){
 EXPORT void bot_assess_hook(void* bot,void* m){
  int receiving=receiving_serve(bot);unsigned char allow=BYTE(bot,0x38);
  void* rules=rooted(rules_root);
- int no_block=doubles_enabled&&bot_has_human_mate(bot)&&rules&&INT(rules,0x7c)!=INT(bot,0x28);
+ int no_block=(doubles_enabled||quartet_enabled)&&bot_has_human_mate(bot)&&rules&&INT(rules,0x7c)!=INT(bot,0x28);
  if(receiving||no_block)BYTE(bot,0x38)=0;
  bot_assess_trampoline(bot,m);BYTE(bot,0x38)=allow;
  /* Update inlines the jump decision: only the High tactic initiates it. */
@@ -262,7 +262,7 @@ static void* select_online(int format,void* m){
 EXPORT void main_menu_hook(void* o,void* argument,void* m){
  /* Entering another game from the main menu must not inherit doubles. Keep
   * the current match's speed if the user merely opens and closes the menu. */
- doubles_requested=0;main_menu_trampoline(o,argument,m);
+ doubles_requested=0;main_menu_trampoline(o,argument,m);show_button(o,0x30,0);
 }
 EXPORT void* solo_day_hook(void* o,void* m){
  if(online_selector)return select_online(4,m);
@@ -357,7 +357,7 @@ static void prepare_match(void* o){
  root_set(&rules_root,o);reception_pending=0;reception_context=0;
  serve_flight_team=-1;serve_fault=0;deferred_serve_point=-1;player_airborne=0;root_set(&jumping_player_root,0);
  doubles_enabled=(doubles_requested&&offline()||online_mode())&&!BYTE(o,0x68);
- quartet_enabled=!doubles_enabled&&offline()&&!BYTE(o,0x68);
+ quartet_enabled=!doubles_enabled&&(offline()||network_physics())&&!BYTE(o,0x68);
  doubles_spawned=0;doubles_team_counts[0]=doubles_team_counts[1]=0;
  void* teams=PTR(o,0x60);
  if(teams&&*(U64*)((char*)teams+0x18)==2){
@@ -395,12 +395,10 @@ EXPORT void add_player_hook(void* team,void* player,int slot,void* m){
 EXPORT _Bool front_row_hook(void* m){return doubles_enabled||quartet_enabled?0:FN(0xef32b0,_Bool(*)(void*))(m);}
 EXPORT float player_speed_hook(void* m){
  float speed=FN(0xef33b0,float(*)(void*))(m);
- if(doubles_enabled)return speed*doubles_player_speed;
- return quartet_enabled&&member_role(rooted(local_player_root))==0?speed*doubles_ally_speed:speed;
+ return doubles_enabled||quartet_enabled?speed*doubles_player_speed:speed;
 }
 EXPORT void bot_body_hook(void* bot,void* m){
- float speed=FLT(bot,0x3c);if(doubles_enabled)FLT(bot,0x3c)=speed*(bot_has_human_mate(bot)?doubles_ally_speed:doubles_speed);
- else if(quartet_enabled&&member_role(bot)==0)FLT(bot,0x3c)=speed*doubles_ally_speed;
+ float speed=FLT(bot,0x3c);if(doubles_enabled||quartet_enabled)FLT(bot,0x3c)=speed*(bot_has_human_mate(bot)?doubles_ally_speed:doubles_speed);
  bot_body_trampoline(bot,m);FLT(bot,0x3c)=speed;
 }
 /* Only the bot-serve placement reads through this call-site hook. Raising
@@ -435,6 +433,7 @@ EXPORT void* pass_target_hook(void* bot,void* m){
 }
 #include "formation_serve.c"
 #include "online_2v2.c"
+#include "comfort_v14.c"
 #ifdef MODE_PROBE
 /* Built only in the disposable validation binary. Commands are consumed on
  * Unity's main thread, never invoked by an external thread. */

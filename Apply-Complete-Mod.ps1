@@ -46,17 +46,21 @@ try {
     }
     $game=(Resolve-Path -LiteralPath $GameDirectory).Path
     if(-not (Test-Path -LiteralPath (Join-Path $game 'VolleyballFever.exe'))){throw 'Pasta do jogo incorreta.'}
-    $allowed=@('GameAssembly.dll','VolleyballFever_Data/resources.assets','VolleyballFever_Data/level1','VolleyballFever_Data/level2','VolleyballFever_Data/level3','VolleyballFever_Data/sharedassets1.assets','VolleyballFever_Data/sharedassets3.assets')
-    if($config.files.Count -ne 7){throw 'Manifesto incompleto.'}
+    $allowed=@('GameAssembly.dll','VolleyballFever_Data/resources.assets','VolleyballFever_Data/level1','VolleyballFever_Data/level2','VolleyballFever_Data/level3','VolleyballFever_Data/sharedassets1.assets','VolleyballFever_Data/sharedassets3.assets','VolleyballFever_Data/sharedassets0.assets','VolleyballFever_Data/level0')
+    if($config.files.Count -ne 9){throw 'Manifesto incompleto.'}
     $seen=@{}; $jobs=@()
     foreach($f in $config.files){
         if($f.path -notin $allowed -or $seen.ContainsKey($f.path)){throw 'Caminho invalido no manifesto.'}
         $seen[$f.path]=$true
         $target=Join-Path $game $f.path
         $current=Hash $target
-        if($current -ne $f.original_sha256 -and $current -ne $f.modified_sha256){throw "Arquivo incompatível: $($f.path). Use a versao original Steam build 9216628. Nenhum arquivo do jogo foi alterado."}
+        if($current -ne $f.original_sha256 -and $current -ne $f.modified_sha256 -and $current -ne $f.previous_sha256){throw "Arquivo incompatível: $($f.path). Use a versao original Steam build 9216628. Nenhum arquivo do jogo foi alterado."}
         $desired=$f.modified_sha256; $delta=$f.forward
         if($Restore){$desired=$f.original_sha256; $delta=$f.reverse}
+        if($f.previous_sha256 -and $current -eq $f.previous_sha256){
+            $delta=$f.upgrade
+            if($Restore){$delta=$f.previous_reverse}
+        }
         if($current -eq $desired){continue}
         if($delta.name -notmatch '^\d+-(forward|reverse)\.bin$'){throw 'Nome de patch invalido.'}
         $patch=Join-Path $PSScriptRoot $delta.name
@@ -93,7 +97,7 @@ try {
         throw "Instalacao cancelada; estado anterior recuperado. $cause"
     }
     foreach($job in $jobs){Remove-Item -LiteralPath $job.new}
-    if($Restore){Write-Host 'Os sete arquivos originais foram restaurados.'}
-    else {Write-Host 'Caioba completo v12 instalado. Abra o jogo pela Steam.'}
+    if($Restore){Write-Host 'Os nove arquivos originais foram restaurados.'}
+    else {Write-Host 'Caioba completo v14 checkpoint instalado. Abra o jogo pela Steam.'}
     Write-Host "Backup da operacao: $stage"
 } catch {Write-Host $_.Exception.Message; exit 1}

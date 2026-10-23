@@ -1,0 +1,1 @@
+Os PNGs desta pasta são desenhos procedurais originais criados por create_caioba_characters.py para este mod: rostos, roupas, emojis e padrão da rede. As prévias mostram as novas geometrias procedurais. Não foram extraídos de texturas do jogo. As geometrias são reproduzíveis pelo gerador; esqueleto/animações do jogo não estão nesta pasta.

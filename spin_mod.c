@@ -51,8 +51,12 @@ typedef void (*SetVec)(void*,V3,void*);
 typedef void (*SetFloat)(void*,float,void*);
 typedef _Bool (*GetBool)(void*,void*);
 static int offline(void){return FN(0x61fbf0,_Bool(*)(void*))(0);}
+static int network_physics(void);
 static void reception_begin(void* body);
 static void reception_end(void);
+static void set_begin(void* body,void* part);
+static void set_end(void);
+static int assisted_set(V3 position,V3* velocity);
 static void setspin(void* ball,V3 spin){
     void* rb=*(void**)((char*)ball+0x98);
     void* local=*(void**)((char*)ball+0x30);
@@ -62,8 +66,9 @@ static void setspin(void* ball,V3 spin){
 EXPORT void collision_hook(void* body,void* part,void* ball,void* collision,void* method){
     /* Keep original hit validation, scoring, normal bounce and ownership. */
     reception_begin(body);
+    set_begin(body,part);
     pending_valid=0;
-    if(part&&ball&&collision&&offline()&&*(int*)((char*)part+0x18)==3&&*((unsigned char*)ball+0x88)){
+    if(part&&ball&&collision&&(offline()||network_physics())&&*(int*)((char*)part+0x18)==3&&*((unsigned char*)ball+0x88)){
         void* rb=*(void**)((char*)ball+0x98);
         void* contacts=*(void**)((char*)collision+0x40);
         if(!contacts)contacts=*(void**)((char*)collision+0x48);
@@ -85,10 +90,11 @@ EXPORT void collision_hook(void* body,void* part,void* ball,void* collision,void
     }
     collision_trampoline(body,part,ball,collision,method);
     reception_end();
+    set_end();
     pending_valid=0;pending_ball=0;
 }
 EXPORT void random_hook(void* ball,void* method){
-    if(pending_valid&&pending_ball==ball&&offline()){
+    if(pending_valid&&pending_ball==ball&&(offline()||network_physics())){
         setspin(ball,pending_spin);spinning_ball=ball;pending_time=0;return;
     }
     random_trampoline(ball,method);
@@ -96,11 +102,30 @@ EXPORT void random_hook(void* ball,void* method){
 }
 /* Local-player hits skip SetRandomAngularVelocity. This wrapper replaces only
  * the confirmed accepted-hit call site inside PhysicalBody.Handle... . */
+/* Spin is packed atomically into the reliable hit RPC context. */
+EXPORT int encode_spin(V3 spin,int context){
+ spin=clampv(spin,60);float v[3]={spin.x,spin.y,spin.z};unsigned packed=0x50000000u|(context&7);
+ for(int i=0;i<3;i++){float f=v[i]*(127.0f/60.0f);int q=(int)(f+(f>=0?.5f:-.5f));packed|=((unsigned)q&255u)<<(3+i*8);}return (int)packed;
+}
+EXPORT V3 decode_spin(int packed){
+ V3 spin;float* v=&spin.x;for(int i=0;i<3;i++){int q=((unsigned)packed>>(3+i*8))&255;if(q>=128)q-=256;v[i]=q*(60.0f/127.0f);}return spin;
+}
+static void activate_spin(void* ball,V3 spin){setspin(ball,spin);spinning_ball=ball;pending_time=0;}
 EXPORT void motion_hook(void* ball,V3 position,V3 velocity,_Bool hit,_Bool isThrow,int touchId,int team,int context,void* method){
-    FN(0x77e5c0,void(*)(void*,V3,V3,_Bool,_Bool,int,int,int,void*))(ball,position,velocity,hit,isThrow,touchId,team,context,method);
-    if(hit&&pending_valid&&pending_ball==ball&&offline()){
-        setspin(ball,pending_spin);spinning_ball=ball;pending_time=0;
-    }
+ int has_spin=hit&&pending_valid&&pending_ball==ball;V3 spin=pending_spin;
+ if(hit&&assisted_set(position,&velocity)){has_spin=1;spin=(V3){0,0,0};pending_spin=spin;}
+ if(has_spin&&network_physics()){context=encode_spin(spin,context);spin=decode_spin(context);pending_spin=spin;}
+ FN(0x77e5c0,void(*)(void*,V3,V3,_Bool,_Bool,int,int,int,void*))(ball,position,velocity,hit,isThrow,touchId,team,context,method);
+ if(has_spin&&(offline()||network_physics()))activate_spin(ball,spin);
+}
+static void integrate_spin(void* rb,float dt){
+ if(!rb||FN(0xec5940,GetBool)(rb,0))return;
+ V3 omega=FN(0xec5870,GetVec)(rb,0);if(dot(omega,omega)<0.0625f)return;
+ V3 velocity=FN(0xec5b90,GetVec)(rb,0);if(dot(velocity,velocity)<0.01f)return;
+ V3 acceleration=compute_magnus(omega,velocity,magnus_coefficient,magnus_acceleration_limit);
+ int n=(int)(dt/0.033334f)+1;if(n>8)n=8;float h=dt/n;
+ for(int i=0;i<n;i++){V3 mid=add(velocity,mul(acceleration,h*.5f));velocity=add(velocity,mul(compute_magnus(omega,mid,magnus_coefficient,magnus_acceleration_limit),h));acceleration=compute_magnus(omega,velocity,magnus_coefficient,magnus_acceleration_limit);}
+ FN(0xec60d0,SetVec)(rb,velocity,0);
 }
 EXPORT void late_hook(void* ball,void* method){
     late_trampoline(ball,method);
@@ -112,25 +137,11 @@ EXPORT void late_hook(void* ball,void* method){
     pending_time+=dt;
     if(pending_time+0.000001f<physics_interval)return;
     dt=pending_time;pending_time=0;
-    if(!offline()){spinning_ball=0;return;}
+    int online=network_physics();
+    if(!offline()&&!online){spinning_ball=0;return;}
     void* rb=*(void**)((char*)ball+0x98);
-    if(!rb||FN(0xec5940,GetBool)(rb,0))return;
-    V3 omega=FN(0xec5870,GetVec)(rb,0);
-    if(dot(omega,omega)<0.0625f){spinning_ball=0;return;}
-    V3 velocity=FN(0xec5b90,GetVec)(rb,0);
-    if(dot(velocity,velocity)<0.01f)return;
-    physics_steps++;
-    V3 acceleration=compute_magnus(omega,velocity,magnus_coefficient,magnus_acceleration_limit);
-    /* Bounded midpoint integration is stable when rendering drops below 30Hz.
-       No repeated angular setter: Unity integrates the spin assigned at impact. */
-    int n=(int)(dt/0.033334f)+1;
-    if(n>8)n=8;
-    float h=dt/n;
-    for(int i=0;i<n;i++){
-        V3 mid=add(velocity,mul(acceleration,h*0.5f));
-        velocity=add(velocity,mul(compute_magnus(omega,mid,magnus_coefficient,magnus_acceleration_limit),h));
-        acceleration=compute_magnus(omega,velocity,magnus_coefficient,magnus_acceleration_limit);
-    }
-    FN(0xec60d0,SetVec)(rb,velocity,0);
+    physics_steps++;integrate_spin(rb,dt);
+    void* local=*(void**)((char*)ball+0x30);
+    if(online&&local!=rb)integrate_spin(local,dt);
 }
 #include "mode_2v2.c"

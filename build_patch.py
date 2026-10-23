@@ -27,6 +27,7 @@ entries=[('collision',0xeeb3b0),('random',0x77f430),('late',0x77ec30),
  ('add_player',0x30cfb0),('bot_body',0x271460),('pass_target',0x270d00),
  ('tracked_touch',0x253d30),('bot_hit',0x26fbb0),('serve_routine',0x25ab20),('bot_assess',0x26f190),('player_jump',0x329df0),('team_update',0x30d0d0),('local_serve',0x259160),('hand_find',0x312c50)]
 entries += [('online_entry',0xef7230),('network_version',0x31a240),('clear_teams',0x2529c0),('online_setup',0x254a00),('choose_team',0x31b1b0),('online_awake',0x3846d0),('client_motion',0x77de30),('client_end',0x252c10)]
+entries += [('avatar_update',0xeefbc0)]
 if 'probe_start_hook' in exports:entries += [('probe_start',0xef74f0),('probe_solo',0xef4620)]
 for name,rva in entries:
     n=0
@@ -133,7 +134,7 @@ for item in patches:
     assert check.get_section_by_rva(item['hook']).Characteristics&0x20000000
 for section in check.sections:
     assert not (section.Name.startswith(b'.vf') and section.Characteristics&0x20000000 and section.Characteristics&0x80000000)
-manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'CaioBa-2v2-v10','status':'Online 2v2 candidate; two-PC VR validation required'}
+manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'CaioBa-2v2-v14 / CaioBa-4v4-v14','status':'v14 checkpoint; VR and live two-PC validation pending'}
 (R/'analysis/native-patch-manifest.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))
 

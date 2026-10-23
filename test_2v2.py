@@ -122,7 +122,7 @@ def run(base):
   for i,a in enumerate(areas):assert e.q(a+0x28)==areas[(i+1)%4]
  assert e.call('front_row_hook')==0
  e.call('bot_serve_position_hook',result,serve_transform,0);assert e.vec(result)==e.pos[serve_transform]
- e.call('bot_body_hook',e.bot);assert e.calls[-1]==('speed',2)
+ e.call('bot_body_hook',e.bot);assert abs(e.calls[-1][1]-3.2)<1e-5
  e.u.mem_write(e.target+0x24,b'\1');e.call('pass_target_hook',e.bot);assert e.flt(e.target+0x20)==2
  e.flag('doubles_requested',1);e.online=True;e.call('game_go_hook',e.game);assert e.val('doubles_enabled')==0 and e.pos==e.original_pos
  e.online=False;e.u.mem_write(e.game+0x68,b'\1');e.call('game_go_hook',e.game);assert e.val('doubles_enabled')==0

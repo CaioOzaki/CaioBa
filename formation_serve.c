@@ -80,12 +80,12 @@ static void hand_serve_reset(void){
 /* Replace just the waiting-ball placement in LocalPlayerServe. The ball
  * stays frozen and invisible until either hand asks to grab it. */
 EXPORT void hand_serve_position_hook(void* t,V3 p,void* m){
- if(offline()||online_mode())p=(V3){0,-100,0};
+ if(offline()||network_physics())p=(V3){0,-100,0};
  FN(0xb756b0,SetVec)(t,p,m);
 }
 EXPORT _Bool local_serve_hook(void* routine,void* m){
  _Bool result=local_serve_trampoline(routine,m);
- if(!offline()&&!online_mode())return result;
+ if(!offline()&&!network_physics())return result;
  void* closure=PTR(routine,0x28);void* ball=closure?PTR(closure,0x10):0;
  if(result&&INT(routine,0x10)==1&&ball&&!BYTE(ball,0xd0)){
   root_set(&waiting_ball_root,ball);serve_visible(ball,0);
@@ -93,8 +93,14 @@ EXPORT _Bool local_serve_hook(void* routine,void* m){
  return result;
 }
 EXPORT void* hand_find_hook(void* hand,void* m){
+ /* Each avatar has Hands reading local input: reject remote avatar hands. */
+ if(network_physics()){
+  void* player=online_local_player();void* body=player?PTR(player,0x80):0;
+  void* ht=hand?transform(hand):0;void* bt=body?transform(body):0;
+  if(!ht||!bt||!FN(12008720,_Bool(*)(void*,void*,void*))(ht,bt,0))return 0;
+ }
  void* ball=rooted(waiting_ball_root);void* rules=rooted(rules_root);
- if(ball&&rules&&BYTE(rules,0x7a)&&BYTE(ball,0x89)&&!BYTE(ball,0xd0)&&!PTR(hand,0x30)&&(offline()||online_mode())){
+ if(ball&&rules&&BYTE(rules,0x7a)&&BYTE(ball,0x89)&&!BYTE(ball,0xd0)&&!PTR(hand,0x30)&&(offline()||network_physics())){
   void* center=PTR(hand,0x18);if(center){
    position_set(transform(ball),position(center));serve_visible(ball,1);
    root_set(&waiting_ball_root,0);

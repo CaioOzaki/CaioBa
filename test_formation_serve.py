@@ -2,7 +2,7 @@
 exec(open(__file__.replace('test_formation_serve.py','test_2v2.py')).read().split('def run(base):')[0])
 class FormationEngine(Engine):
  def __init__(self,base):
-  super().__init__(base);self.ids={};self.members=[];self.render={};self.assessed=[];self.tactics=[];self.grab=False;self.parents={}
+  super().__init__(base);self.ids={};self.members=[];self.render={};self.assessed=[];self.tactics=[];self.grab=False;self.parents={};self.local_hands=set()
   self.ptr(base+0x1519208,self.klass)
   self.player=self.alloc();self.integer(self.player+0x28,0)
   self.call('game_go_hook',self.game)
@@ -36,6 +36,7 @@ class FormationEngine(Engine):
   elif r==0x3130b0:self.ret(self.grab)
   elif r==0xa0c080:self.ret(a!=b)
   elif r==0xa0be40:self.ret(a==b)
+  elif r==12008720:self.ret(a in self.local_hands);
   elif r==0xb755b0:self.parents[a]=b;self.ret()
   elif addr==H+0xfb000:self.u.mem_write(a+0xd0,b'\0');self.ret()
   else:super().hook(u,addr,size,user)
@@ -50,8 +51,8 @@ def run(base):
    assert p[2]==(1 if team else -1)*(7 if role==0 else 1.5 if role==2 else 4)
    assert e.u.mem_read(area+0x39,1)==bytes([role==0])
   bot=e.members[team][2]
-  e.call('bot_body_hook',bot);assert abs(e.calls[-1][1]-3.2)<1e-5 and e.flt(bot+0x3c)==2
-  e.ptr(bot+0x20,e.areas[team][3]);e.call('bot_body_hook',bot);assert e.calls[-1][1]==2
+  e.call('bot_body_hook',bot);assert abs(e.calls[-1][1]-(3.2 if team==0 else 2.8))<1e-5 and e.flt(bot+0x3c)==2
+  e.ptr(bot+0x20,e.areas[team][3]);e.call('bot_body_hook',bot);assert abs(e.calls[-1][1]-(3.2 if team==0 else 2.8))<1e-5
   e.ptr(bot+0x20,e.areas[team][2])
   # First bot touch targets setter; setter alone approaches the second.
   e.used(1-team,1);e.call('bot_hit_hook',bot,0);assert e.tactics[-1][0]==2 and e.tactics[-1][1]>1
@@ -66,17 +67,18 @@ def run(base):
   e.call('bot_hit_hook',setter,0);assert e.tactics[-1][0]==2
   e.used(team,2,e.ids[setter]);e.call('team_update_hook',e.teams[team])
   e.call('bot_hit_hook',bot,0);assert e.tactics[-1][0]==1
- # Player gains and loses rear bonus through role rotation.
+ # All quartet roles now share doubles movement speed.
  e.ptr(e.player+0x20,e.areas[0][2]);e.call('player_speed_hook')
  speed=struct.unpack('<f',struct.pack('<I',e.u.reg_read(UC_X86_REG_XMM0)&0xffffffff))[0];assert abs(speed-2.4)<1e-5
  e.ptr(e.player+0x20,e.areas[0][1]);e.call('player_speed_hook')
- speed=struct.unpack('<f',struct.pack('<I',e.u.reg_read(UC_X86_REG_XMM0)&0xffffffff))[0];assert abs(speed-1.5)<1e-5
+ speed=struct.unpack('<f',struct.pack('<I',e.u.reg_read(UC_X86_REG_XMM0)&0xffffffff))[0];assert abs(speed-2.4)<1e-5
  # Doubles ally won't block; can still jump to attack its own team's set.
  e.flag('quartet_enabled',0);e.flag('doubles_enabled',1);bot=e.members[0][2];e.u.mem_write(bot+0x38,b'\1')
  e.used(1,2);e.call('bot_assess_hook',bot);assert e.assessed[-1]==0 and struct.unpack('<i',e.u.mem_read(bot+0xa4,4))[0]==2
  e.used(0,2);e.call('bot_assess_hook',bot);assert e.assessed[-1]==1 and struct.unpack('<i',e.u.mem_read(bot+0xa4,4))[0]==1
  # Both hands can retrieve frozen hidden ball from anywhere, only once.
- for right in (0,1):
+ for right,fmt in ((0,2),(1,2),(0,4),(1,4)):
+  e.flag('online_format',fmt)
   e.online=bool(right);e.flag('online_version_ready',right)
   ball=e.alloc(0x200);renderer=e.alloc();bt=e.alloc();e.ptr(ball+0x40,renderer);e.transforms[ball]=bt;e.pos[bt]=(0,1,-10)
   e.u.mem_write(ball+0x89,b'\1');e.u.mem_write(e.game+0x7a,b'\1')
@@ -87,6 +89,13 @@ def run(base):
   # Run the ORIGINAL Hand.Update and ORIGINAL StartInteraction through
   # the patched FindClosestInteractable call, not just the helper alone.
   e.transforms[hand]=center;klass=e.alloc(0x200);e.ptr(ball,klass)
+  if right:
+   nk=e.alloc(0x200);st=e.alloc();body=e.alloc(0x200);body_t=e.alloc()
+   e.ptr(e.b+0x1542650,nk);e.ptr(nk+0xb8,st);e.ptr(st,e.player);e.ptr(e.player+0x80,body);e.transforms[body]=body_t
+   e.local_hands.add(center)
+   remote=e.alloc();rt=e.alloc();e.transforms[remote]=rt;e.ptr(remote+0x18,rt);e.pos[rt]=(9,2,9)
+   assert e.call('hand_find_hook',remote)==0 and not e.render[renderer]
+
   e.ptr(klass+0x190,e.b+0x77f660);e.ptr(klass+0x1a0,H+0xfb000)
   ex['hand_update_native']=0x312f60
   e.grab=False;e.call('hand_update_native',hand);assert not e.render[renderer] and e.q(hand+0x30)==0
