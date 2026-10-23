@@ -2,7 +2,7 @@
 
 Implementado em 2v2 e 4v4, solo e online:
 - Salto dos bots com ápice 40 cm maior, calculado pela velocidade vertical.
-- Levantamentos 40 cm mais altos, incluindo a assistência com dois GRABs.
+- Levantamentos 40 cm mais altos, também entre bots, incluindo a assistência com dois GRABs.
 - Saque dos bots com impulso vertical maior: margem do arco aumentada em 65 cm para passar pela rede elevada.
 - Bola do saque nasce 2,8 m acima da posição real do bot sacador. Ele aguarda embaixo dela durante a preparação.
 - Sete modelos cartoon com cabeças maiores, corpos compactos e membros arredondados. Mantidas as identidades e animações existentes; camisa e tênis da senhora em vinho.

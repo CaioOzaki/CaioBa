@@ -447,6 +447,10 @@ EXPORT void* pass_target_hook(void* bot,void* m){
  if(doubles_enabled&&target&&BYTE(target,0x24)){
   float apex=FLT(target,0x20);if(apex<=0)apex=FLT(bot,0x44);
   FLT(target,0x20)=apex+doubles_set_extra;doubles_high_sets++;
+ }else if(doubles_enabled&&target){
+  /* The raised net also affects the opposing bots' normal sets. */
+  float apex=FLT(target,0x20);if(apex<=0)apex=FLT(bot,0x44);
+  FLT(target,0x20)=apex+.4f;
  }
  return target;
 }

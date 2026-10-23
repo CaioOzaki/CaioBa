@@ -114,7 +114,7 @@ def run(base):
    e.call('bot_serve_position_hook',result,serve_transform,0)
    assert e.vec(result)==before and e.pos[serve_transform]==before # Empty roster: safe fallback.
  e.u.mem_write(e.target+0x24,b'\1');e.flt(e.target+0x20,0);e.call('pass_target_hook',e.bot);assert abs(e.flt(e.target+0x20)-3.65)<1e-5
- e.u.mem_write(e.target+0x24,b'\0');e.flt(e.target+0x20,2);e.call('pass_target_hook',e.bot);assert e.flt(e.target+0x20)==2
+ e.u.mem_write(e.target+0x24,b'\0');e.flt(e.target+0x20,2);e.call('pass_target_hook',e.bot);assert abs(e.flt(e.target+0x20)-2.4)<1e-5
  e.call('solo_back_hook',e.page);assert e.val('solo_stage')==0
  e.call('solo_day_hook',e.page);assert e.val('solo_stage')==4 and all(e.visible[e.q(e.page+o)] for o in (0x40,0x48,0x50,0x58))
  e.call('solo_start_hook',e.page,123,0);e.call('game_go_hook',e.game);assert e.val('doubles_enabled')==0 and e.val('quartet_enabled')==1
@@ -123,13 +123,13 @@ def run(base):
  assert e.call('front_row_hook')==0
  e.call('bot_serve_position_hook',result,serve_transform,0);assert e.vec(result)==e.pos[serve_transform]
  e.call('bot_body_hook',e.bot);assert abs(e.calls[-1][1]-3.2)<1e-5
- e.u.mem_write(e.target+0x24,b'\1');e.call('pass_target_hook',e.bot);assert e.flt(e.target+0x20)==2
+ e.u.mem_write(e.target+0x24,b'\1');e.flt(e.target+0x20,2);e.call('pass_target_hook',e.bot);assert e.flt(e.target+0x20)==2
  e.flag('doubles_requested',1);e.online=True;e.call('game_go_hook',e.game);assert e.val('doubles_enabled')==0 and e.pos==e.original_pos
  e.online=False;e.u.mem_write(e.game+0x68,b'\1');e.call('game_go_hook',e.game);assert e.val('doubles_enabled')==0
  e.flag('doubles_requested',1);e.flag('doubles_enabled',1);e.call('main_menu_hook',e.page);assert e.val('doubles_requested')==0 and e.val('doubles_enabled')==1
  e.call('solo_entry_hook',e.page);assert e.val('solo_stage')==0
  return True
 assert run(0x180000000) and run(0x190000000)
-report={'passed':18,'ASLR_bases':2,'checks':['format selector','2v2 courts','4v4 courts','back navigation','reopen Solo resets','three bots only','two member slots per team','two-position rotation','whole depth coverage','4v4 cross and online geometry restoration','all four positions participate in 4v4 rotation','player speed multiplier','bot speed without accumulation','higher set to player','bot-to-bot unchanged','inactive rally does not modify set','online excluded','bomb excluded'],'scope':'Patched machine code with deterministic engine stubs; does not replace Unity or VR testing.'}
+report={'passed':18,'ASLR_bases':2,'checks':['format selector','2v2 courts','4v4 courts','back navigation','reopen Solo resets','three bots only','two member slots per team','two-position rotation','whole depth coverage','4v4 cross and online geometry restoration','all four positions participate in 4v4 rotation','player speed multiplier','bot speed without accumulation','higher set to player','bot-to-bot set raised 40cm','inactive rally does not modify set','online excluded','bomb excluded'],'scope':'Patched machine code with deterministic engine stubs; does not replace Unity or VR testing.'}
 (R/'analysis/2v2-test-results.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))
 
