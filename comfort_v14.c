@@ -1,4 +1,5 @@
 /* Second-touch setting and deterministic original avatar skins. */
+EXPORT void high_five_update(void* body);
 TRAMP(void,avatar_update,(void* body,void* m))
 typedef struct {float x,y;} V2;
 typedef struct {float x,y,z,w;} Q4;
@@ -29,7 +30,7 @@ static void set_begin(void* body,void* part){
 }
 static void set_end(void){setting_context=0;root_set(&setting_body,0);}
 EXPORT V3 setting_arc(V3 from,V3 target){
- float top=(from.y>target.y?from.y:target.y)+3.25f;
+ float top=(from.y>target.y?from.y:target.y )+3.65f;
  float vy=sqroot(19.62f*(top-from.y));float t=vy/9.81f+sqroot(2*(top-target.y)/9.81f);
  return (V3){(target.x-from.x)/t,vy,(target.z-from.z)/t};
 }
@@ -127,5 +128,5 @@ static void setting_feedback(void* body){
  for(int i=0;i<finger_count;i++){void* t=rooted(fingers[i].root);if(alive(t))FN(0xb754c0,void(*)(void*,Q4,void*))(t,fingers[i].open,0);}
 }
 EXPORT void avatar_update_hook(void* body,void* m){
- avatar_update_trampoline(body,m);skin_body(body);setting_feedback(body);
+ avatar_update_trampoline(body,m);skin_body(body);setting_feedback(body);high_five_update(body);
 }

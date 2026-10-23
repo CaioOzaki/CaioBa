@@ -45,7 +45,7 @@ static void* quartet_pass(void* bot,void* target,void* m){
  if(target){
   V3 point=receiver==rooted(local_player_root)?player_court_position(receiver):position(transform(receiver));
   point.y+=1.2f;*(V3*)((char*)target+0x10)=point;
-  FLT(target,0x20)=FLT(bot,0x44)+1.25f;BYTE(target,0x24)=receiver==rooted(local_player_root);
+  FLT(target,0x20)=FLT(bot,0x44)+doubles_set_extra;BYTE(target,0x24)=receiver==rooted(local_player_root);
   if(used==1)root_set(&attack_receiver[team],receiver);
  }
  return target;

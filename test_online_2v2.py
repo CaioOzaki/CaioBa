@@ -20,9 +20,9 @@ class OnlineEngine(Engine):
   if r==ex['network_version_trampoline']:self.ret()
   elif r==0x61fcd0:self.ret(self.settings)
   elif r==0x60acf0:
-   assert self.text[self.q(a+0x28)]==('CaioBa-2v2-v14' if self.val('online_format')==2 else 'CaioBa-4v4-v14');self.ret(1)
+   assert self.text[self.q(a+0x28)]==('CaioBa-2v2-v15' if self.val('online_format')==2 else 'CaioBa-4v4-v15');self.ret(1)
   elif r==0x60abf0:
-   assert self.text[self.q(self.app+0x28)]==('CaioBa-2v2-v14' if self.val('online_format')==2 else 'CaioBa-4v4-v14');self.ret(1)
+   assert self.text[self.q(self.app+0x28)]==('CaioBa-2v2-v15' if self.val('online_format')==2 else 'CaioBa-4v4-v15');self.ret(1)
   elif r==ex['clear_teams_trampoline']:self.calls.append(('clear',));self.ret()
   elif r==ex['choose_team_trampoline']:self.integer(a+0x28,b);self.calls.append(('choose',a,b));self.ret()
   elif r==ex['online_setup_trampoline']:self.calls.append(('setup',tuple(self.team(p) for p in self.people)));self.ret()
@@ -56,7 +56,7 @@ def run(base):
  assert e.val('online_selector')==1 and e.label(0x40)=='4v4' and e.label(0x48)=='2v2'
  assert e.text[e.labels[e.q(e.page+0x38)]]=='Online - Modo de jogo'
  e.call('solo_day_hook',e.page);assert e.val('online_format')==4 and e.val('online_selector')==0
- e.call('connect_default_hook');assert e.text[e.q(e.app+0x28)]=='CaioBa-4v4-v14'
+ e.call('connect_default_hook');assert e.text[e.q(e.app+0x28)]=='CaioBa-4v4-v15'
  e.call('clear_teams_hook',e.game);assert e.val('doubles_enabled')==0
  for row in e.areas:
   for i,a in enumerate(row):assert e.q(a+0x28)==row[(i+1)%4]
@@ -71,7 +71,7 @@ def run(base):
 
  for teams in ((0,1),(0,0),(1,1),(0,0,1),(0,1,1),(0,0,1,1),(0,0,0,0),(1,1,1,1)):
   e=OnlineEngine(base,teams)
-  assert e.text[e.q(e.app+0x28)]=='CaioBa-2v2-v14'
+  assert e.text[e.q(e.app+0x28)]=='CaioBa-2v2-v15'
   # The production connect routine inlines and overwrites AppVersion.
   e.ptr(e.app+0x28,e.string('1.7'));e.flag('online_version_ready',0)
   assert e.call('connect_default_hook')&255 and e.val('online_version_ready')==1

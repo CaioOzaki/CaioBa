@@ -57,7 +57,7 @@ def run_reception(base):
   assert struct.unpack('<i',e.u.mem_read(e.bot+0xa4,4))[0]==1 and abs(e.flt(e.bot+0x4c)-.6)<1e-6 and abs(e.flt(e.bot+0x50)-.2)<1e-6
  e.flag('doubles_enabled',1);e.integer(e.game+0x7c,0);e.integer(e.game+0x9c,1);e.integer(e.bot+0x28,0);e.u.mem_write(e.game+0x79,b'\0')
  e.null_target=True;e.call('pass_target_hook',e.bot)
- assert e.vec(e.target+0x10)==(-2,struct.unpack('<f',struct.pack('<f',1.2))[0],-4.5) and e.flt(e.target+0x20)==3.25 and e.u.mem_read(e.target+0x24,1)==b'\1'
+ assert e.vec(e.target+0x10)==(-2,struct.unpack('<f',struct.pack('<f',1.2))[0],-4.5) and abs(e.flt(e.target+0x20)-3.65)<1e-5 and e.u.mem_read(e.target+0x24,1)==b'\1'
  e.call('game_go_hook',e.game);assert e.val('reception_pending')==0
 
 run_reception(0x180000000);run_reception(0x190000000)

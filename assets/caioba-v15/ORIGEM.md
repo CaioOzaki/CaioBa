@@ -1,0 +1,1 @@
+Arte procedural própria gerada por create_caioba_characters_v15.py: rostos, roupas, emojis e rede. Não são texturas extraídas do jogo. Geometria gerada pelo mesmo código; esqueleto e animações do jogo permanecem apenas na instalação local.

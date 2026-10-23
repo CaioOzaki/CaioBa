@@ -112,8 +112,8 @@ def run(base):
   serve_transform=e.transforms[e.areas[t][2]];before=e.pos[serve_transform];result=e.alloc()
   for _ in range(3):
    e.call('bot_serve_position_hook',result,serve_transform,0)
-   assert e.vec(result)==(before[0],before[1]+2,before[2]) and e.pos[serve_transform]==before
- e.u.mem_write(e.target+0x24,b'\1');e.flt(e.target+0x20,0);e.call('pass_target_hook',e.bot);assert e.flt(e.target+0x20)==3.25
+   assert e.vec(result)==before and e.pos[serve_transform]==before # Empty roster: safe fallback.
+ e.u.mem_write(e.target+0x24,b'\1');e.flt(e.target+0x20,0);e.call('pass_target_hook',e.bot);assert abs(e.flt(e.target+0x20)-3.65)<1e-5
  e.u.mem_write(e.target+0x24,b'\0');e.flt(e.target+0x20,2);e.call('pass_target_hook',e.bot);assert e.flt(e.target+0x20)==2
  e.call('solo_back_hook',e.page);assert e.val('solo_stage')==0
  e.call('solo_day_hook',e.page);assert e.val('solo_stage')==4 and all(e.visible[e.q(e.page+o)] for o in (0x40,0x48,0x50,0x58))

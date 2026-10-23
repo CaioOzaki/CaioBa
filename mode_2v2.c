@@ -39,7 +39,7 @@ EXPORT float doubles_speed=1.40f;
 EXPORT float doubles_player_speed=1.60f;
 EXPORT float doubles_ally_speed=1.60f;
 EXPORT float doubles_serve_height_extra=2.0f;
-EXPORT float doubles_set_extra=1.25f;
+EXPORT float doubles_set_extra=1.65f;
 EXPORT int doubles_spawned=0;
 EXPORT int doubles_team_counts[2]={0,0};
 EXPORT U64 doubles_high_sets=0;
@@ -60,6 +60,8 @@ static V3 jump_takeoff;
 EXPORT int serve_flight_team=-1;
 static int serve_fault;
 static int deferred_serve_point=-1;
+static int point_reason=0;
+static void point_message(void* rules,int team,int reason);
 static void* transform(void* o);
 static V3 position(void* t);
 static V3 player_court_position(void* player){
@@ -84,7 +86,7 @@ static void managed_field(void* obj,int offset,void* value){
  * This host-side coroutine also serves standard 4v4; no doubles gate. */
 EXPORT _Bool serve_routine_hook(void* routine,void* m){
  int state=INT(routine,0x10);
- if(state==0){serve_flight_team=-1;serve_fault=0;deferred_serve_point=-1;}
+ if(state==0){point_reason=0;serve_flight_team=-1;serve_fault=0;deferred_serve_point=-1;}
  if(state==101||state==102){INT(routine,0x10)=state-100;return serve_routine_trampoline(routine,m);}
  void* rules=PTR(routine,0x20);int team=INT(routine,0x28);
  if(rules&&!BYTE(rules,0x68)&&(state==2||(state==1&&team==INT(rules,0x90)))){
@@ -139,6 +141,7 @@ EXPORT void tracked_touch_hook(void* rules,int player,int team,void* m){
    fault=isbot?BYTE(member,0x80):player_is_airborne(member);
   }
   if(fault){
+   point_reason=serving?5:serve_flight_team==team?6:7;
    serve_fault=1;serve_flight_team=-1;reception_pending=0;
    if(BYTE(rules,0x78))FN(0x2533a0,void(*)(void*,int,void*))(rules,1-team,0);
    else deferred_serve_point=1-team;
@@ -200,6 +203,12 @@ static int ally_setup(void* bot){
  return used>=0&&used<2;
 }
 EXPORT void bot_hit_hook(void* bot,void* ball,void* m){
+ void* serving_rules=rooted(rules_root);
+ if(serving_rules&&BYTE(serving_rules,0x79)&&!BYTE(serving_rules,0x68)){
+  float apex=FLT(bot,0x44),smack=FLT(bot,0x48);
+  FLT(bot,0x44)=apex+.65f;FLT(bot,0x48)=smack+.65f;
+  bot_hit_trampoline(bot,ball,m);FLT(bot,0x44)=apex;FLT(bot,0x48)=smack;return;
+ }
  if(!ally_setup(bot)&&!quartet_setup(bot)){bot_hit_trampoline(bot,ball,m);return;}
  int tactic=INT(bot,0xa4);float chance=FLT(bot,0x4c),failure=FLT(bot,0x50);
  /* The original pass branch requires tactic 2, >=2 remaining touches and a
@@ -399,14 +408,24 @@ EXPORT float player_speed_hook(void* m){
 }
 EXPORT void bot_body_hook(void* bot,void* m){
  float speed=FLT(bot,0x3c);if(doubles_enabled||quartet_enabled)FLT(bot,0x3c)=speed*(bot_has_human_mate(bot)?doubles_ally_speed:doubles_speed);
+ void* rules=rooted(rules_root);void* area=PTR(bot,0x20);
+ if(rules&&BYTE(rules,0x78)&&BYTE(rules,0x79)&&area&&BYTE(area,0x38)&&INT(bot,0x28)==INT(rules,0x7c))FLT(bot,0x3c)=0;
  bot_body_trampoline(bot,m);FLT(bot,0x3c)=speed;
 }
 /* Only the bot-serve placement reads through this call-site hook. Raising
  * the returned position leaves the court transform and human serve intact. */
 EXPORT V3 bot_serve_position_hook(void* serve_transform,void* m){
- V3 p=FN(0xb74de0,GetVec)(serve_transform,m);
- if(doubles_enabled)p.y+=doubles_serve_height_extra;
- return p;
+ V3 fallback=FN(0xb74de0,GetVec)(serve_transform,m);
+ void* rules=rooted(rules_root);if(!rules||BYTE(rules,0x68))return fallback;
+ int team=INT(rules,0x7c);if(team<0||team>1)return fallback;
+ void* sides=PTR(rules,0x60);void* side=sides?PTR(sides,0x20+8*team):0;
+ void* list=side?PTR(side,0x30):0;void* array=list?PTR(list,0x10):0;int n=list?INT(list,0x18):0;
+ if(!array||n<1||n>4)return fallback;
+ for(int i=0;i<n;i++){
+  void* bot=PTR(array,0x20+8*i);void* area=bot?PTR(bot,0x20):0;
+  if(area&&BYTE(area,0x38)){V3 p=position(transform(bot));p.y+=2.8f;return p;}
+ }
+ return fallback;
 }
 EXPORT void* pass_target_hook(void* bot,void* m){
  void* target=pass_target_trampoline(bot,m);
@@ -434,6 +453,7 @@ EXPORT void* pass_target_hook(void* bot,void* m){
 #include "formation_serve.c"
 #include "online_2v2.c"
 #include "comfort_v14.c"
+#include "celebration_v15.c"
 #ifdef MODE_PROBE
 /* Built only in the disposable validation binary. Commands are consumed on
  * Unity's main thread, never invoked by an external thread. */

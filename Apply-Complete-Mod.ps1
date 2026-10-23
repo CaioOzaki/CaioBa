@@ -98,6 +98,6 @@ try {
     }
     foreach($job in $jobs){Remove-Item -LiteralPath $job.new}
     if($Restore){Write-Host 'Os nove arquivos originais foram restaurados.'}
-    else {Write-Host 'Caioba completo v14 checkpoint instalado. Abra o jogo pela Steam.'}
+    else {Write-Host 'Caioba completo v15 checkpoint instalado. Abra o jogo pela Steam.'}
     Write-Host "Backup da operacao: $stage"
 } catch {Write-Host $_.Exception.Message; exit 1}
