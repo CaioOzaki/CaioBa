@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "ASLR_bases": 2,
+  "checks": [
+    "spawn above actual server on both teams/formats",
+    "server stays under ball",
+    "serve arc raised and restored",
+    "jump apex +40cm",
+    "reason encoded without changing score team",
+    "point text with smaller reason",
+    "clap only after approaching",
+    "hands remain tracking-driven",
+    "no repeated clap while touching",
+    "clap during rally",
+    "clap rearmed after point"
+  ]
+}

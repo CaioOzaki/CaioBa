@@ -52,6 +52,8 @@ static unsigned online_start_root;
 static int online_mode(void){return online_version_ready&&online_format==2&&!offline();}
 static void* online_local_player(void);
 static int online_reception(void* player);
+static int riot_skin(void* player);
+static void riot_end_point(void* rules);
 static int bot_has_human_mate(void* bot);
 static int player_is_airborne(void* player);
 static unsigned jumping_player_root;
@@ -183,16 +185,19 @@ EXPORT void bot_assess_hook(void* bot,void* m){
 }
 static void reception_begin(void* body){
  reception_context=0;
- if(doubles_enabled&&online_mode()&&body){reception_context=online_reception(PTR(body,0x168));return;}
- if(!doubles_enabled||!reception_pending||!body)return;
+ if(!(doubles_enabled||quartet_enabled)||!body)return;
+ if(network_physics()){reception_context=online_reception(PTR(body,0x168));return;}
  void* rules=rooted(rules_root);void* player=PTR(body,0x168);
- if(rules&&player&&INT(player,0x28)==0&&BYTE(rules,0x78)&&!BYTE(rules,0x79)&&offline())reception_context=1;
+ if(!rules||!player||!BYTE(rules,0x78)||!offline())return;
+ int team=INT(player,0x28);if(team<0||team>1)return;
+ if(BYTE(rules,0x79))return;
+ reception_context=INT(rules,0x7c)!=team||INT(rules,0x9c)==0;
 }
 static void reception_end(void){reception_context=0;}
 /* Replaces only the inlined PlayerPrefs read in the player's hit routine.
  * The settings menu and saved preference are untouched. */
 EXPORT int reception_assist_hook(void* key,int fallback,void* m){
- if(doubles_enabled)return reception_context;
+ if(doubles_enabled||quartet_enabled)return reception_context;
  return FN(0xa12690,int(*)(void*,int,void*))(key,fallback,m);
 }
 static int ally_setup(void* bot){
@@ -429,7 +434,14 @@ EXPORT V3 bot_serve_position_hook(void* serve_transform,void* m){
 }
 EXPORT void* pass_target_hook(void* bot,void* m){
  void* target=pass_target_trampoline(bot,m);
- if(quartet_enabled)return quartet_pass(bot,target,m);
+ if(quartet_enabled)target=quartet_pass(bot,target,m);
+ void* set_rules=rooted(rules_root);
+ if(target&&set_rules&&BYTE(set_rules,0x78)&&!BYTE(set_rules,0x79)&&INT(set_rules,0x7c)==INT(bot,0x28)&&INT(set_rules,0x9c)==1){
+  float x=FLT(target,0x10);FLT(target,0x10)=x< -3.5f?-3.5f:x>3.5f?3.5f:x;
+  FLT(target,0x14)=1.65f;FLT(target,0x18)=INT(bot,0x28)? .85f:-.85f;
+  return target;
+ }
+ if(quartet_enabled)return target;
  if(ally_setup(bot)&&(!target||!BYTE(target,0x24))){
   /* In rare cases the original chooser yields no human target. Reuse a
    * normally allocated target and aim a high set at the actual teammate. */
@@ -458,6 +470,7 @@ EXPORT void* pass_target_hook(void* bot,void* m){
 #include "online_2v2.c"
 #include "comfort_v14.c"
 #include "celebration_v15.c"
+#include "volley_riot_v16.c"
 #ifdef MODE_PROBE
 /* Built only in the disposable validation binary. Commands are consumed on
  * Unity's main thread, never invoked by an external thread. */
@@ -470,6 +483,7 @@ static void probe(void* start){
  if(probe_command==1&&start){probe_command=0;solo_entry_hook(start,0);}
  if(probe_command==2&&page){probe_command=0;choose(page,2);solo_day_trampoline(page,0);}
  if(probe_command==3&&page){probe_command=0;choose(page,2);FN(0xef4320,void*(*)(void*,void*))(page,0);}
+ if(probe_command==4&&page){probe_command=0;choose(page,4);FN(0xef4320,void*(*)(void*,void*))(page,0);}
 }
 EXPORT void probe_start_hook(void* o,void* m){probe_start_trampoline(o,m);probe(o);}
 EXPORT void probe_solo_hook(void* o,void* m){probe_solo_trampoline(o,m);probe(0);}

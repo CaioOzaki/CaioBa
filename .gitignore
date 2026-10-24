@@ -6,6 +6,7 @@ tools/
 analysis/
 distribution/
 maps-v*/
+visuals-v*/
 __pycache__/
 *.pyc
 *.dll

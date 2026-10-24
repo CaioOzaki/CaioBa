@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "bases": 2,
+  "layouts": 8,
+  "checks": [
+    "separate Photon app version",
+    "client initialization without Go",
+    "two slots per side",
+    "2/3/4 humans plus remaining bots",
+    "host resolves overfull choices",
+    "human speed 1.6 on both teams",
+    "remote reception state from RPCs",
+    "full team selection guard",
+    "remote jump fault",
+    "solo restored"
+  ],
+  "scope": "Actual compiled hooks with Photon/Unity stubs; no live two-PC headset session performed."
+}

@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "files": 11,
+  "checks": [
+    "original to v16",
+    "install repeated",
+    "v16 to original",
+    "restore repeated",
+    "v15 rostos to v16",
+    "restore after upgrade",
+    "incompatible input aborts before mutation",
+    "ZIP CRC and every delta digest"
+  ],
+  "zip_bytes": 73158296,
+  "sha256": "eb809c2d4a30fe5aa7e997b123578a40a109fd549265c87b3fef8c23542e8be5",
+  "scope": "Disposable fixture; live Steam install unchanged"
+}

@@ -39,18 +39,8 @@ static int assisted_set(V3 from,V3* velocity){
  /* The accepted-hit path may already have incremented GameRules touches. */
  if(!setting_context||!body||!both_grips())return 0;
  void* player=PTR(body,0x168);void* rules=rooted(rules_root);if(!rules)return 0;
- int team=INT(player,0x28);void* sides=PTR(rules,0x60);void* side=sides?PTR(sides,0x20+team*8):0;
- void* list=side?PTR(side,0x28):0;void* array=list?PTR(list,0x10):0;int n=list?INT(list,0x18):0;
- if(!array||n<1||n>4)return 0;
- float best=1e20f;V3 target={0,0,0};int found=0;
- for(int i=0;i<n;i++){
-  void* mate=PTR(array,0x20+i*8);if(!mate||mate==player)continue;
-  V3 p=position(transform(mate));p.y+=1.65f;
-  float score=(p.x-from.x)*(p.x-from.x)+(p.z-from.z)*(p.z-from.z);
-  int role=member_role(mate);if(quartet_enabled&&(role==1||role==3))score-=100;
-  if(score<best){best=score;target=p;found=1;}
- }
- if(!found||!finitev(from)||!finitev(target))return 0;
+ int team=INT(player,0x28);if(team<0||team>1||!finitev(from))return 0;
+ V3 target={from.x< -3.5f?-3.5f:from.x>3.5f?3.5f:from.x,1.65f,team?.85f:-.85f};
  *velocity=setting_arc(from,target);return 1;
 }
 static void* str(const char* text){return FN(0x14b790,void*(*)(const char*))(text);}
@@ -58,6 +48,7 @@ static void* find_child(void* parent,const char* path){return parent?FN(0xb73890
 static int alive(void* o){return o&&FN(0xa0bfb0,_Bool(*)(void*,void*))(o,0);}
 static void* gameobject(void* component){return FN(0x94b570,void*(*)(void*,void*))(component,0);}
 static int player_skin(void* player){
+ int chosen=riot_skin(player);if(chosen>=0)return chosen;
  if(!network_physics())return 0;
  void* view=FN(0x6054c0,void*(*)(void*,void*))(player,0);
  if(!view)return 0;int owner=FN(0xe6e1b0,int(*)(void*,void*))(view,0),rank=0;
@@ -101,7 +92,7 @@ static void restore_fingers(void){
 }
 static void setting_feedback(void* body){
  if(PTR(body,0x168)!=local_avatar_player())return;
- int active=setting_ready(body)&&both_grips();
+ int active=both_grips();
  if(feedback_active&&(!active||rooted(feedback_body)!=body))restore_fingers();
  if(!active)return;
  if(!feedback_active){

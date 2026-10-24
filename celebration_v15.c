@@ -29,7 +29,7 @@ static void point_message(void* rules,int team,int reason){
  };
  if(!rules||team<0||team>1||reason<1||reason>7)return;
  void* text=PTR(rules,0x28);if(!text)return;
- const char* parts[4]={team?"PONTO DO TIME VERMELHO\n<size=55%>":"PONTO DO TIME AZUL\n<size=55%>",causes[team][reason],"</size>",0};
+ const char* parts[4]={team?"<color=#E74750>VERMELHO +1</color>\n<size=70%>":"<color=#2468DF>AZUL +1</color>\n<size=70%>",causes[team][reason],"</size>",0};
  char message[240];int n=0;
  for(int p=0;parts[p];p++)for(int i=0;parts[p][i]&&n<239;i++)message[n++]=parts[p][i];message[n]=0;
  FN(0x2405f0,void(*)(void*,void*,void*))(text,str(message),0);
@@ -51,7 +51,7 @@ static void play_clap(void* body){
   FN(0xebc590,void(*)(void*,float,void*))(source,1,0);FN(0xebc760,void(*)(void*,float,void*))(source,.65f,0);
  }
  if(!alive(rooted(clap_clip))){
-  void* clip=FN(0xeba090,void*(*)(void*,int,int,int,_Bool,void*))(str("Caioba_Clap"),4410,1,22050,0,0);if(!clip)return;
+  void* clip=FN(0xeba090,void*(*)(void*,int,int,int,_Bool,void*))(str("VolleyRiot_Clap"),4410,1,22050,0,0);if(!clip)return;
   root_set(&clap_clip,clip);
   void* corlib=FN(0x14acb0,void*(*)(void))();void* single=FN(0x14a5a0,void*(*)(void*,const char*,const char*))(corlib,"System","Single");
   void* samples=FN(0x14a4f0,void*(*)(void*,U64))(single,4410);if(!samples)return;
@@ -71,7 +71,7 @@ EXPORT void high_five_update(void* body){
  if(PTR(body,0x168)!=online_local_player()){apply_high_five();return;}
  float dt=FN(0xb72960,float(*)(void*))(0);if(dt<=0||dt>.25f)return;
  hold_time-=dt;clap_cooldown-=dt;
- if(net_rally_active){hold_time=0;for(int i=0;i<8;i++)for(int j=0;j<4;j++)clap_peers[i].known[j]=0;return;}
+ /* Celebrations are available during rallies. Never move tracked hands or colliders. */
  void* list=online_players();void* array=list?PTR(list,0x10):0;int count=list?INT(list,0x18):0;
  if(!array||count<1||count>8)return;
  for(int i=0;i<count;i++){
@@ -79,11 +79,15 @@ EXPORT void high_five_update(void* body){
   ClapPeer* peer=&clap_peers[i];if(rooted(peer->body)!=remote){root_set(&peer->body,remote);for(int j=0;j<4;j++){peer->known[j]=0;peer->armed[j]=0;}}
   for(int left=0;left<2;left++)for(int right=0;right<2;right++){
    void* a=hand_target(body,left);void* b=hand_target(remote,right);if(!a||!b)continue;
-   V3 p=position(a),q=position(b),diff=sub(p,q);float d=sqroot(dot(diff,diff));int j=left*2+right;
+   V3 p=*(V3*)((char*)body+(left?0x120:0x104)),q=*(V3*)((char*)remote+(right?0x120:0x104));
+   if(!finitev(p)||!finitev(q))continue;
+   V3 diff=sub(p,q);float d=sqroot(dot(diff,diff));int j=left*2+right;
    if(d>.28f)peer->armed[j]=1;
-   if(peer->known[j]&&peer->armed[j]&&d<.16f&&(peer->distance[j]-d)/dt>.2f&&clap_cooldown<=0){
-    hold_position=mul(add(p,q),.5f);hold_time=.16f;clap_cooldown=.7f;peer->armed[j]=0;
+   if(peer->known[j]&&peer->armed[j]&&d<.22f&&(peer->distance[j]-d)/dt>.08f&&clap_cooldown<=0){
+    hold_position=mul(add(p,q),.5f);hold_time=0;clap_cooldown=.7f;peer->armed[j]=0;
     root_set(&hold_hand[0],a);root_set(&hold_hand[1],b);play_clap(body);
+    void* arm=PTR(body,left?0x48:0x40);void* part=arm?PTR(arm,0x28):0;
+    if(part)FN(0xeefd80,void(*)(void*,void*,_Bool,void*))(body,part,0,0);
    }
    peer->known[j]=1;peer->distance[j]=d;
   }
