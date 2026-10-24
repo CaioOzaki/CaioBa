@@ -2,16 +2,18 @@
   "passed": true,
   "files": 11,
   "checks": [
-    "original to v16",
+    "original to current",
     "install repeated",
-    "v16 to original",
+    "current to original",
     "restore repeated",
-    "v15 rostos to v16",
+    "v15 rostos to current",
     "restore after upgrade",
+    "v16 to menu hotfix",
+    "restore directly from v16",
     "incompatible input aborts before mutation",
     "ZIP CRC and every delta digest"
   ],
-  "zip_bytes": 73158296,
-  "sha256": "eb809c2d4a30fe5aa7e997b123578a40a109fd549265c87b3fef8c23542e8be5",
+  "zip_bytes": 79037876,
+  "sha256": "f79ec088c8cae47d19123e5eef478f6352ec0ca7ff904b93219c75bc755684e1",
   "scope": "Disposable fixture; live Steam install unchanged"
 }

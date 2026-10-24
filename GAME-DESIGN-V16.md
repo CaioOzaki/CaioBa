@@ -4,7 +4,7 @@ Vôlei em VR com aparência cartoon, equipes fáceis de reconhecer e comemoraç�
 
 ## Identidade
 
-Azul royal `#2468DF`, vermelho coral `#E74750`, azul-marinho `#10233F` e creme `#FFF5DC`. A fonte Lilita One dá personalidade aos menus, placares e mensagens. Logo próprio com bola, letras robustas e movimento diagonal. O vermelho corresponde ao lado negativo do eixo da quadra e o azul ao positivo.
+Azul royal `#2468DF`, vermelho coral `#E74750`, azul-marinho `#10233F` e creme `#FFF5DC`. A fonte Lilita One dá personalidade aos placares e mensagens. Os menus usam botões creme, letras marinho e a fonte nativa compatível com o VR, com realces claros em azul e vermelho. Logo próprio com bola, letras robustas e movimento diagonal. O vermelho corresponde ao lado negativo do eixo da quadra e o azul ao positivo.
 
 As superfícies usam contraste amplo, sem depender de detalhes pequenos para reconhecer um time. A bola e as linhas permanecem legíveis contra os dois lados do piso. Antenas listradas são decorativas.
 

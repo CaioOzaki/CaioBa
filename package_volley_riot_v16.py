@@ -4,7 +4,7 @@ No Steam executables or whole game DLLs are placed in the ZIP.
 import argparse,hashlib,json,re,shutil,struct,zipfile
 from pathlib import Path
 R=Path(__file__).resolve().parent
-p=argparse.ArgumentParser();p.add_argument('--game',type=Path,required=True);p.add_argument('--candidate',type=Path,required=True);p.add_argument('--v15-package',type=Path,required=True);p.add_argument('--output',type=Path,default=R/'distribution/Volley-Riot-v16');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--game',type=Path,required=True);p.add_argument('--candidate',type=Path,required=True);p.add_argument('--v15-package',type=Path,required=True);p.add_argument('--upgrade-from',type=Path);p.add_argument('--output',type=Path,default=R/'distribution/Volley-Riot-v16');a=p.parse_args()
 H=lambda b:hashlib.sha256(b).hexdigest()
 def prior_file(name):
  if a.v15_package.is_dir():return (a.v15_package/name).read_bytes()
@@ -31,7 +31,7 @@ def delta(src,dst):
  assert apply(src,patch)==dst
  return patch
 a.output.mkdir(parents=True,exist_ok=True)
-manifest={'version':'Volley-Riot-v16','steam_build':9216628,'network_versions':['VolleyRiot-2v2-v16','VolleyRiot-4v4-v16'],'validation':'Automated native logic and installer tests; live VR and two-PC session pending','files':[]}
+manifest={'version':'Volley-Riot-v16.1-menu','steam_build':9216628,'network_versions':['VolleyRiot-2v2-v16','VolleyRiot-4v4-v16'],'validation':'Automated native logic, menu contrast and installer tests; headset confirmation pending','files':[]}
 fixture=R/'tools/v16-installer-fixture';fixture.mkdir(parents=True,exist_ok=True);(fixture/'VolleyballFever.exe').write_bytes(b'installer fixture, not executable')
 fixture_v15=R/'tools/v16-fixture-v15';fixture_v15.mkdir(parents=True,exist_ok=True)
 index=0
@@ -50,6 +50,13 @@ for path in names:
  for key,src,dst in operations:
   direction='reverse' if key in ['reverse','previous_reverse'] else 'forward'
   name=f'{index}-{direction}.bin';index+=1;data=delta(src,dst);(a.output/name).write_bytes(data);item[key]={'name':name,'sha256':H(data)}
+ if a.upgrade_from and (a.upgrade_from/path).exists():
+  old=(a.upgrade_from/path).read_bytes()
+  if H(old) not in [H(original),H(baseline),H(modified)]:
+   extra={'sha256':H(old)}
+   for key,dst in [('forward',modified),('reverse',original)]:
+    name=f'{index}-{key}.bin';index+=1;data=delta(old,dst);(a.output/name).write_bytes(data);extra[key]={'name':name,'sha256':H(data)}
+   item['additional_versions']=[extra]
  manifest['files'].append(item)
  for root,data in [(fixture,original),(fixture_v15,baseline)]:
   target=root/path;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
@@ -58,19 +65,24 @@ for path in names:
 installer=(R/'Apply-Complete-Mod.ps1').read_text(encoding='utf-8-sig')
 start=installer.index('    $allowed=@(');end=installer.index('\n    $seen=',start)
 installer=installer[:start]+"    $allowed=@("+','.join("'"+x+"'" for x in names)+")\n    if($config.files.Count -ne 11){throw 'Manifesto incompleto.'}"+installer[end:]
-installer=installer.replace('Caioba-backup-','VolleyRiot-backup-').replace('Os nove arquivos originais foram restaurados.','Os onze arquivos originais foram restaurados.').replace('Caioba completo v15 checkpoint instalado. Abra o jogo pela Steam.','Volley Riot v16 instalado. Abra o jogo pela Steam.')
+installer=installer.replace('Caioba-backup-','VolleyRiot-backup-').replace('Os nove arquivos originais foram restaurados.','Os onze arquivos originais foram restaurados.').replace('Caioba completo v15 checkpoint instalado. Abra o jogo pela Steam.','Volley Riot v16.1 instalado. Abra o jogo pela Steam.')
 (a.output/'Aplicar-mod.ps1').write_text(installer,encoding='utf-8-sig')
 for name,flag in [('Instalar.cmd',''),('Restaurar.cmd',' -Restore')]:
  (a.output/name).write_bytes(('@echo off\r\npowershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0Aplicar-mod.ps1"'+flag+'\r\npause\r\n').encode('ascii'))
-readme='''VOLLEY RIOT v16 — mod para Volleyball Fever, Steam build 9216628
+readme='''VOLLEY RIOT v16.1 — CORRECAO DE VISIBILIDADE DO MENU
+Mod para Volleyball Fever, Steam build 9216628
 
 1. Cada amigo precisa ter sua própria instalação compatível do jogo.
 2. Extraia o ZIP inteiro em uma pasta. Feche o jogo e execute Instalar.cmd.
-3. O instalador aceita o original compatível ou Caioba v15 rostos e faz backup.
+3. Aceita o original compatível, Caioba v15 rostos e Volley Riot v16. Faz backup.
 4. Abra pela Steam. Todos devem usar este mesmo ZIP, modo, região e sala.
 5. Para desfazer, feche o jogo e execute Restaurar.cmd.
 
-Inclui identidade Volley Riot, quadra vermelha/azul, fonte cartoon, antenas,
+Corrige os menus: botoes claros, letras escuras, estados de selecao com contraste
+e fonte nativa funcional para as letras dos botoes. Sincroniza as cores da UI curva.
+A fonte cartoon permanece nos placares e nos avisos. Mantem o protocolo online v16.
+
+Inclui identidade Volley Riot, quadra vermelha/azul, antenas,
 luvas novas, bots mais altos e correção do cabelo comprido. Ajusta limite
 na rede, levantamentos próximos da rede e recepção em todo primeiro toque.
 O ginásio tem dois placares de parede. O menu online permite percorrer

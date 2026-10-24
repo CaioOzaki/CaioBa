@@ -8,6 +8,7 @@ Os relatórios em `validation/v16/` acompanham o código desta versão.
 - **Regressão online:** namespace da versão, inicialização dos clientes, formatos, distribuição de jogadores, guarda para time cheio e falta de saque de jogador remoto. Chamadas de Unity e Photon são substituídas explicitamente nesses testes.
 - **Instalador real em cópias isoladas:** original → v16, instalação repetida, restauração repetida, v15 rostos → v16, restauração após atualização e recusa de entrada incompatível antes de modificar outros arquivos. ZIP e deltas têm verificação de integridade.
 - **Arquivos Unity:** reabertura dos assets serializados e leitura dos componentes nativos modificados. O ginásio carregou na abertura sem renderização.
+- **Menu v16.1:** 45 controles e 225 estados de cor verificados nos arquivos salvos, com contraste mínimo de 10,42:1. Fonte nativa idêntica à versão funcional anterior; ações dos botões preservadas e cores guardadas pelo CurvedUI sincronizadas. A confirmação visual no headset continua pendente.
 
 ## Pendências de integração
 

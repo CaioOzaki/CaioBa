@@ -32,13 +32,14 @@ python stage_native_v16.py
 python test_volley_riot_v16.py
 python test_v16_gameplay.py
 python test_v16_online_menu.py
+python test_menu_visibility_v16.py
 python test_hooks.py
 python test_online_2v2.py
 python package_volley_riot_v16.py --game "PASTA-DA-INSTALACAO-V15" --candidate visuals-v16 --v15-package "PASTA-OU-ZIP-DA-V15-ROSTOS"
 python test_v16_installer.py
 ```
 
-O pacote aceita o jogo original compatível e a v15 rostos, verifica todos os arquivos antes de aplicar e guarda backup da operação. `Restaurar.cmd` retorna os onze arquivos ao original. Os arquivos de distribuição não devem ser commitados no repositório.
+O pacote aceita o jogo original compatível e a v15 rostos, verifica todos os arquivos antes de aplicar e guarda backup da operação. Para gerar a atualização v16.1 sobre a v16, acrescente `--upgrade-from versions/v16-before-menu-fix` ao empacotador, usando uma cópia verificada dos dois arquivos anteriores nessa pasta. `Restaurar.cmd` retorna os onze arquivos ao original. Os arquivos de distribuição não devem ser commitados no repositório.
 
 `MODE_PROBE` habilita controles de diagnóstico somente em uma cópia descartável. `stage_native_v16.py` rejeita esse tipo de binário para impedir sua distribuição.
 

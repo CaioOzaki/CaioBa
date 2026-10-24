@@ -52,9 +52,8 @@ hand_material['m_SavedProperties']['m_Colors']=[('_Color',color('ffffff'))]
 hand_material['m_SavedProperties']['m_Floats']=[(k,.15 if k=='_Glossiness' else v) for k,v in hand_material['m_SavedProperties']['m_Floats']]
 put('resources.assets',14,hand_material,'new glove fabric and matte finish')
 
-# Embedded TrueType font, used for every legacy UI label including built-in-font references.
-f='sharedassets0.assets';d=read(f,188);d['m_Name']='Lilita One';d['m_FontNames']=['Lilita One'];d['m_FontData']=list((ART/'LilitaOne-Regular.ttf').read_bytes());d['m_ConvertCase']=0
-put(f,188,d,'embedded cartoon font')
+# Keep the known-working native legacy font for VR menus. Lilita One is used
+# by the static SDF score and point-message fonts below.
 atlas,glyphs,chars,legacy,ascent,descent=make_font(ART/'LilitaOne-Regular.ttf')
 atlas.save(ART/'LilitaOne-SDF.png')
 atlas_alpha=Image.new('RGBA',atlas.size,(255,255,255,255));atlas_alpha.putalpha(atlas)
@@ -111,6 +110,9 @@ for f in ['level0','resources.assets','sharedassets0.assets','level1','level2','
    pid=d['characterParent']['m_PathID'];tr=read(f,pid);tr['m_LocalScale']['y']*=1.10
    put(f,pid,tr,'bot visual height +10%')
   if changed:put(f,o.path_id,d,'identity, UI typography or subtle point message')
+
+from menu_visibility_v16 import apply_menu_visibility
+changes.append({'file':'level0','reason':'high-contrast menu and CurvedUI cache synchronization',**apply_menu_visibility(load('level0'))})
 
 # Antennas are segmented visual cubes, without ANY collider or rule component.
 f='sharedassets3.assets';mats=[]

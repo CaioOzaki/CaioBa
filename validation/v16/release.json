@@ -1,9 +1,9 @@
 {
-  "name": "Volley Riot v16",
+  "name": "Volley Riot v16.1 menu visibility fix",
   "status": "test candidate",
   "native_sha256": "cee7cf34446d99b20a19f3c729258c53a6e20c07aa278f5423be4495067b8bdf",
-  "zip_sha256": "eb809c2d4a30fe5aa7e997b123578a40a109fd549265c87b3fef8c23542e8be5",
-  "zip_bytes": 73158296,
+  "zip_sha256": "f79ec088c8cae47d19123e5eef478f6352ec0ca7ff904b93219c75bc755684e1",
+  "zip_bytes": 79037876,
   "files_in_installer": 11,
   "network_versions": [
     "VolleyRiot-2v2-v16",
