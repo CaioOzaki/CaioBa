@@ -8,12 +8,16 @@
     "restore repeated",
     "v15 rostos to current",
     "restore after upgrade",
-    "v16 to menu hotfix",
-    "restore directly from v16",
+    "v16 and v16.1 to dark menu",
+    "restore directly from v16 and v16.1",
     "incompatible input aborts before mutation",
     "ZIP CRC and every delta digest"
   ],
-  "zip_bytes": 79037876,
-  "sha256": "f79ec088c8cae47d19123e5eef478f6352ec0ca7ff904b93219c75bc755684e1",
+  "previous_menu_versions": [
+    "v16-before-menu-fix",
+    "v16.1-before-dark-menu"
+  ],
+  "zip_bytes": 79056537,
+  "sha256": "c0ff08e6ba7a3a273ed16c55730b1d0a8e768dd3fd24ac85c7698e1baa7eed40",
   "scope": "Disposable fixture; live Steam install unchanged"
 }

@@ -39,7 +39,7 @@ python package_volley_riot_v16.py --game "PASTA-DA-INSTALACAO-V15" --candidate v
 python test_v16_installer.py
 ```
 
-O pacote aceita o jogo original compatível e a v15 rostos, verifica todos os arquivos antes de aplicar e guarda backup da operação. Para gerar a atualização v16.1 sobre a v16, acrescente `--upgrade-from versions/v16-before-menu-fix` ao empacotador, usando uma cópia verificada dos dois arquivos anteriores nessa pasta. `Restaurar.cmd` retorna os onze arquivos ao original. Os arquivos de distribuição não devem ser commitados no repositório.
+O pacote aceita o jogo original compatível e a v15 rostos, verifica todos os arquivos antes de aplicar e guarda backup da operação. Para gerar o menu escuro v16.2 a partir da instalação v16.1, execute `python build_dark_menu_v16.py --game "PASTA-DA-INSTALACAO-V16.1"`, seguido do teste de visibilidade. Para aceitar atualizações das duas revisões anteriores, acrescente `--upgrade-from versions/v16-before-menu-fix --upgrade-from versions/v16.1-before-dark-menu` ao empacotador, usando cópias verificadas dos arquivos anteriores nessas pastas. A base passada em `--game` ao empacotador continua sendo a v15. `Restaurar.cmd` retorna os onze arquivos ao original. Os arquivos de distribuição não devem ser commitados no repositório.
 
 `MODE_PROBE` habilita controles de diagnóstico somente em uma cópia descartável. `stage_native_v16.py` rejeita esse tipo de binário para impedir sua distribuição.
 

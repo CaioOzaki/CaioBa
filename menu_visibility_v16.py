@@ -4,7 +4,7 @@ import copy
 def rgba(value):
  return {**{k:int(value[i:i+2],16)/255 for k,i in zip('rgb',(0,2,4))},'a':1.}
 DARK=rgba('10233F');LIGHT=rgba('FFF5DC');WHITE=rgba('FFFFFF')
-STATES={'m_NormalColor':LIGHT,'m_HighlightedColor':rgba('C8DFFF'),'m_SelectedColor':rgba('B8D5FF'),'m_PressedColor':rgba('FFCCD1'),'m_DisabledColor':rgba('CAD3E0')}
+STATES={'m_NormalColor':rgba('263B56'),'m_HighlightedColor':rgba('2B4669'),'m_SelectedColor':rgba('324D70'),'m_PressedColor':rgba('553141'),'m_DisabledColor':rgba('26303F')}
 
 def apply_menu_visibility(file):
  trees={}
@@ -33,7 +33,7 @@ def apply_menu_visibility(file):
  labels=0
  for pid,d in trees.items():
   if 'm_Text' not in d:continue
-  d['m_Color']=(DARK if on_button(d['m_GameObject']['m_PathID']) else LIGHT).copy()
+  d['m_Color']=LIGHT.copy()
   if 'm_FontData' in d and on_button(d['m_GameObject']['m_PathID']):
    fd=d['m_FontData'];fd['m_BestFit']=1;fd['m_MinSize']=10;fd['m_MaxSize']=max(10,fd['m_FontSize'])
   file.objects[pid].save_typetree(d);graphics[d['m_GameObject']['m_PathID']]=d['m_Color'].copy();labels+=1

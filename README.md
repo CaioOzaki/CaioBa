@@ -4,7 +4,7 @@ Identidade cartoon e ajustes de vôlei em VR para Volleyball Fever, Steam build 
 
 A v16 acrescenta quadra azul/vermelha, logo e acabamento da rede próprios, antenas decorativas, Lilita One nos placares e avisos, luvas de geometria nova e placares nas duas paredes do ginásio. Bots ficam mais altos e o personagem de cabelo comprido recebe cobertura na nuca.
 
-A correção **v16.1** torna os botões claros com letras escuras, sincroniza as cores da interface curva e usa a fonte nativa já funcional nos menus. O instalador atualiza também a v16 anterior. A física e o protocolo das salas v16 são os mesmos.
+A revisão **v16.2** usa botões escuros com letras claras, inclusive ao selecionar e clicar, sincroniza as cores da interface curva e usa a fonte nativa já funcional nos menus. O instalador atualiza também as versões v16 e v16.1. A física e o protocolo das salas v16 são os mesmos.
 
 O limite junto à rede considera a cabeça rastreada. Levantamentos do jogador com dois GRABs e dos bots no segundo toque miram uma zona próxima da rede. A assistência de recepção vale para o primeiro toque de cada posse. High five funciona durante o rally, com som e retorno tátil, sem deslocar mãos ou colisores.
 

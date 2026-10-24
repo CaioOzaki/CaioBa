@@ -16,16 +16,25 @@ check('original_sha256')
 results.append(run());check('modified_sha256')
 results.append(run());check('modified_sha256')
 results.append(run(True));check('original_sha256')
-if any(f.get('additional_versions') for f in m['files']):
- results.append(run());check('modified_sha256')
- for f in m['files']:
-  if f.get('additional_versions'):shutil.copy2(R/'versions/v16-before-menu-fix'/f['path'],fixture/f['path'])
+tested_versions=[]
+for version in ['v16-before-menu-fix','v16.1-before-dark-menu']:
+ root=R/'versions'/version
+ if not root.exists():continue
+ def install_prior():
+  copied=0
+  for f in m['files']:
+   source=root/f['path']
+   if source.exists():
+    assert H(source) in {f['modified_sha256']}|{extra['sha256'] for extra in f.get('additional_versions',[])},(version,f['path'])
+    shutil.copy2(source,fixture/f['path']);copied+=1
+  assert copied,version
+ results.append(run());check('modified_sha256');install_prior()
  results.append(run());check('modified_sha256')
  results.append(run(True));check('original_sha256')
- results.append(run());check('modified_sha256')
- for f in m['files']:
-  if f.get('additional_versions'):shutil.copy2(R/'versions/v16-before-menu-fix'/f['path'],fixture/f['path'])
+ results.append(run());check('modified_sha256');install_prior()
  results.append(run(True));check('original_sha256')
+ tested_versions.append(version)
+assert len(tested_versions)==2,'Both previous menu revisions must be verified'
 results.append(run(True));check('original_sha256')
 for f in m['files']:shutil.copy2(prior/f['path'],fixture/f['path'])
 results.append(run());check('modified_sha256')
@@ -50,5 +59,5 @@ with zipfile.ZipFile(archive) as z:
   for extra in f.get('additional_versions',[]):
    for key in ['forward','reverse']:assert hashlib.sha256(z.read('Volley-Riot-v16/'+extra[key]['name'])).hexdigest()==extra[key]['sha256']
 digest=H(archive);archive.with_suffix('.zip.sha256').write_text(digest+'  '+archive.name+'\n')
-report={'passed':True,'files':len(m['files']),'checks':['original to current','install repeated','current to original','restore repeated','v15 rostos to current','restore after upgrade','v16 to menu hotfix','restore directly from v16','incompatible input aborts before mutation','ZIP CRC and every delta digest'],'zip_bytes':archive.stat().st_size,'sha256':digest,'scope':'Disposable fixture; live Steam install unchanged'}
+report={'passed':True,'files':len(m['files']),'checks':['original to current','install repeated','current to original','restore repeated','v15 rostos to current','restore after upgrade','v16 and v16.1 to dark menu','restore directly from v16 and v16.1','incompatible input aborts before mutation','ZIP CRC and every delta digest'],'previous_menu_versions':tested_versions,'zip_bytes':archive.stat().st_size,'sha256':digest,'scope':'Disposable fixture; live Steam install unchanged'}
 (R/'analysis/v16-installer-tests.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))

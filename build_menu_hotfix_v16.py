@@ -3,7 +3,7 @@ import argparse,copy,hashlib,json,os,shutil
 from pathlib import Path
 import UnityPy
 from UnityPy.helpers.TypeTreeGenerator import TypeTreeGenerator
-from menu_visibility_v16 import apply_menu_visibility,contrast,DARK,STATES
+from menu_visibility_v16 import apply_menu_visibility,contrast,LIGHT,STATES
 R=Path(__file__).resolve().parent
 p=argparse.ArgumentParser();p.add_argument('--game',type=Path,required=True);p.add_argument('--font-baseline',type=Path,required=True);a=p.parse_args()
 manifest=json.loads((R/'distribution/Volley-Riot-v16/patch.json').read_text());rows={f['path']:f for f in manifest['files']}
@@ -29,5 +29,5 @@ for name in ['level0','sharedassets0.assets']:
  for obj in check.file.objects.values():
   if obj.type.name in ['Font','RectTransform']:obj.read_typetree()
  m=json.loads((out/'manifest.json').read_text());next(f for f in m if f['path']==rel)['after']=hashlib.sha256(data).hexdigest();(out/'manifest.json').write_text(json.dumps(m,indent=2))
-report={'changes':changes,'minimum_button_contrast':min(contrast(DARK,c) for c in STATES.values()),'scope':'menu colors, cached vertex colors and native menu font only; gameplay and online protocol unchanged'}
+report={'changes':changes,'minimum_button_contrast':min(contrast(LIGHT,c) for c in STATES.values()),'scope':'menu colors, cached vertex colors and native menu font only; gameplay and online protocol unchanged'}
 (R/'analysis/v16-menu-visibility.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))

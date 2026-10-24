@@ -3,7 +3,7 @@
   "selectables": 45,
   "button_labels": 45,
   "checked_color_states": 225,
-  "minimum_contrast": 10.42209913102261,
+  "minimum_contrast": 7.957747459718419,
   "native_menu_font": "byte-identical to working v15 font",
   "callbacks": "unchanged",
   "shared_assets": "only legacy font object changed",
