@@ -1,8 +1,0 @@
-{
-  "headless_scene_load": true,
-  "loaded_objects": 7343,
-  "automatic_solo_match": "not_reached; menu update probe did not advance",
-  "VR_visual_playtest": false,
-  "live_two_PC_online_session": false,
-  "scope": "Deserialization and scene startup only; no successful live match is claimed"
-}

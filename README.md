@@ -4,7 +4,7 @@ Latest visual update: BOT 5 now has black hair, retaining her wine shirt and sho
 
 Cartoon VR volleyball mod, rebuilt from the explicitly selected **v15-rostos** baseline. Current design: https://www.figma.com/design/1sIgjKcMItHmbLIu1dnch0?node-id=2-24 . See [CHECKPOINT-V16.md](CHECKPOINT-V16.md) and [CLOUDCOURT-GAME-DESIGN.md](CLOUDCOURT-GAME-DESIGN.md).
 
-This checkpoint uses the **Cloudcourt-2v2-v16 / Cloudcourt-4v4-v16** room namespaces. Previous experiments in this repository remain in history and other files; they are not this release. Do not mix their DLLs, generated assets, or installers with this checkpoint.
+This checkpoint uses the **Cloudcourt-2v2-v16 / Cloudcourt-4v4-v16** room namespaces. Abandoned experimental releases are retained in Git history; their exclusive files have been removed from the current branch. Do not mix their DLLs, generated assets, or installers with this checkpoint.
 
 Native entry point: `spin_mod.c`, including `mode_2v2.c`, `formation_serve.c`, `online_2v2.c`, `comfort_v14.c`, `celebration_v15.c` and `identity_v16.c`. `build_patch.py` applies the compiled helper to the compatible local game copy. Tests execute compiled x64 code using deterministic Unity/Photon stubs.
 
