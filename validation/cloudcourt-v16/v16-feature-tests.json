@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "ASLR_bases": [
+    "0x180000000",
+    "0x190000000"
+  ],
+  "checks": [
+    "symmetric net limits with room-scale torso offset",
+    "first team touch each possession in both formats",
+    "second touch still unassisted",
+    "setting window 1.15m from net",
+    "bot jump apex +70cm from original",
+    "third-touch attack clearance and restored fields",
+    "high five during rally",
+    "swept fast hand contact",
+    "clap cooldown",
+    "explicit skin RPC",
+    "team swap queued until next point, updates membership and areas",
+    "A and trigger menu input"
+  ],
+  "scope": "Compiled native code with engine stubs; VR and real two-PC session still required."
+}

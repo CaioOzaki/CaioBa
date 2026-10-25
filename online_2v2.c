@@ -34,14 +34,12 @@ static int bot_has_human_mate(void* bot){
  void* players=side?PTR(side,0x38):0;return players&&INT(players,0x18)>0;
 }
 static int online_reception(void* player){
- if(!player||player!=online_local_player()||!net_rally_active||net_first_touch)return 0;
- int team=INT(player,0x28);
- return team>=0&&team<2&&net_serve_team!=team&&(net_touch_team!=team||net_touch_count==0);
+ return player&&player==online_local_player()&&net_rally_active&&net_touch_team>=0&&(net_touch_team!=INT(player,0x28)||net_touch_count==0);
 }
 static void set_mod_version(void* app){
  online_version_ready=0;
  if(app){
-  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"VolleyRiot-2v2-v16":"VolleyRiot-4v4-v16");
+  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v16":"Cloudcourt-4v4-v16");
   managed_field(app,0x28,version);online_version_ready=1;
  }
 }
@@ -124,5 +122,5 @@ EXPORT void client_end_hook(void* rules,int team,V3 pos,void* m){
  if(network_physics()){net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;}
  client_end_trampoline(rules,team,pos,m);
  if(reason)point_message(rules,team,reason);
- riot_end_point(rules);
+ if(network_physics())finish_team_changes();
 }

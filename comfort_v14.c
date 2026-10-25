@@ -40,7 +40,8 @@ static int assisted_set(V3 from,V3* velocity){
  if(!setting_context||!body||!both_grips())return 0;
  void* player=PTR(body,0x168);void* rules=rooted(rules_root);if(!rules)return 0;
  int team=INT(player,0x28);if(team<0||team>1||!finitev(from))return 0;
- V3 target={from.x< -3.5f?-3.5f:from.x>3.5f?3.5f:from.x,1.65f,team?.85f:-.85f};
+ /* Aim at a predictable attack window, not at a teammate's current feet. */
+ V3 target={from.x<0?-2.65f:2.65f,2.65f,team==0?-1.15f:1.15f};
  *velocity=setting_arc(from,target);return 1;
 }
 static void* str(const char* text){return FN(0x14b790,void*(*)(const char*))(text);}
@@ -48,7 +49,7 @@ static void* find_child(void* parent,const char* path){return parent?FN(0xb73890
 static int alive(void* o){return o&&FN(0xa0bfb0,_Bool(*)(void*,void*))(o,0);}
 static void* gameobject(void* component){return FN(0x94b570,void*(*)(void*,void*))(component,0);}
 static int player_skin(void* player){
- int chosen=riot_skin(player);if(chosen>=0)return chosen;
+ int selected=chosen_skin(player);if(selected>=0)return selected;
  if(!network_physics())return 0;
  void* view=FN(0x6054c0,void*(*)(void*,void*))(player,0);
  if(!view)return 0;int owner=FN(0xe6e1b0,int(*)(void*,void*))(view,0),rank=0;
@@ -91,33 +92,14 @@ static void restore_fingers(void){
  finger_count=0;feedback_active=0;root_set(&feedback_body,0);
 }
 static void setting_feedback(void* body){
- if(PTR(body,0x168)!=local_avatar_player())return;
- int active=both_grips();
- if(feedback_active&&(!active||rooted(feedback_body)!=body))restore_fingers();
- if(!active)return;
- if(!feedback_active){
-  root_set(&feedback_body,body);feedback_active=1;
-  const char* paths[2]={"Hand Root L/Open/Pr_LowPolyHand_Light_01_L/LHand/hand_l","Hand Root R/Open/Pr_LowPolyHand_Light_01_R/RHand/hand_r"};
-  for(int side=0;side<2;side++){
-   void* palm=find_child(transform(body),paths[side]);if(!palm)continue;
-   int count=FN(0xb74800,int(*)(void*,void*))(palm,0);if(count!=5)continue;
-   for(int j=0;j<5;j++){
-    void* t=FN(0xb73930,void*(*)(void*,int,void*))(palm,j,0);
-    for(int joint=0;joint<3&&t&&finger_count<30;joint++){
-     Finger* f=&fingers[finger_count++];root_set(&f->root,t);
-     f->saved=FN(0xb74b50,Q4(*)(void*,void*))(t,0);f->open=f->saved;
-     /* Straighten distal joints; fan proximal fingers slightly. */
-     if(joint){f->open.x*=.25f;f->open.y*=.25f;f->open.z*=.25f;}
-     else if(j<4)f->open.x+=(j-1.5f)*.045f;
-     f->open=normalized(f->open);
-     int children=FN(0xb74800,int(*)(void*,void*))(t,0);
-     t=children?FN(0xb73930,void*(*)(void*,int,void*))(t,0,0):0;
-    }
-   }
-  }
+ if(PTR(body,0x168)!=local_avatar_player()||!setting_ready(body)||!both_grips())return;
+ const char* paths[2]={"Hand Root L","Hand Root R"};
+ for(int side=0;side<2;side++){
+  void* root=find_child(transform(body),paths[side]);void* open=find_child(root,"Open"),*closed=find_child(root,"Closed");
+  if(open)FN(0x94f700,void(*)(void*,_Bool,void*))(gameobject(open),1,0);
+  if(closed)FN(0x94f700,void(*)(void*,_Bool,void*))(gameobject(closed),0,0);
  }
- for(int i=0;i<finger_count;i++){void* t=rooted(fingers[i].root);if(alive(t))FN(0xb754c0,void(*)(void*,Q4,void*))(t,fingers[i].open,0);}
 }
 EXPORT void avatar_update_hook(void* body,void* m){
- avatar_update_trampoline(body,m);skin_body(body);setting_feedback(body);high_five_update(body);
+ avatar_update_trampoline(body,m);skin_body(body);setting_feedback(body);high_five_update(body);cloudcourt_avatar_tick(body);
 }

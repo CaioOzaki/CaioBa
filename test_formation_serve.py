@@ -58,12 +58,12 @@ def run(base):
   e.used(1-team,1);e.call('bot_hit_hook',bot,0);assert e.tactics[-1][0]==2 and e.tactics[-1][1]>1
   e.call('pass_target_hook',bot);point=e.vec(e.target+0x10)
   setter=e.members[team][0];sp=e.pos[e.transforms[setter]]
-  assert abs(point[0]-sp[0])<1e-5 and abs(point[2]-sp[2])<1e-5
+  assert abs(point[0])<1e-5 and abs(abs(point[2])-.85)<1e-5
   e.used(team,1,e.ids[bot]);e.call('team_update_hook',e.teams[team])
   for obj in e.members[team]:
    if obj!=e.player:assert e.u.mem_read(obj+0x70,1)==bytes([obj==setter])
   # Second touch targets a wing; third is not forced into another pass.
-  e.call('pass_target_hook',setter);point=e.vec(e.target+0x10);assert abs(point[0])==3
+  e.call('pass_target_hook',setter);point=e.vec(e.target+0x10);assert abs(abs(point[0])-2.65)<1e-5 and abs(abs(point[2])-1.15)<1e-5
   e.call('bot_hit_hook',setter,0);assert e.tactics[-1][0]==2
   e.used(team,2,e.ids[setter]);e.call('team_update_hook',e.teams[team])
   e.call('bot_hit_hook',bot,0);assert e.tactics[-1][0]==1

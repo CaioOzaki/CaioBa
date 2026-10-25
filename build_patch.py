@@ -12,7 +12,6 @@ backup.parent.mkdir(exist_ok=True)
 if not backup.exists():backup.write_bytes(target.read_bytes())
 original=backup.read_bytes(); p=pefile.PE(data=original)
 q=pefile.PE(str(R/'tools/spin-native.dll'))
-assert q.OPTIONAL_HEADER.ImageBase==p.OPTIONAL_HEADER.ImageBase, 'Compile helper with --image-base,0x180000000'
 assert p.OPTIONAL_HEADER.SizeOfImage==0x1950000
 assert p.FILE_HEADER.Machine==0x8664
 assert not getattr(q,'DIRECTORY_ENTRY_IMPORT',[])
@@ -29,9 +28,7 @@ entries=[('collision',0xeeb3b0),('random',0x77f430),('late',0x77ec30),
  ('tracked_touch',0x253d30),('bot_hit',0x26fbb0),('serve_routine',0x25ab20),('bot_assess',0x26f190),('player_jump',0x329df0),('team_update',0x30d0d0),('local_serve',0x259160),('hand_find',0x312c50)]
 entries += [('online_entry',0xef7230),('network_version',0x31a240),('clear_teams',0x2529c0),('online_setup',0x254a00),('choose_team',0x31b1b0),('online_awake',0x3846d0),('client_motion',0x77de30),('client_end',0x252c10)]
 entries += [('avatar_update',0xeefbc0),('bot_jump',0x270020)]
-entries += [('net_clamp',0x31ad60)]
-entries += [('riot_choose',0x30cb90),('riot_menu',0x314ad0)]
-entries += [('riot_score',0x253e30)]
+entries += [('clamp_player',0x31ad60),('button_press',0x461e90),('client_choose',0x30cb90),('ui_submit',0x2437d0),('intro_page',0x3168b0),('tmp_awake',0x42f790),('tmp_ui_awake',0xa28680),('ui_text_enable',0xe83720),('refresh_score',0x253e30),('in_room_ui',0x315840),('in_game_active',0x313f40)]
 if 'probe_start_hook' in exports:entries += [('probe_start',0xef74f0),('probe_solo',0xef4620)]
 for name,rva in entries:
     n=0
@@ -142,7 +139,7 @@ for item in patches:
     assert check.get_section_by_rva(item['hook']).Characteristics&0x20000000
 for section in check.sections:
     assert not (section.Name.startswith(b'.vf') and section.Characteristics&0x20000000 and section.Characteristics&0x80000000)
-manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'VolleyRiot-2v2-v16 / VolleyRiot-4v4-v16','status':'v16 candidate; VR and live two-PC validation pending'}
+manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v16 / Cloudcourt-4v4-v16','status':'v16 checkpoint; VR and live two-PC validation pending'}
 (R/'analysis/native-patch-manifest.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))
 

@@ -54,15 +54,13 @@ try {
         $seen[$f.path]=$true
         $target=Join-Path $game $f.path
         $current=Hash $target
-        $extra=@($f.additional_versions | Where-Object {$_.sha256 -eq $current} | Select-Object -First 1)
-        if($current -ne $f.original_sha256 -and $current -ne $f.modified_sha256 -and $current -ne $f.previous_sha256 -and -not $extra.Count){throw "Arquivo incompatível: $($f.path). Use a versao original Steam build 9216628. Nenhum arquivo do jogo foi alterado."}
+        if($current -ne $f.original_sha256 -and $current -ne $f.modified_sha256 -and $current -ne $f.previous_sha256){throw "Arquivo incompatível: $($f.path). Use a versao original Steam build 9216628. Nenhum arquivo do jogo foi alterado."}
         $desired=$f.modified_sha256; $delta=$f.forward
         if($Restore){$desired=$f.original_sha256; $delta=$f.reverse}
         if($f.previous_sha256 -and $current -eq $f.previous_sha256){
             $delta=$f.upgrade
             if($Restore){$delta=$f.previous_reverse}
         }
-        if($extra.Count){$delta=$extra[0].forward; if($Restore){$delta=$extra[0].reverse}}
         if($current -eq $desired){continue}
         if($delta.name -notmatch '^\d+-(forward|reverse)\.bin$'){throw 'Nome de patch invalido.'}
         $patch=Join-Path $PSScriptRoot $delta.name
@@ -100,6 +98,6 @@ try {
     }
     foreach($job in $jobs){Remove-Item -LiteralPath $job.new}
     if($Restore){Write-Host 'Os nove arquivos originais foram restaurados.'}
-    else {Write-Host 'Caioba completo v15 checkpoint instalado. Abra o jogo pela Steam.'}
+    else {Write-Host 'Cloudcourt VR v16 checkpoint instalado. Abra o jogo pela Steam.'}
     Write-Host "Backup da operacao: $stage"
 } catch {Write-Host $_.Exception.Message; exit 1}

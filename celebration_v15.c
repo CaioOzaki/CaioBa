@@ -3,7 +3,7 @@ TRAMP(void,bot_jump,(void* bot,void* m))
 EXPORT void bot_jump_hook(void* bot,void* m){
  bot_jump_trampoline(bot,m);
  if(doubles_enabled||quartet_enabled){
-  float v=FLT(bot,0x98);FLT(bot,0x98)=sqroot(v*v+2*9.81f*.4f);
+  float v=FLT(bot,0x98);FLT(bot,0x98)=sqroot(v*v+2*9.81f*.7f);
   FLT(bot,0xa0)=2*FLT(bot,0x98)/9.81f;
  }
 }
@@ -29,16 +29,20 @@ static void point_message(void* rules,int team,int reason){
  };
  if(!rules||team<0||team>1||reason<1||reason>7)return;
  void* text=PTR(rules,0x28);if(!text)return;
- const char* parts[4]={team?"<color=#E74750>VERMELHO +1</color>\n<size=70%>":"<color=#2468DF>AZUL +1</color>\n<size=70%>",causes[team][reason],"</size>",0};
+ const char* parts[4]={team?"<size=70%><color=#FF7278>VERMELHO +1</color></size>\n<size=42%>":"<size=70%><color=#75CFFF>AZUL +1</color></size>\n<size=42%>",causes[team][reason],"</size>",0};
  char message[240];int n=0;
  for(int p=0;parts[p];p++)for(int i=0;parts[p][i]&&n<239;i++)message[n++]=parts[p][i];message[n]=0;
  FN(0x2405f0,void(*)(void*,void*,void*))(text,str(message),0);
 }
 static unsigned clap_clip,clap_source,clap_body;
 static unsigned hold_hand[2];static V3 hold_position;static float hold_time,clap_cooldown;
-typedef struct {unsigned body;float distance[4];unsigned char armed[4],known[4];} ClapPeer;
+typedef struct {unsigned body;float distance[4];V3 relative[4];unsigned char armed[4],known[4];} ClapPeer;
 static ClapPeer clap_peers[8];
-static void* hand_target(void* body,int right){void* arm=body?PTR(body,right?0x48:0x40):0;return arm?PTR(arm,0x10):0;}
+static void* hand_target(void* body,int right){
+ void* arm=body?PTR(body,right?0x48:0x40):0;
+ void* hand=arm?PTR(arm,0x28):0;
+ return hand?transform(hand):(arm?PTR(arm,0x10):0);
+}
 static void play_clap(void* body){
  if(!alive(rooted(clap_source))||rooted(clap_body)!=body){
   void* domain=FN(0x14a920,void*(*)(void))();
@@ -51,7 +55,7 @@ static void play_clap(void* body){
   FN(0xebc590,void(*)(void*,float,void*))(source,1,0);FN(0xebc760,void(*)(void*,float,void*))(source,.65f,0);
  }
  if(!alive(rooted(clap_clip))){
-  void* clip=FN(0xeba090,void*(*)(void*,int,int,int,_Bool,void*))(str("VolleyRiot_Clap"),4410,1,22050,0,0);if(!clip)return;
+  void* clip=FN(0xeba090,void*(*)(void*,int,int,int,_Bool,void*))(str("Cloudcourt_Clap"),4410,1,22050,0,0);if(!clip)return;
   root_set(&clap_clip,clip);
   void* corlib=FN(0x14acb0,void*(*)(void))();void* single=FN(0x14a5a0,void*(*)(void*,const char*,const char*))(corlib,"System","Single");
   void* samples=FN(0x14a4f0,void*(*)(void*,U64))(single,4410);if(!samples)return;
@@ -69,9 +73,9 @@ static void apply_high_five(void){
 EXPORT void high_five_update(void* body){
  if(!network_physics())return;
  if(PTR(body,0x168)!=online_local_player()){apply_high_five();return;}
- float dt=FN(0xb72960,float(*)(void*))(0);if(dt<=0||dt>.25f)return;
+ float dt=FN(0xb72b10,float(*)(void*))(0);if(dt<=0||dt>.25f)return;
  hold_time-=dt;clap_cooldown-=dt;
- /* Celebrations are available during rallies. Never move tracked hands or colliders. */
+
  void* list=online_players();void* array=list?PTR(list,0x10):0;int count=list?INT(list,0x18):0;
  if(!array||count<1||count>8)return;
  for(int i=0;i<count;i++){
@@ -79,17 +83,16 @@ EXPORT void high_five_update(void* body){
   ClapPeer* peer=&clap_peers[i];if(rooted(peer->body)!=remote){root_set(&peer->body,remote);for(int j=0;j<4;j++){peer->known[j]=0;peer->armed[j]=0;}}
   for(int left=0;left<2;left++)for(int right=0;right<2;right++){
    void* a=hand_target(body,left);void* b=hand_target(remote,right);if(!a||!b)continue;
-   V3 p=*(V3*)((char*)body+(left?0x120:0x104)),q=*(V3*)((char*)remote+(right?0x120:0x104));
-   if(!finitev(p)||!finitev(q))continue;
-   V3 diff=sub(p,q);float d=sqroot(dot(diff,diff));int j=left*2+right;
-   if(d>.28f)peer->armed[j]=1;
-   if(peer->known[j]&&peer->armed[j]&&d<.22f&&(peer->distance[j]-d)/dt>.08f&&clap_cooldown<=0){
-    hold_position=mul(add(p,q),.5f);hold_time=0;clap_cooldown=.7f;peer->armed[j]=0;
+   V3 p=position(a),q=position(b),diff=sub(p,q);float d=sqroot(dot(diff,diff));int j=left*2+right;
+   if(d>.32f)peer->armed[j]=1;
+   V3 travel=sub(diff,peer->relative[j]);float length=dot(travel,travel),t=length>1e-8f?-dot(peer->relative[j],travel)/length:0;
+   if(t<0)t=0;if(t>1)t=1;V3 closest=add(peer->relative[j],mul(travel,t));
+   int touching=d<.22f||(peer->known[j]&&dot(closest,closest)<.0225f);
+   if(peer->known[j]&&peer->armed[j]&&touching&&clap_cooldown<=0){
+    hold_position=mul(add(p,q),.5f);hold_time=.16f;clap_cooldown=.7f;peer->armed[j]=0;
     root_set(&hold_hand[0],a);root_set(&hold_hand[1],b);play_clap(body);
-    void* arm=PTR(body,left?0x48:0x40);void* part=arm?PTR(arm,0x28):0;
-    if(part)FN(0xeefd80,void(*)(void*,void*,_Bool,void*))(body,part,0,0);
    }
-   peer->known[j]=1;peer->distance[j]=d;
+   peer->known[j]=1;peer->distance[j]=d;peer->relative[j]=diff;
   }
  }
  apply_high_five();

@@ -23,7 +23,7 @@ class CelebrationEngine(SettingEngine):
   elif r==0x2533a0:self.ret()
   elif r==0x2405f0:self.message=self.text[b];self.ret()
   elif r==0xa0bfb0:self.ret(a!=0)
-  elif r==0xb72960:self.ret(f=1/60)
+  elif r in (0xb72960,0xb72b10):self.ret(f=1/60)
   elif r in (0x14a920,0x14a910,0x14a530,0x14a5a0,0x14b9c0,0x14a710,0x14acb0):self.ret(self.generic)
   elif r==0x14a4f0:assert b==4410;self.ret(self.samples)
   elif r==0x94f240:self.ret(self.audio)
@@ -45,10 +45,10 @@ for base in (0x180000000,0x190000000):
    out=e.alloc();e.call('bot_serve_position_hook',out,e.transforms[e.areas[team][2]],0);spawn_position=e.vec(out);assert abs(spawn_position[1]-2.8)<1e-5 and spawn_position[0]==2 and spawn_position[2]==e.pos[t][2]
    e.u.mem_write(e.game+0x78,b'\1\1');e.call('bot_body_hook',server);assert e.calls[-1][1]==0 and e.flt(server+0x3c)==2
    e.call('bot_hit_hook',server,e.ball);assert abs(e.apex[-1]-2.65)<1e-5 and e.flt(server+0x44)==2
-   e.call('bot_jump_hook',server);v=e.flt(server+0x98);assert abs((v*v-e.jump_speed**2)/19.62-.4)<1e-5;assert abs(e.flt(server+0xa0)-2*v/9.81)<1e-5
+   e.call('bot_jump_hook',server);v=e.flt(server+0x98);assert abs((v*v-e.jump_speed**2)/19.62-.7)<1e-5;assert abs(e.flt(server+0xa0)-2*v/9.81)<1e-5
  value=e.alloc();e.integer(value,1)
  e.call('four_point_hook',e.game,1);e.call('score_box_hook',e.generic,value);assert e.boxed==0x4303
- e.call('client_end_hook',e.game,e.boxed,e.pv);assert 'PONTO DO TIME VERMELHO' in e.message and '4 toques do time azul' in e.message and '<size=55%>' in e.message
+ e.call('client_end_hook',e.game,e.boxed,e.pv);assert 'VERMELHO +1' in e.message and '4 toques do time azul' in e.message and '<size=42%>' in e.message
  e.call('double_point_hook',e.game,0);e.integer(value,0);e.call('score_box_hook',e.generic,value);e.call('client_end_hook',e.game,e.boxed,e.pv);assert 'Dois toques' in e.message
  e.online=True;e.flag('online_version_ready',1)
  e.tracked_hands(.5);e.call('high_five_update',e.body);assert e.played==0
@@ -57,10 +57,11 @@ for base in (0x180000000,0x190000000):
  for _ in range(12):e.tracked_hands(.08);e.call('high_five_update',e.body)
  assert e.played==1
  e.call('net_new_rally_hook',e.game,0)
+ for _ in range(60):e.tracked_hands(.5);e.call('high_five_update',e.body)
  for d in (.5,.08):e.tracked_hands(d);e.call('high_five_update',e.body)
- assert e.played==1
+ assert e.played==2
  e.call('client_end_hook',e.game,0,e.pv)
  for _ in range(60):e.tracked_hands(.5);e.call('high_five_update',e.body)
- e.tracked_hands(.08);e.call('high_five_update',e.body);assert e.played==2
-report={'passed':True,'ASLR_bases':2,'checks':['spawn above actual server on both teams/formats','server stays under ball','serve arc raised and restored','jump apex +40cm','reason encoded without changing score team','point text with smaller reason','clap only after approaching','hands meet briefly','no repeated clap while touching','no clap during rally','clap rearmed after point']}
+ e.tracked_hands(.08);e.call('high_five_update',e.body);assert e.played==3
+report={'passed':True,'ASLR_bases':2,'checks':['spawn above actual server on both teams/formats','server stays under ball','serve arc raised and restored','jump apex +70cm','reason encoded without changing score team','point text with smaller reason','clap only after approaching','hands meet briefly','no repeated clap while touching','clap during rally','clap rearmed after point']}
 (R/'analysis/v15-celebration-tests.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))

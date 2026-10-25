@@ -1,0 +1,12 @@
+{
+  "name": "Cloudcourt VR v16",
+  "base": "v15-rostos",
+  "files": 9,
+  "zip_bytes": 54960720,
+  "zip_sha256": "dd85a06b1674e906c258fd77dd33848ecedaf4d7dfdd96385fd3a4a6151cce94",
+  "installer_tests": "original install, repeated install, repeated restore, v15-rostos upgrade, unknown input and damaged delta rejection passed",
+  "startup_checks": "menu/indoor 18 seconds, beach 15 seconds",
+  "VR_playtest": false,
+  "live_two_PC_multiplayer": false,
+  "figma": "https://www.figma.com/design/1sIgjKcMItHmbLIu1dnch0?node-id=2-24"
+}
