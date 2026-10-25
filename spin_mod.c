@@ -57,6 +57,10 @@ static void reception_end(void);
 static void set_begin(void* body,void* part);
 static void set_end(void);
 static int assisted_set(V3 position,V3* velocity);
+static int lobby_active(void);
+static int lobby_is_ball(void* ball);
+static float lobby_step_time(void* ball,float dt);
+static void lobby_adopt_ball(void* ball);
 static void setspin(void* ball,V3 spin){
     void* rb=*(void**)((char*)ball+0x98);
     void* local=*(void**)((char*)ball+0x30);
@@ -131,15 +135,21 @@ static void integrate_spin(void* rb,float dt){
  FN(0xec60d0,SetVec)(rb,velocity,0);
 }
 EXPORT void late_hook(void* ball,void* method){
+    /* Cached Photon instantiations may arrive before the room page activates. */
+    if(lobby_active())lobby_adopt_ball(ball);
     late_trampoline(ball,method);
     frame_callbacks++;
-    if(ball!=spinning_ball)return;
-    if(*((unsigned char*)ball+0xd0)){spinning_ball=0;pending_time=0;return;}
+    int practice=lobby_is_ball(ball);
+    if(ball!=spinning_ball&&!practice)return;
+    if(*((unsigned char*)ball+0xd0)){if(ball==spinning_ball){spinning_ball=0;pending_time=0;}return;}
     float dt=FN(0xb72960,float(*)(void*))(0);
     if(!(dt>0&&dt<=0.25f))return;
-    pending_time+=dt;
-    if(pending_time+0.000001f<physics_interval)return;
-    dt=pending_time;pending_time=0;
+    if(practice){dt=lobby_step_time(ball,dt);if(!(dt>0))return;}
+    else {
+     pending_time+=dt;
+     if(pending_time+0.000001f<physics_interval)return;
+     dt=pending_time;pending_time=0;
+    }
     int online=network_physics();
     if(!offline()&&!online){spinning_ball=0;return;}
     void* rb=*(void**)((char*)ball+0x98);

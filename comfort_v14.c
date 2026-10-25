@@ -40,8 +40,26 @@ static int assisted_set(V3 from,V3* velocity){
  if(!setting_context||!body||!both_grips())return 0;
  void* player=PTR(body,0x168);void* rules=rooted(rules_root);if(!rules)return 0;
  int team=INT(player,0x28);if(team<0||team>1||!finitev(from))return 0;
- /* Aim at a predictable attack window, not at a teammate's current feet. */
- V3 target={from.x<0?-2.65f:2.65f,2.65f,team==0?-1.15f:1.15f};
+ /* Project the intended attacker onto the near-net attack strip. Keep their
+  * lateral position instead of sending every set to a fixed wing. */
+ void* receiver=0;float nearest=1.0e20f;V3 receiver_position=from;
+ void* sides=PTR(rules,0x60);void* side=sides?PTR(sides,0x20+8*team):0;
+ void* list=side?PTR(side,0x28):0;void* items=list?PTR(list,0x10):0;
+ int n=list?INT(list,0x18):0;
+ if(items&&n>0&&n<=4)for(int i=0;i<n;i++){
+  void* candidate=PTR(items,0x20+8*i);if(!candidate||candidate==player||INT(candidate,0x28)!=team)continue;
+  /* In quartet prefer the two attacking wings, if roles are available. */
+  int role=member_role(candidate);if(quartet_enabled&&role>=0&&role!=1&&role!=3)continue;
+  void* humans=side?PTR(side,0x38):0;void* ha=humans?PTR(humans,0x10):0;
+  int hn=humans?INT(humans,0x18):0,is_human=0;
+  if(ha&&hn>=0&&hn<=4)for(int j=0;j<hn;j++)if(PTR(ha,0x20+8*j)==candidate)is_human=1;
+  V3 p=is_human?player_court_position(candidate):position(transform(candidate));if(!finitev(p))continue;
+  float score=(p.x-from.x)*(p.x-from.x)+.2f*p.z*p.z;
+  if(score<nearest){nearest=score;receiver=candidate;receiver_position=p;}
+ }
+ float x=receiver_position.x;if(x< -3.65f)x=-3.65f;if(x>3.65f)x=3.65f;
+ V3 target={x,2.65f,team==0?-1.15f:1.15f};
+ if(receiver&&quartet_enabled)root_set(&attack_receiver[team],receiver);
  *velocity=setting_arc(from,target);return 1;
 }
 static void* str(const char* text){return FN(0x14b790,void*(*)(const char*))(text);}

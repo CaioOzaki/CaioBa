@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "cases": [
+    [
+      "0x180000000",
+      2
+    ],
+    [
+      "0x180000000",
+      4
+    ],
+    [
+      "0x190000000",
+      2
+    ],
+    [
+      "0x190000000",
+      4
+    ]
+  ],
+  "checks": [
+    "2v2 and 4v4 lobby",
+    "cross net movement",
+    "bounded map area",
+    "own trigger hand",
+    "remote hand rejected",
+    "native attachment and release",
+    "four-ball recycling",
+    "spawn cooldown",
+    "singleton preserved",
+    "cleanup before game",
+    "no spawning in match or outside room"
+  ],
+  "scope": "Compiled x64 with Unity/Photon stubs; real two-PC headset playtest still required."
+}

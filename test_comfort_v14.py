@@ -51,7 +51,7 @@ for base in (0x180000000,0x190000000):
      import math
      t=(v[1]+math.sqrt(v[1]*v[1]-2*9.81*1.15))/9.81
      landing=(v[0]*t,2.65,-4+v[2]*t)
-     assert abs(landing[0]-2.65)<1e-4 and abs(landing[2]+1.15)<1e-4,landing
+     assert abs(landing[0])<=3.6501 and abs(landing[2]+1.15)<1e-4,landing
    e.grips=[True,True]
    if online:
     e.receive(0);assert e.call('setting_ready',e.body)==0

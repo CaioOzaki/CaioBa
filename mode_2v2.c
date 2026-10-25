@@ -474,6 +474,7 @@ EXPORT void* pass_target_hook(void* bot,void* m){
 #include "comfort_v14.c"
 #include "celebration_v15.c"
 #include "identity_v16.c"
+#include "lobby_v18.c"
 #ifdef MODE_PROBE
 /* Built only in the disposable validation binary. Commands are consumed on
  * Unity's main thread, never invoked by an external thread. */

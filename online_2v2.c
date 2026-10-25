@@ -39,7 +39,7 @@ static int online_reception(void* player){
 static void set_mod_version(void* app){
  online_version_ready=0;
  if(app){
-  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v17":"Cloudcourt-4v4-v17");
+  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v18":"Cloudcourt-4v4-v18");
   managed_field(app,0x28,version);online_version_ready=1;
  }
 }
@@ -114,7 +114,7 @@ EXPORT void client_motion_hook(void* ball,V3 pos,V3 velocity,_Bool hit,int touch
   if(encoded)activate_spin(ball,spin);
   else {if(spinning_ball==ball)spinning_ball=0;setspin(ball,(V3){0,0,0});}
  }
- if(network_physics()&&hit&&team>=0&&team<2){
+ if(network_physics()&&!lobby_is_ball(ball)&&hit&&team>=0&&team<2){
   net_touch_count=net_touch_team==team?net_touch_count+1:1;net_touch_team=team;
   net_serve_team=net_first_touch?team:-1;net_first_touch=0;
  }

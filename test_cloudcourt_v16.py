@@ -51,7 +51,7 @@ for base in (0x180000000,0x190000000):
    e.used(last,used);assert e.reception()==expected,(fmt,last,used)
   e.used(0,1);v=e.hit();import math
   duration=(v[1]+math.sqrt(v[1]**2-19.62*1.15))/9.81
-  assert abs(v[0]*duration-2.65)<1e-4 and abs(-4+v[2]*duration+1.15)<1e-4
+  assert abs(v[0]*duration)<=3.6501 and abs(-4+v[2]*duration+1.15)<1e-4
   bot=e.members[0][2];e.call('bot_jump_hook',bot);vy=e.flt(bot+0x98);assert abs((vy*vy-e.jump_speed**2)/19.62-.7)<1e-5
   e.used(0,2);e.call('bot_hit_hook',bot,e.ball);assert abs(e.apex[-1]-2.6)<1e-5 and e.flt(bot+0x44)==2
  e.online=True;e.flag('online_version_ready',1)

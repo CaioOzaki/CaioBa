@@ -48,7 +48,11 @@ try {
     if(-not (Test-Path -LiteralPath (Join-Path $game 'VolleyballFever.exe'))){throw 'Pasta do jogo incorreta.'}
     $required=@('GameAssembly.dll','VolleyballFever_Data/resources.assets','VolleyballFever_Data/level1','VolleyballFever_Data/level2','VolleyballFever_Data/level3','VolleyballFever_Data/sharedassets1.assets','VolleyballFever_Data/sharedassets3.assets','VolleyballFever_Data/sharedassets0.assets','VolleyballFever_Data/level0')
     $allowed=$required+@('VolleyballFever_Data/globalgamemanagers.assets')
-    if($config.files.Count -notin @(9,10)){throw 'Manifesto incompleto.'}
+    if($config.version -eq 'Cloudcourt-v18-praia-lobby'){
+        $required+=@('VolleyballFever_Data/globalgamemanagers.assets','VolleyballFever_Data/sharedassets2.assets','VolleyballFever_Data/sharedassets4.assets','VolleyballFever_Data/resources.resource','VolleyballFever_Data/sharedassets0.resource','VolleyballFever_Data/sharedassets1.resource','VolleyballFever_Data/sharedassets2.resource','VolleyballFever_Data/sharedassets4.resource')
+        $allowed=$required
+        if($config.files.Count -ne 17){throw 'Manifesto v18 incompleto.'}
+    } elseif($config.files.Count -notin @(9,10)){throw 'Manifesto incompleto.'}
     $seen=@{}; $jobs=@()
     foreach($f in $config.files){
         if($f.path -notin $allowed -or $seen.ContainsKey($f.path)){throw 'Caminho invalido no manifesto.'}

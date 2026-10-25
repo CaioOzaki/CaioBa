@@ -28,6 +28,7 @@ entries=[('collision',0xeeb3b0),('random',0x77f430),('late',0x77ec30),
  ('tracked_touch',0x253d30),('bot_hit',0x26fbb0),('serve_routine',0x25ab20),('bot_assess',0x26f190),('player_jump',0x329df0),('team_update',0x30d0d0),('local_serve',0x259160),('hand_find',0x312c50)]
 entries += [('online_entry',0xef7230),('network_version',0x31a240),('clear_teams',0x2529c0),('online_setup',0x254a00),('choose_team',0x31b1b0),('online_awake',0x3846d0),('client_motion',0x77de30),('client_end',0x252c10)]
 entries += [('avatar_update',0xeefbc0),('bot_jump',0x270020)]
+entries += [('lobby_enter',0x314c60),('lobby_start',0x3154d0),('lobby_ball_awake',0x77dc80)]
 entries += [('clamp_player',0x31ad60),('button_press',0x461e90),('client_choose',0x30cb90),('ui_submit',0x2437d0),('intro_page',0x3168b0),('tmp_awake',0x42f790),('tmp_ui_awake',0xa28680),('ui_text_enable',0xe83720),('refresh_score',0x253e30),('in_room_ui',0x315840),('in_game_active',0x313f40)]
 if 'probe_start_hook' in exports:entries += [('probe_start',0xef74f0),('probe_solo',0xef4620)]
 for name,rva in entries:
@@ -103,6 +104,10 @@ motion_hook=exports['motion_hook']+delta
 result[p.get_offset_from_rva(callsite):p.get_offset_from_rva(callsite)+5]=b'\xe8'+struct.pack('<i',motion_hook-callsite-5)
 patches.append(dict(name='accepted_local_hit',rva=callsite,length=5,original=callbytes.hex(),hook=motion_hook,kind='call'))
 for name,site,original_target,hookname in [
+ ('lobby_move_enabled',0x31c3a3,0xef3370,'lobby_move_enabled_hook'),
+ ('lobby_move_clamp_x',0x31c13f,0x956d70,'lobby_move_clamp_hook'),
+ ('lobby_move_clamp_z',0x31c1cf,0x956d70,'lobby_move_clamp_hook'),
+ ('lobby_move_position',0x31c202,0xb756b0,'lobby_move_position_hook'),
  ('score_reason',0x2584e1,0x14ba70,'score_box_hook'),
  ('four_touches',0x253de8,0x2533a0,'four_point_hook'),
  ('double_touch',0x253e10,0x2533a0,'double_point_hook'),
@@ -141,7 +146,7 @@ for item in patches:
     assert check.get_section_by_rva(item['hook']).Characteristics&0x20000000
 for section in check.sections:
     assert not (section.Name.startswith(b'.vf') and section.Characteristics&0x20000000 and section.Characteristics&0x80000000)
-manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v17 / Cloudcourt-4v4-v17','status':'v17 review fixes; VR and live two-PC validation pending'}
+manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v18 / Cloudcourt-4v4-v18','status':'v18 beach/audio/lobby/setting; VR and live two-PC validation pending'}
 (R/'analysis/native-patch-manifest.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))
 

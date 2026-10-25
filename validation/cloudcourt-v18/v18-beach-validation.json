@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "palm_vertices": 261,
+  "palm_triangles": 512,
+  "previous_triangles": 831,
+  "shared_mesh_and_material": true,
+  "texture_size": 512,
+  "no_transparency": true,
+  "terrain_resolution_preserved": 1025,
+  "scenes": [
+    {
+      "scene": "level1",
+      "palms": 17,
+      "colliders_unchanged": true
+    },
+    {
+      "scene": "level2",
+      "palms": 17,
+      "colliders_unchanged": true
+    }
+  ],
+  "preview": "assets/beach-v18/preview-palm.png"
+}

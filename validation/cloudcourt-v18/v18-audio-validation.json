@@ -1,0 +1,227 @@
+{
+  "passed": true,
+  "clips": [
+    {
+      "asset": "resources.assets",
+      "id": 127,
+      "event": "Fuse",
+      "source": "Cloudcourt original synthesis",
+      "wav": "resources-127.wav",
+      "duration": 2.0,
+      "peak": 0.24,
+      "fsb_bytes": 88324
+    },
+    {
+      "asset": "resources.assets",
+      "id": 128,
+      "event": "FuseTick",
+      "source": "Cloudcourt original synthesis",
+      "wav": "resources-128.wav",
+      "duration": 0.11002267573696145,
+      "peak": 0.3,
+      "fsb_bytes": 4964
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 171,
+      "event": "Music02",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets0-171.wav",
+      "duration": 34.285714285714285,
+      "peak": 0.28,
+      "fsb_bytes": 1512100
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 172,
+      "event": "RedPoint01",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets0-172.wav",
+      "duration": 0.7500226757369615,
+      "peak": 0.35,
+      "fsb_bytes": 33188
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 173,
+      "event": "etfx_explosion_mystic",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets0-173.wav",
+      "duration": 1.0,
+      "peak": 0.55,
+      "fsb_bytes": 44228
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 174,
+      "event": "Interface01",
+      "source": "Kenney Interface Sounds / click_003.ogg (CC0)",
+      "wav": "sharedassets0-174.wav",
+      "duration": 0.010022675736961452,
+      "peak": 0.04366007619516796,
+      "fsb_bytes": 548
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 175,
+      "event": "ReadyToExplode",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets0-175.wav",
+      "duration": 0.9,
+      "peak": 0.32,
+      "fsb_bytes": 39812
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 176,
+      "event": "BallHit01",
+      "source": "Kenney Impact Sounds / impactSoft_medium_000.ogg (CC0)",
+      "wav": "sharedassets0-176.wav",
+      "duration": 0.11800453514739229,
+      "peak": 0.6309892145130889,
+      "fsb_bytes": 5316
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 177,
+      "event": "BluePoint01",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets0-177.wav",
+      "duration": 0.7500226757369615,
+      "peak": 0.35,
+      "fsb_bytes": 33188
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 178,
+      "event": "Silence",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets0-178.wav",
+      "duration": 0.08,
+      "peak": 0.0,
+      "fsb_bytes": 3652
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 179,
+      "event": "RedPoint02",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets0-179.wav",
+      "duration": 0.7500226757369615,
+      "peak": 0.35,
+      "fsb_bytes": 33188
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 180,
+      "event": "BluePoint03",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets0-180.wav",
+      "duration": 0.7500226757369615,
+      "peak": 0.35,
+      "fsb_bytes": 33188
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 181,
+      "event": "BallHit02",
+      "source": "Kenney Impact Sounds / impactPunch_medium_002.ogg (CC0)",
+      "wav": "sharedassets0-181.wav",
+      "duration": 0.54140589569161,
+      "peak": 0.65,
+      "fsb_bytes": 24004
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 182,
+      "event": "RedPoint03",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets0-182.wav",
+      "duration": 0.7500226757369615,
+      "peak": 0.35,
+      "fsb_bytes": 33188
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 183,
+      "event": "Negative",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets0-183.wav",
+      "duration": 0.8499773242630385,
+      "peak": 0.32,
+      "fsb_bytes": 37604
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 184,
+      "event": "Positive",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets0-184.wav",
+      "duration": 1.1499773242630384,
+      "peak": 0.36,
+      "fsb_bytes": 50820
+    },
+    {
+      "asset": "sharedassets0.assets",
+      "id": 185,
+      "event": "BluePoint02",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets0-185.wav",
+      "duration": 0.7500226757369615,
+      "peak": 0.35,
+      "fsb_bytes": 33188
+    },
+    {
+      "asset": "sharedassets1.assets",
+      "id": 58,
+      "event": "Ambience_Location_Exterior_Beach_Day",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets1-58.wav",
+      "duration": 16.0,
+      "peak": 0.17,
+      "fsb_bytes": 705700
+    },
+    {
+      "asset": "sharedassets1.assets",
+      "id": 59,
+      "event": "Ambience_Animals_Birds_Seagulls",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets1-59.wav",
+      "duration": 16.0,
+      "peak": 0.12,
+      "fsb_bytes": 705700
+    },
+    {
+      "asset": "sharedassets2.assets",
+      "id": 19,
+      "event": "Ambience_Location_Exterior_Beach_Night",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets2-19.wav",
+      "duration": 16.0,
+      "peak": 0.17,
+      "fsb_bytes": 705700
+    },
+    {
+      "asset": "sharedassets4.assets",
+      "id": 14,
+      "event": "TeamPresentationStinger",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets4-14.wav",
+      "duration": 4.285714285714286,
+      "peak": 0.36,
+      "fsb_bytes": 189124
+    },
+    {
+      "asset": "sharedassets4.assets",
+      "id": 15,
+      "event": "etfx_explosion_nuke",
+      "source": "Cloudcourt original synthesis",
+      "wav": "sharedassets4-15.wav",
+      "duration": 1.0,
+      "peak": 0.55,
+      "fsb_bytes": 44228
+    }
+  ],
+  "count": 22,
+  "all_fmod_roundtrips": true
+}

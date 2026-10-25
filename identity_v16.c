@@ -17,6 +17,7 @@ static int text_equals(void* s,const char* word){
 }
 static int named(void* component,const char* name){return text_equals(FN(0xa0bdd0,void*(*)(void*,void*))(gameobject(component),0),name);}
 EXPORT void clamp_player_hook(void* player,void* m){
+ if(lobby_active())return;
  clamp_player_trampoline(player,m);
  if((!doubles_enabled&&!quartet_enabled)||!player)return;
  int team=INT(player,0x28);if(team<0||team>1)return;
