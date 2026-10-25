@@ -245,6 +245,11 @@ for gid,g in gg.items():
   for o in effects:
    raw=bytearray(o.get_raw_data());raw[68:84]=graphic;o.set_raw_data(bytes(raw))
 
+# Apply the menu hit-test and shared VR splash fixes to every fresh rebuild.
+from fix_cloudcourt_menu_v16 import fix_menu_assets
+files['globalgamemanagers.assets']=UnityPy.load(str(R/'working/VolleyballFever_Data/globalgamemanagers.assets')).file
+fix_menu_assets(files['level0'],files['globalgamemanagers.assets'])
+
 # Compact point message and scoreboard styling, including world-space variants.
 for name,f in files.items():
  for o in list(f.objects.values()):

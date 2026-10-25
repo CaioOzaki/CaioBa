@@ -46,8 +46,9 @@ try {
     }
     $game=(Resolve-Path -LiteralPath $GameDirectory).Path
     if(-not (Test-Path -LiteralPath (Join-Path $game 'VolleyballFever.exe'))){throw 'Pasta do jogo incorreta.'}
-    $allowed=@('GameAssembly.dll','VolleyballFever_Data/resources.assets','VolleyballFever_Data/level1','VolleyballFever_Data/level2','VolleyballFever_Data/level3','VolleyballFever_Data/sharedassets1.assets','VolleyballFever_Data/sharedassets3.assets','VolleyballFever_Data/sharedassets0.assets','VolleyballFever_Data/level0')
-    if($config.files.Count -ne 9){throw 'Manifesto incompleto.'}
+    $required=@('GameAssembly.dll','VolleyballFever_Data/resources.assets','VolleyballFever_Data/level1','VolleyballFever_Data/level2','VolleyballFever_Data/level3','VolleyballFever_Data/sharedassets1.assets','VolleyballFever_Data/sharedassets3.assets','VolleyballFever_Data/sharedassets0.assets','VolleyballFever_Data/level0')
+    $allowed=$required+@('VolleyballFever_Data/globalgamemanagers.assets')
+    if($config.files.Count -notin @(9,10)){throw 'Manifesto incompleto.'}
     $seen=@{}; $jobs=@()
     foreach($f in $config.files){
         if($f.path -notin $allowed -or $seen.ContainsKey($f.path)){throw 'Caminho invalido no manifesto.'}
@@ -67,6 +68,7 @@ try {
         if((Hash $patch) -ne $delta.sha256){throw 'Pacote corrompido. Extraia novamente o ZIP.'}
         $jobs+=@{target=$target;patch=$patch;desired=$desired;prior=$current;relative=$f.path}
     }
+    foreach($path in $required){if(-not $seen.ContainsKey($path)){throw 'Manifesto incompleto.'}}
     if($jobs.Count -eq 0){Write-Host 'Os arquivos ja estao na versao solicitada.';exit 0}
     $stage=Join-Path $game ('Caioba-backup-'+[Guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $stage | Out-Null
@@ -97,7 +99,7 @@ try {
         throw "Instalacao cancelada; estado anterior recuperado. $cause"
     }
     foreach($job in $jobs){Remove-Item -LiteralPath $job.new}
-    if($Restore){Write-Host 'Os nove arquivos originais foram restaurados.'}
+    if($Restore){Write-Host 'Os arquivos originais do pacote foram restaurados.'}
     else {Write-Host 'Cloudcourt VR v16 checkpoint instalado. Abra o jogo pela Steam.'}
     Write-Host "Backup da operacao: $stage"
 } catch {Write-Host $_.Exception.Message; exit 1}
