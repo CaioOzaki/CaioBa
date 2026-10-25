@@ -13,7 +13,7 @@ A=R/'assets/cloudcourt-v16';A.mkdir(parents=True,exist_ok=True)
 OUT=R/'characters-v16';OUT.mkdir(exist_ok=True)
 BASE=R/'versions/v13-antes-personagens'
 SKINS=['#e9b98d','#f0c5a6','#b98055','#f0c3a2','#e7b589','#744a39','#edbb9b']
-HAIRS=['#171b24','#5a3929','#30261e','#342b27','#e4dfd9','#f1f0e9','#392820']
+HAIRS=['#171b24','#5a3929','#30261e','#342b27','#171b24','#f1f0e9','#392820']
 SHIRTS=['#171d27','#f1f0e9','#537c79','#404d65','#762f49','#263b4b','#426178']
 PANTS=['#141922','#20242c','#aa906c','#293e59','#435a61','#29323b','#aa9276']
 SHOES=['#2466d3','#141a20','#624a38','#f0e6d6','#762f49','#4c3329','#293a49']
@@ -49,7 +49,7 @@ def face(n,emoji=False):
         d.rectangle((0,0,512,72),fill=hair)
         for x in range(16,512,48):d.ellipse((x-33,23,x+39,101+(x%3)*4),fill=hair)
     elif n==3:d.rectangle((0,0,512,65),fill=hair);d.rectangle((0,0,55,480),fill=hair);d.rectangle((457,0,512,480),fill=hair)
-    elif n in (4,5):pass # White hair is geometry; no painted arc across the face.
+    elif n in (4,5):pass # Hair is geometry; no painted arc across the face.
     else:d.polygon([(0,0),(512,0),(512,76),(344,50),(103,116),(0,79)],fill=hair)
     for x in (171,341):
         if n==4:d.arc((x-32,192,x+32,239),180,355,fill=ink,width=7)
