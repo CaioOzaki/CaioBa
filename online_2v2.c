@@ -39,7 +39,7 @@ static int online_reception(void* player){
 static void set_mod_version(void* app){
  online_version_ready=0;
  if(app){
-  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v18":"Cloudcourt-4v4-v18");
+  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v19":"Cloudcourt-4v4-v19");
   managed_field(app,0x28,version);online_version_ready=1;
  }
 }
@@ -96,6 +96,7 @@ EXPORT void online_awake_hook(void* page,void* m){
  online_awake_trampoline(page,m);
  label(text_component(page,0x40),"Criar sala");
  label(text_component(page,0x48),"Entrar na sala");
+ map_label_v19();
 }
 /* Client_NewRally originally only tail-calls RefreshUI. Replace its exact
  * seven bytes instead of relocating that short relative jump. */

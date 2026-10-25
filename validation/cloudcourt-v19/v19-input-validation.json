@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "ASLR_bases": [
+    "0x180000000",
+    "0x190000000"
+  ],
+  "actual_generic_interface_invoker": true,
+  "float_return_in_XMM0": true,
+  "checks": [
+    "Original held input",
+    "OVR A and SteamVR A fallback",
+    "Left and right digital trigger",
+    "Independent analog 0.60/0.35 hysteresis",
+    "NaN analog and disconnect release",
+    "Inactive/locked buttons silent",
+    "One cached 2D source/clip for repeated clicks",
+    "Finite 80ms procedural click samples",
+    "Pointer detects parent Button without allocating each frame"
+  ],
+  "VR_tested": false
+}

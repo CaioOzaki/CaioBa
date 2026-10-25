@@ -3,7 +3,8 @@ __file__=__file__.replace('test_cloudcourt_v16.py','test_celebration_v15.py')
 exec(open(__file__).read().split('\nfor base in ')[0])
 class CloudEngine(CelebrationEngine):
  def __init__(self,base):
-  super().__init__(base);self.names={};self.selected=[];self.probe_reception=False;self.a_button=False;self.submit=False;self.assists=[]
+  super().__init__(base);self.names={};self.selected=[];self.probe_reception=False;self.a_button=False;self.submit=False;self.assists=[];self.prefs={}
+  self.ui_samples=self.alloc(0x20+1764*4);self.ui_clip=self.alloc()
   self.ptr(base+0x15260b8,self.alloc());self.ptr(base+0x15269d0,self.alloc())
  def string(self,s):
   v=self.alloc(0x400);self.text[v]=s;self.integer(v+0x10,len(s));self.u.mem_write(v+0x14,s.encode('utf-16le'));return v
@@ -18,7 +19,13 @@ class CloudEngine(CelebrationEngine):
   elif r==0xa0bdd0:self.ret(self.string(self.names.get(a,'')))
   elif r==0x6054c0:self.ret(self.generic)
   elif r==0xe6e1b0:self.ret(1)
-  elif r==0xa12870:self.ret()
+  elif r==0xa12870:self.prefs[self.text[a]]=b;self.ret()
+  elif r==0xa12690:self.ret(self.prefs.get(self.text[a],b))
+  elif r in (0x478bf0,0x83c7f0):self.ret(a!=0)
+  elif r==0x14a4f0 and b==1764:self.ret(self.ui_samples)
+  elif r==0xeba090 and b==1764:self.ret(self.ui_clip)
+  elif r==0xeba5f0 and a==self.ui_clip:self.ret(True)
+  elif r in (0xebc370,0xebc500,0xebc460):self.ret()
   elif r==0x1c1f90:
    assert b==1;arr=self.alloc();self.ptr(arr+0x18,1);self.ret(arr)
   elif r==0x14ba70:
@@ -64,7 +71,7 @@ for base in (0x180000000,0x190000000):
  for _ in range(8):e.tracked_hands(.08);e.call('high_five_update',e.body)
  assert e.played==2
  # Skin selection is broadcast via an existing reliable RPC and decoded per player.
- button=e.alloc();e.names[button]='PuloSkin2';e.call('button_press_hook',button);assert e.selected[-1]==0x5608
+ button=e.alloc();e.names[button]='PuloSkin2';e.call('button_press_hook',button);assert e.selected[-1]==0x5c190044
  assert struct.unpack('<i',e.u.mem_read(e.player+0x28,4))[0]==0
  old_area=e.q(e.player+0x20);other=e.members[1][0];new_area=e.q(other+0x20)
  e.names[button]='PuloTeams';e.call('button_press_hook',button)

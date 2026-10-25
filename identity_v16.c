@@ -27,10 +27,11 @@ EXPORT void clamp_player_hook(void* player,void* m){
  if(change){p.z+=change;position_set(t,p);}
 }
 typedef struct {unsigned player;int skin;} SkinChoice;
-static SkinChoice choices[8];static int preferred_skin=-1;
+static SkinChoice choices[8];static int preferred_skin=-1,preferred_map,preferences_loaded;
 static int chosen_skin(void* player){for(int i=0;i<8;i++)if(rooted(choices[i].player)==player)return choices[i].skin;return -1;}
 static void remember_skin(void* player,int skin){
- for(int i=0;i<8;i++)if(rooted(choices[i].player)==player||!alive(rooted(choices[i].player))){root_set(&choices[i].player,player);choices[i].skin=skin&3;return;}
+ if(skin<0||skin>=81)return;
+ for(int i=0;i<8;i++)if(rooted(choices[i].player)==player||!alive(rooted(choices[i].player))){root_set(&choices[i].player,player);choices[i].skin=skin;return;}
 }
 static int list_index(void* list,void* value){void* a=list?PTR(list,0x10):0;int n=list?INT(list,0x18):0;if(!a||n<0||n>8)return -1;for(int i=0;i<n;i++)if(PTR(a,0x20+8*i)==value)return i;return -1;}
 static int list_replace(void* list,void* old,void* value){int i=list_index(list,old);if(i<0)return 0;managed_field(PTR(list,0x10),0x20+8*i,value);INT(list,0x1c)++;return 1;}
@@ -79,9 +80,12 @@ static int has_team_membership(void* player){
 }
 EXPORT void client_choose_hook(void* player,int value,void* m){
  if(!player)return;
- if((value&0xff00)==0x5600){
-  int team=value&1,skin=(value>>2)&3;
-  if((value&0x20)&&has_team_membership(player)){
+ int modern=((unsigned)value&0xfffffc00u)==0x5c190000u;
+ if(modern||(value&0xff00)==0x5600){
+  int team=value&1,face=modern?(value>>1)&15:(value>>2)&3,outfit=modern?(value>>5)&15:2;
+  if(face>=9||outfit>=9)return;
+  int skin=face+9*outfit,change=modern?(value&0x200):(value&0x20);
+  if(change&&has_team_membership(player)){
    if(net_rally_active){for(int i=0;i<8;i++)if(rooted(pending_teams[i].player)==player||!alive(rooted(pending_teams[i].player))){root_set(&pending_teams[i].player,player);pending_teams[i].team=team;break;}}
    else switch_team(player,team);
   }
@@ -90,7 +94,7 @@ EXPORT void client_choose_hook(void* player,int value,void* m){
   else if(!has_team_membership(player))INT(player,0x28)=team;
   remember_skin(player,skin);return;
  }
- INT(player,0x28)=value;
+ if(value==0||value==1)INT(player,0x28)=value;
 }
 static void send_mod_choice(void* player,int value){
  /* Original InvokeRpc_ChooseTeam sends AllBufferedViaServer (6). Appearance
@@ -108,14 +112,17 @@ static void send_mod_choice(void* player,int value){
  FN(0xe6bb50,void(*)(void*,void*,int,void*,void*))(view,str("Client_ChooseTeam"),5,args,0);
 }
 static void select_appearance(int skin,int change){
+ ensure_preferences_v19();
+ if(skin>=0&&skin<9){preferred_skin=skin+9*(preferred_skin/9);FN(0xa12870,void(*)(void*,int,void*))(str("Cloudcourt.Face"),skin,0);}
  void* player=online_local_player();if(!player||!network_physics())return;
  int team=INT(player,0x28);if(team<0||team>1)return;
- if(preferred_skin<0)preferred_skin=player_skin(player);
- if(skin>=0){preferred_skin=skin;FN(0xa12870,void(*)(void*,int,void*))(str("Cloudcourt.Skin"),skin,0);}
  if(change)team=1-team;
- send_mod_choice(player,0x5600|team|((preferred_skin&3)<<2)|(change?0x20:0));
+ send_mod_choice(player,0x5c190000|team|((preferred_skin%9)<<1)|((preferred_skin/9)<<5)|(change?0x200:0));
 }
 EXPORT void button_press_hook(void* button,void* m){
+ if(!ui_button_valid_v19(button))return;
+ ui_click_v19(button);
+ if(customization_button_v19(button))return;
  if(named(button,"PuloTeams")){select_appearance(-1,1);return;}
  const char* names[4]={"PuloSkin0","PuloSkin1","PuloSkin2","PuloSkin3"};
  for(int i=0;i<4;i++)if(named(button,names[i])){select_appearance(i,0);return;}
@@ -123,14 +130,7 @@ EXPORT void button_press_hook(void* button,void* m){
 }
 EXPORT void intro_page_hook(void* page,void* arg,void* m){FN(0xee37b0,void(*)(void*,void*,void*,void*))(page,str("Start"),0,0);}
 EXPORT void ui_submit_hook(_Bool value,void* m){
- int pressed=FN(0x452d40,_Bool(*)(int,int,void*))(1,2,0);
- void* k=*(void**)(base()+0x1542b48);void* st=k?PTR(k,0xb8):0;void* input=st?PTR(st,0):0;void* vr=input?PTR(input,0x40):0;
- if(vr){void* system=*(void**)(base()+0x1541dc0);void* controller=FN(0xa2710,void*(*)(int,void*,void*))(6,system,vr);
-  if(controller&&PTR(controller,0)==*(void**)(base()+0x15412b0)){
-   void* device=PTR(controller,0x10);if(device)pressed|=FN(0x40d5a0,_Bool(*)(void*,int,void*))(device,7,0);
-  }
- }
- ui_submit_trampoline(value||pressed,m);
+ ui_submit_trampoline(ui_input_v19(value)!=0,m);
 }
 static unsigned cartoon_font,cartoon_tmp;static int font_busy;
 static void* bubble_font(void){
@@ -169,14 +169,14 @@ EXPORT void in_room_ui_hook(void* page,void* m){
  in_room_ui_trampoline(page,m);label(text_component(page,0x38),"BLUE TEAM");label(text_component(page,0x40),"RED TEAM");
 }
 EXPORT void in_game_active_hook(void* page,void* arg,void* m){
+ customization_close_v19();
  in_game_active_trampoline(page,arg,m);
  const char* names[5]={"PuloTeams","PuloSkin0","PuloSkin1","PuloSkin2","PuloSkin3"};
- for(int i=0;i<5;i++){void* t=find_child(transform(page),names[i]);if(t)FN(0x94f700,void(*)(void*,_Bool,void*))(gameobject(t),network_physics()!=0,0);}
+ for(int i=0;i<5;i++){void* t=find_child(transform(page),names[i]);if(t)FN(0x94f700,void(*)(void*,_Bool,void*))(gameobject(t),i==0&&network_physics(),0);}
 }
 static float skin_refresh;
 static void cloudcourt_avatar_tick(void* body){
  if(!network_physics()||PTR(body,0x168)!=online_local_player())return;
  skin_refresh-=FN(0xb72b10,float(*)(void*))(0);if(skin_refresh>0)return;skin_refresh=3;
- if(preferred_skin<0)preferred_skin=FN(0xa12690,int(*)(void*,int,void*))(str("Cloudcourt.Skin"),-1,0);
- if(preferred_skin>=0&&preferred_skin<4)select_appearance(preferred_skin,0);
+ ensure_preferences_v19();select_appearance(-1,0);
 }

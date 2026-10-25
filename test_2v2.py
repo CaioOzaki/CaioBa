@@ -89,7 +89,7 @@ class Engine:
 def run(base):
  e=Engine(base);e.call('solo_awake_hook',e.page)
  assert e.label(0x40)=='4v4' and e.label(0x48)=='2v2';assert not e.visible[e.q(e.page+0x50)]
- e.call('solo_night_hook',e.page);assert e.val('solo_stage')==2 and e.label(0x40)=='Beach Day'
+ e.call('solo_night_hook',e.page);assert e.val('solo_stage')==2 and e.label(0x40)=='Beach'
  assert e.visible[e.q(e.page+0x50)] and not e.visible[e.q(e.page+0x48)] and not e.visible[e.q(e.page+0x58)]
  e.call('solo_start_hook',e.page,123,0);assert e.val('doubles_requested')==1
  e.call('game_go_hook',e.game);assert e.val('doubles_enabled')==1
@@ -116,7 +116,8 @@ def run(base):
  e.u.mem_write(e.target+0x24,b'\1');e.flt(e.target+0x20,0);e.call('pass_target_hook',e.bot);assert abs(e.flt(e.target+0x20)-3.65)<1e-5
  e.u.mem_write(e.target+0x24,b'\0');e.flt(e.target+0x20,2);e.call('pass_target_hook',e.bot);assert abs(e.flt(e.target+0x20)-2.4)<1e-5
  e.call('solo_back_hook',e.page);assert e.val('solo_stage')==0
- e.call('solo_day_hook',e.page);assert e.val('solo_stage')==4 and all(e.visible[e.q(e.page+o)] for o in (0x40,0x48,0x50,0x58))
+ e.call('solo_day_hook',e.page);assert e.val('solo_stage')==4 and all(e.visible[e.q(e.page+o)] for o in (0x40,0x50,0x58))
+ assert e.label(0x40)=='Beach' and not e.visible[e.q(e.page+0x48)] # Night retired in v19.
  e.call('solo_start_hook',e.page,123,0);e.call('game_go_hook',e.game);assert e.val('doubles_enabled')==0 and e.val('quartet_enabled')==1
  for areas in e.areas:
   for i,a in enumerate(areas):assert e.q(a+0x28)==areas[(i+1)%4]

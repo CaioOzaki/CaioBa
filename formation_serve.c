@@ -102,7 +102,7 @@ EXPORT void* hand_find_hook(void* hand,void* m){
   void* ht=hand?transform(hand):0;void* bt=body?transform(body):0;
   if(!ht||!bt||!FN(12008720,_Bool(*)(void*,void*,void*))(ht,bt,0))return 0;
  }
- if(lobby_active())return lobby_hand_ball(hand);
+ if(lobby_active())return ui_pointer_over_button_v19()?0:lobby_hand_ball(hand);
  void* ball=rooted(waiting_ball_root);void* rules=rooted(rules_root);
  if(ball&&rules&&BYTE(rules,0x7a)&&BYTE(ball,0x89)&&!BYTE(ball,0xd0)&&!PTR(hand,0x30)&&(offline()||network_physics())){
   void* center=PTR(hand,0x18);if(center){

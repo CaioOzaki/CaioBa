@@ -1,19 +1,21 @@
-# Cloudcourt VR — v18
+# Cloudcourt VR — v19
 
-Current checkpoint: **Cloudcourt-v18-praia-lobby**. [Changes and validation](CHECKPOINT-V18.md).
+Current checkpoint: **Cloudcourt-v19-customizacao**. [Changes and validation](CHECKPOINT-V19.md).
 
-- All 22 AudioClips replaced: Kenney CC0 impacts/menu click and original synthesized music, chimes and beach ambience. [Credits and licenses](assets/audio-v18/CREDITS.md).
-- Original curved fan palms (261 vertices / 512 triangles, previously 831), shared material and 512px mipmapped atlas. New sand texture, normals, crescent shore and dunes; flat court/runoff and collider components preserved.
-- Assisted second-touch set follows the intended teammate's lateral position at the near-net attack strip, in solo and online 2v2/4v4. Both GRAB buttons remain required.
-- Online pre-match room permits walking across both sides and trigger-to-hand practice balls. Photon owns each ball per spawning client. Up to four live balls per client are recycled; practice objects are disabled/destroyed before match transition. Practice contacts do not update rally touch tracking.
+- Bots jump through the real inlined Update path, reaching a 2m apex and timing attacks for descending sets. The approved player set trajectory and target remain unchanged.
+- Nine independent emoji faces and nine outfits, giving 81 combinations. Customize from the main menu or pause overlay; preferences persist and online peers receive each player's choice. [PNG previews and catalog](assets/customization-v19/README.md).
+- Quest A and both digital/analog triggers feed the same menu submit state. Valid button clicks play a cached 2D sound. Clicking UI in the lobby does not request a practice ball.
+- Beach sea/bird AudioSources disabled. Indoor and Beach are the available courts. The host chooses the online map before creating the room and all peers follow its Photon room property.
+- Best of three sets with a two-point lead: Indoor25 / Beach21. Sets/points options and the night court are hidden.
 
-Room namespaces: **Cloudcourt-2v2-v18 / Cloudcourt-4v4-v18**. All friends must use v18, the same format and region. Existing v17 fixes are preserved. Original networking has no mid-match late join.
+Room namespaces: **Cloudcourt-2v2-v19 / Cloudcourt-4v4-v19**. All friends need v19, the same format and region. Earlier v18 beach, audio, lobby and gameplay fixes are preserved.
 
-Build order on an existing compatible local v17 working copy: compile `spin_mod.c`, run `build_patch.py`, then `build_audio_v18.py` and `build_beach_v18.py`. The latter scripts edit current assets in place and preserve unrelated data. Do not run the old v16 visual assembly over a v18 copy. `package_cloudcourt_v18.py` builds and tests a 17-file reversible installer for compatible original Steam build 9216628 or v17. Previous ZIPs remain local.
+Build on a compatible local v18 working copy: compile `spin_mod.c`, run `build_patch.py`, then `build_cloudcourt_v19.py`. It applies only v19 UI/art/audio-source changes to existing assets. Do not run the old v16 assembly over this release. `package_cloudcourt_v19.py` builds and tests a reversible 17-file installer for the compatible original Steam build 9216628 or v18. Previous ZIPs remain local.
 
-Run `run_validation_v18.py` for native regression and asset checks. Compiled x64 tests use deterministic Unity/Photon stubs; FSB banks are decoded through FMOD and compared sample-for-sample. These checks do not establish real Quest 3 visuals/input or real two-PC behavior, which still require playtesting.
+Validation: `run_validation_v19.py` covers 23 native suites, including original Bot.Update and scoring control flow. `audit_assets_v19.py`, `test_menu_v19.py`, `test_customization_art_v19.py` and `test_silence_beach_v19.py` cover the final serialized assets. Controlled menu/Indoor and Beach startup checks passed. Engine stubs, UV sampling and startup checks do not establish actual Quest 3 comfort/input or live two-PC behavior; those still need playtesting.
 
-Own compatible base game required. This repository contains mod sources, original procedural artwork and selected third-party CC0 source effects with their licenses. It does not contain game DLLs, extracted original meshes/textures/audio, backups or installer ZIPs. A clean clone alone is not a complete game build; local `working`, `backup`, `versions` and tool dependencies are needed. Procedural sound/music WAVs and art previews can be regenerated from the supplied sources. The current branch continues to exclude abandoned experimental files.
+Own compatible base game required. This repository contains mod sources, own procedural artwork and previously included CC0 effects with their licenses. It does not contain game DLLs, extracted original meshes/textures/audio, backups or distribution ZIPs. A clean clone alone is not a complete game build; compatible local assets, backups and tool dependencies are required. The cleaned branch continues to exclude abandoned experimental files.
 
 Visual identity: https://www.figma.com/design/1sIgjKcMItHmbLIu1dnch0?node-id=2-24
-Earlier release: [v17 review](CHECKPOINT-V17-REVISAO.md).
+
+Earlier release: [v18](CHECKPOINT-V18.md). [Sound credits](assets/audio-v18/CREDITS.md).

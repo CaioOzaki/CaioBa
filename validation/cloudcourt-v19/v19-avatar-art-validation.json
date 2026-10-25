@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "faces": 9,
+  "outfits": 9,
+  "independent_combinations": 81,
+  "atlas": {
+    "face": {
+      "material_id": 1331,
+      "texture_id": 1329,
+      "bytes": 3145744,
+      "max_error": 48,
+      "mean_error": 0.20961987530743634
+    },
+    "outfit": {
+      "material_id": 1332,
+      "texture_id": 1330,
+      "bytes": 3145744,
+      "max_error": 73,
+      "mean_error": 0.23588717425311054
+    }
+  },
+  "shape_normals_indices_bounds_unchanged": true,
+  "unrelated_objects_unchanged": true,
+  "legacy_four_faces_pixel_identical_before_BC7": true,
+  "texture_bytes_total": 6291488,
+  "scope": "Art, serialized references and UV sampling; native selection/RPC and headset review are separate checks."
+}

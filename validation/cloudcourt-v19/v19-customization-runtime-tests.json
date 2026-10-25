@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "remote_material_combinations": 324,
+  "formats": [
+    2,
+    4
+  ],
+  "ASLR_bases": 2,
+  "checks": [
+    "nine faces and nine outfits independent",
+    "remote material UVs correct",
+    "appearance cannot change existing team",
+    "malformed style rejected",
+    "modal opens without restarting match",
+    "preview alpha and UV",
+    "separate preferences retained",
+    "choice wraps",
+    "non-buffered reliable style RPC",
+    "host map toggle persists"
+  ],
+  "VR_playtest": false
+}

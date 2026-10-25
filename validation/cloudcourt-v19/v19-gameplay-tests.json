@@ -1,0 +1,113 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "base": "0x180000000",
+      "format": 2,
+      "online": false,
+      "team": 0
+    },
+    {
+      "base": "0x180000000",
+      "format": 2,
+      "online": false,
+      "team": 1
+    },
+    {
+      "base": "0x180000000",
+      "format": 2,
+      "online": true,
+      "team": 0
+    },
+    {
+      "base": "0x180000000",
+      "format": 2,
+      "online": true,
+      "team": 1
+    },
+    {
+      "base": "0x180000000",
+      "format": 4,
+      "online": false,
+      "team": 0
+    },
+    {
+      "base": "0x180000000",
+      "format": 4,
+      "online": false,
+      "team": 1
+    },
+    {
+      "base": "0x180000000",
+      "format": 4,
+      "online": true,
+      "team": 0
+    },
+    {
+      "base": "0x180000000",
+      "format": 4,
+      "online": true,
+      "team": 1
+    },
+    {
+      "base": "0x190000000",
+      "format": 2,
+      "online": false,
+      "team": 0
+    },
+    {
+      "base": "0x190000000",
+      "format": 2,
+      "online": false,
+      "team": 1
+    },
+    {
+      "base": "0x190000000",
+      "format": 2,
+      "online": true,
+      "team": 0
+    },
+    {
+      "base": "0x190000000",
+      "format": 2,
+      "online": true,
+      "team": 1
+    },
+    {
+      "base": "0x190000000",
+      "format": 4,
+      "online": false,
+      "team": 0
+    },
+    {
+      "base": "0x190000000",
+      "format": 4,
+      "online": false,
+      "team": 1
+    },
+    {
+      "base": "0x190000000",
+      "format": 4,
+      "online": true,
+      "team": 0
+    },
+    {
+      "base": "0x190000000",
+      "format": 4,
+      "online": true,
+      "team": 1
+    }
+  ],
+  "checks": [
+    "real Bot.Update inline jump reaches 2m",
+    "airtime consistent with height",
+    "rising set does not trigger early takeoff",
+    "descending set receives timed jump",
+    "remote bot ownership respected",
+    "real EndRally checks 21/25 and two-point lead on both teams",
+    "real EndSet ends after 2 wins (best of 3)"
+  ],
+  "setting_arc_and_target_changed": false,
+  "setting_source_sha256": "2aeb4e6819f5becada43b2d27a9bc75b493d8841f95d25c3b6294b39c0f19e94",
+  "scope": "Original game control flow with deterministic engine stubs; physical Quest 3 and two-PC playtest pending."
+}

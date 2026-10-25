@@ -20,7 +20,9 @@ class SettingEngine(FormationEngine):
  def hook(self,u,addr,size,user):
   r=addr-self.b;a,b,c=[u.reg_read(reg) for reg in (UC_X86_REG_RCX,UC_X86_REG_RDX,UC_X86_REG_R8)]
   if r==0xa2710:
-   if a in (5,6):self.ret(self.controllers[a-5])
+   if b==self.q(self.b+0x1541dc0) and a in (5,6):self.ret(self.controllers[a-5])
+   elif a==4:self.ret(False)
+   elif a==5:self.ret(f=0)
    else:assert a==1;self.ret(self.grips[self.controllers.index(c)])
   elif r==ex['collision_trampoline']:
    # Real hit handling increments the count BEFORE dispatching motion.

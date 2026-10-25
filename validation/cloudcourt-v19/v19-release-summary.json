@@ -1,0 +1,32 @@
+{
+  "checkpoint": "Cloudcourt-v19-customizacao",
+  "implementation_complete": true,
+  "installed_verified_files": 17,
+  "native_test_suites_passed": 23,
+  "asset_test_suites_passed": 3,
+  "native_sha256": "48b97d9c072d3cc52f0587e07af7b8ff8e5c68b9290d8d008193348f67e4ba16",
+  "zip_name": "Cloudcourt-v19-customizacao.zip",
+  "zip_bytes": 58358112,
+  "zip_sha256": "5366503dd8ba1b1df6d3a4f29987e1f506921c17585ee11382bd6076986b82d1",
+  "avatar_faces": 9,
+  "avatar_outfits": 9,
+  "avatar_combinations": 81,
+  "avatar_texture_bytes": 6291488,
+  "bot_real_jump_apex_m": 2.0,
+  "unchanged_player_setting_arc": true,
+  "best_of_sets": 3,
+  "indoor_points": 25,
+  "beach_points": 21,
+  "room_namespaces": [
+    "Cloudcourt-2v2-v19",
+    "Cloudcourt-4v4-v19"
+  ],
+  "startup_checks": {
+    "menu_indoor_seconds": 15,
+    "beach_day_seconds": 15,
+    "controlled_without_VR": true
+  },
+  "VR_playtest": false,
+  "live_two_PC_multiplayer": false,
+  "waiting_only_for_user_playtest": true
+}

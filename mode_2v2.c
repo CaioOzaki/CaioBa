@@ -55,6 +55,15 @@ static int online_reception(void* player);
 static int network_physics(void);
 static int chosen_skin(void* player);
 static void cloudcourt_avatar_tick(void* body);
+static int preferred_style(void);
+static void ensure_preferences_v19(void);
+static int customization_button_v19(void* button);
+static void customization_close_v19(void);
+static void map_label_v19(void);
+static int ui_input_v19(int value);
+static int ui_button_valid_v19(void* button);
+static void ui_click_v19(void* button);
+static int ui_pointer_over_button_v19(void);
 static void finish_team_changes(void);
 static int bot_has_human_mate(void* bot);
 static int player_is_airborne(void* player);
@@ -249,13 +258,13 @@ static void show_button(void* page,int offset,int show){
 }
 static void layout(void* page){
  if(!page)return;
- show_button(page,0x40,1);show_button(page,0x48,solo_stage!=2);
+ show_button(page,0x40,1);show_button(page,0x48,solo_stage==0);
  show_button(page,0x50,solo_stage!=0);show_button(page,0x58,solo_stage==4);
  if(solo_stage==0){
   label(text_component(page,0x40),"4v4");label(text_component(page,0x48),"2v2");
   label(PTR(page,0x38),online_selector?"Online - Modo de jogo":"Solo - Modo de jogo");
  }else{
-  set_text(text_component(page,0x40),rooted(day_text_root));
+  label(text_component(page,0x40),"Beach");
   set_text(text_component(page,0x48),rooted(night_text_root));
   label(PTR(page,0x38),solo_stage==2?"Solo 2v2":"Solo 4v4");
  }
@@ -285,7 +294,7 @@ static void* select_online(int format,void* m){
 EXPORT void main_menu_hook(void* o,void* argument,void* m){
  /* Entering another game from the main menu must not inherit doubles. Keep
   * the current match's speed if the user merely opens and closes the menu. */
- doubles_requested=0;main_menu_trampoline(o,argument,m);show_button(o,0x30,0);
+ customization_close_v19();doubles_requested=0;main_menu_trampoline(o,argument,m);show_button(o,0x30,0);
 }
 EXPORT void* solo_day_hook(void* o,void* m){
  if(online_selector)return select_online(4,m);
@@ -295,8 +304,7 @@ EXPORT void* solo_day_hook(void* o,void* m){
 EXPORT void* solo_night_hook(void* o,void* m){
  if(online_selector)return select_online(2,m);
  if(solo_stage==0){choose(o,2);return completed();}
- if(solo_stage==2)return completed();
- return solo_night_trampoline(o,m);
+ return completed(); /* Night is retired; this button only selects 2v2 now. */
 }
 EXPORT void* solo_back_hook(void* o,void* m){
  if(online_selector){online_selector=0;return solo_back_trampoline(o,m);}
@@ -474,7 +482,11 @@ EXPORT void* pass_target_hook(void* bot,void* m){
 #include "comfort_v14.c"
 #include "celebration_v15.c"
 #include "identity_v16.c"
+#include "customization_v19.c"
+#include "input_v19.c"
 #include "lobby_v18.c"
+#include "map_v19.c"
+#include "gameplay_v19.c"
 #ifdef MODE_PROBE
 /* Built only in the disposable validation binary. Commands are consumed on
  * Unity's main thread, never invoked by an external thread. */

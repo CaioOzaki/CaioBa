@@ -30,6 +30,8 @@ entries += [('online_entry',0xef7230),('network_version',0x31a240),('clear_teams
 entries += [('avatar_update',0xeefbc0),('bot_jump',0x270020)]
 entries += [('lobby_enter',0x314c60),('lobby_start',0x3154d0),('lobby_ball_awake',0x77dc80)]
 entries += [('clamp_player',0x31ad60),('button_press',0x461e90),('client_choose',0x30cb90),('ui_submit',0x2437d0),('intro_page',0x3168b0),('tmp_awake',0x42f790),('tmp_ui_awake',0xa28680),('ui_text_enable',0xe83720),('refresh_score',0x253e30),('in_room_ui',0x315840),('in_game_active',0x313f40)]
+from fix_gameplay_v19 import gameplay_v19_entries, V19_CALLS
+entries += gameplay_v19_entries(p)
 if 'probe_start_hook' in exports:entries += [('probe_start',0xef74f0),('probe_solo',0xef4620)]
 for name,rva in entries:
     n=0
@@ -118,7 +120,7 @@ for name,site,original_target,hookname in [
  ('reception_assist',0xeecdbb,0xa12690,'reception_assist_hook'),
  ('connect_fixed_region',0x319759,0x60acf0,'connect_settings_hook'),
  ('connect_auto_region',0x31979c,0x60abf0,'connect_default_hook'),
- ('bot_serve_position',0x25ad60,0xb74de0,'bot_serve_position_hook'),('hand_serve_position',0x259664,0xb756b0,'hand_serve_position_hook')]:
+ ('bot_serve_position',0x25ad60,0xb74de0,'bot_serve_position_hook'),('hand_serve_position',0x259664,0xb756b0,'hand_serve_position_hook')] + V19_CALLS:
     before=p.get_data(site,5)
     assert before==b'\xe8'+struct.pack('<i',original_target-site-5)
     hook=exports[hookname]+delta;offset=p.get_offset_from_rva(site)
@@ -130,6 +132,8 @@ assert p.get_data(site,7)==before
 hook=exports['net_new_rally_hook']+delta;offset=p.get_offset_from_rva(site)
 result[offset:offset+7]=b'\xe9'+struct.pack('<i',hook-site-5)+b'\x90\x90'
 patches.append(dict(name='net_new_rally',rva=site,length=7,original=before.hex(),hook=hook))
+from fix_map_v19 import patch_map_calls_v19
+patch_map_calls_v19(result,p,patches,exports,delta)
 from fix_pause_v16 import patch_pause_tracking
 patch_pause_tracking(result,p,patches)
 struct.pack_into('<H',result,p.FILE_HEADER.get_field_absolute_offset('NumberOfSections'),p.FILE_HEADER.NumberOfSections+4)
@@ -146,7 +150,7 @@ for item in patches:
     assert check.get_section_by_rva(item['hook']).Characteristics&0x20000000
 for section in check.sections:
     assert not (section.Name.startswith(b'.vf') and section.Characteristics&0x20000000 and section.Characteristics&0x80000000)
-manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v18 / Cloudcourt-4v4-v18','status':'v18 beach/audio/lobby/setting; VR and live two-PC validation pending'}
+manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v19 / Cloudcourt-4v4-v19','status':'v19 bot timing, customization, input and online maps; VR and live two-PC validation pending'}
 (R/'analysis/native-patch-manifest.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))
 

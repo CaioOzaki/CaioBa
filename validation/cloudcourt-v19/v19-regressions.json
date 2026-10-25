@@ -1,0 +1,180 @@
+{
+  "passed": true,
+  "completed": 23,
+  "total": 23,
+  "results": [
+    {
+      "test": "test_physics.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.09,
+      "log": "analysis\\v19-test_physics.log"
+    },
+    {
+      "test": "test_2v2.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 6.02,
+      "log": "analysis\\v19-test_2v2.log"
+    },
+    {
+      "test": "test_formation_serve.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 7.22,
+      "log": "analysis\\v19-test_formation_serve.log"
+    },
+    {
+      "test": "test_serve_delay.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 22.0,
+      "log": "analysis\\v19-test_serve_delay.log"
+    },
+    {
+      "test": "test_serve_rules.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 8.22,
+      "log": "analysis\\v19-test_serve_rules.log"
+    },
+    {
+      "test": "test_online_2v2.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 19.2,
+      "log": "analysis\\v19-test_online_2v2.log"
+    },
+    {
+      "test": "test_reception.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 6.98,
+      "log": "analysis\\v19-test_reception.log"
+    },
+    {
+      "test": "test_comfort_v14.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 9.83,
+      "log": "analysis\\v19-test_comfort_v14.log"
+    },
+    {
+      "test": "test_hooks.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 16.99,
+      "log": "analysis\\v19-test_hooks.log"
+    },
+    {
+      "test": "test_celebration_v15.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 27.77,
+      "log": "analysis\\v19-test_celebration_v15.log"
+    },
+    {
+      "test": "test_motion_finite_v17.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 7.75,
+      "log": "analysis\\v19-test_motion_finite_v17.log"
+    },
+    {
+      "test": "test_pause_v16.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 0.91,
+      "log": "analysis\\v19-test_pause_v16.log"
+    },
+    {
+      "test": "test_gloves_v16.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.95,
+      "log": "analysis\\v19-test_gloves_v16.log"
+    },
+    {
+      "test": "test_wall_boards_v17.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 1.86,
+      "log": "analysis\\v19-test_wall_boards_v17.log"
+    },
+    {
+      "test": "test_cloudcourt_v16.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 30.33,
+      "log": "analysis\\v19-test_cloudcourt_v16.log"
+    },
+    {
+      "test": "test_identity_rpc_v16.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 30.34,
+      "log": "analysis\\v19-test_identity_rpc_v16.log"
+    },
+    {
+      "test": "test_setting_v18.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 53.53,
+      "log": "analysis\\v19-test_setting_v18.log"
+    },
+    {
+      "test": "test_lobby_v18.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 16.45,
+      "log": "analysis\\v19-test_lobby_v18.log"
+    },
+    {
+      "test": "test_gameplay_v19.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 32.38,
+      "log": "analysis\\v19-test_gameplay_v19.log"
+    },
+    {
+      "test": "test_bot_contact_v19.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 12.28,
+      "log": "analysis\\v19-test_bot_contact_v19.log"
+    },
+    {
+      "test": "test_customization_v19.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 32.14,
+      "log": "analysis\\v19-test_customization_v19.log"
+    },
+    {
+      "test": "test_input_v19.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 2.91,
+      "log": "analysis\\v19-test_input_v19.log"
+    },
+    {
+      "test": "test_map_v19.py",
+      "passed": true,
+      "exit_code": 0,
+      "seconds": 5.62,
+      "log": "analysis\\v19-test_map_v19.log"
+    }
+  ],
+  "binary_sha256": "48b97d9c072d3cc52f0587e07af7b8ff8e5c68b9290d8d008193348f67e4ba16",
+  "excluded_intentionally": [
+    "test_assets_v18.py",
+    "test_menu_raycast_v16.py"
+  ],
+  "fixture_updates": [
+    {
+      "test": "test_2v2.py",
+      "change": "Require Beach label and inactive Beach Night in the 4v4 selector, matching intentional v19 retirement."
+    }
+  ],
+  "scope": "Native machine code and original control flow with engine stubs. Final v19 assets audited separately; physical Quest 3 and two-PC playtest still pending."
+}

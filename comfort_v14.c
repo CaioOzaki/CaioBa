@@ -68,16 +68,16 @@ static int alive(void* o){return o&&FN(0xa0bfb0,_Bool(*)(void*,void*))(o,0);}
 static void* gameobject(void* component){return FN(0x94b570,void*(*)(void*,void*))(component,0);}
 static int player_skin(void* player){
  int selected=chosen_skin(player);if(selected>=0)return selected;
- if(!network_physics())return 0;
+ if(!network_physics()||player==online_local_player())return preferred_style();
  void* view=FN(0x6054c0,void*(*)(void*,void*))(player,0);
- if(!view)return 0;int owner=FN(0xe6e1b0,int(*)(void*,void*))(view,0),rank=0;
+ if(!view)return 18;int owner=FN(0xe6e1b0,int(*)(void*,void*))(view,0),rank=0;
  void* list=online_players();void* array=list?PTR(list,0x10):0;int n=list?INT(list,0x18):0;
- if(!array||n<0||n>8)return (owner>0?owner-1:0)&3;
+ if(!array||n<0||n>8)return 18+((owner>0?owner-1:0)&3);
  for(int i=0;i<n;i++){
   void* other=PTR(array,0x20+i*8);if(!other||other==player)continue;
   void* v=FN(0x6054c0,void*(*)(void*,void*))(other,0);
   if(v&&FN(0xe6e1b0,int(*)(void*,void*))(v,0)<owner)rank++;
- }return rank&3;
+ }return 18+(rank&3);
 }
 typedef struct {unsigned body,materials[2];int skin;} AvatarSkin;
 static AvatarSkin skins[8];
@@ -98,7 +98,8 @@ static void skin_body(void* body){
  int skin=player_skin(player);if(slot->skin==skin)return;
  slot->skin=skin;
  for(int i=0;i<2;i++){void* mat=rooted(slot->materials[i]);if(mat){
-  FN(0x9566d0,void(*)(void*,V2,void*))(mat,(V2){skin*.25f,0},0);
+  int index=i==0?skin%9:skin/9;
+  FN(0x9566d0,void(*)(void*,V2,void*))(mat,(V2){(index%3)/3.f,(2-index/3)/3.f},0);
   FN(0x956610,void(*)(void*,Q4,void*))(mat,(Q4){1,1,1,1},0);
  }}
 }
