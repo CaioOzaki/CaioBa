@@ -4,6 +4,7 @@ exec(open(__file__).read().split('\nfor base in ')[0])
 class CloudEngine(CelebrationEngine):
  def __init__(self,base):
   super().__init__(base);self.names={};self.selected=[];self.probe_reception=False;self.a_button=False;self.submit=False;self.assists=[]
+  self.ptr(base+0x15260b8,self.alloc());self.ptr(base+0x15269d0,self.alloc())
  def string(self,s):
   v=self.alloc(0x400);self.text[v]=s;self.integer(v+0x10,len(s));self.u.mem_write(v+0x14,s.encode('utf-16le'));return v
  def hook(self,u,addr,size,user):
@@ -18,6 +19,14 @@ class CloudEngine(CelebrationEngine):
   elif r==0x6054c0:self.ret(self.generic)
   elif r==0xe6e1b0:self.ret(1)
   elif r==0xa12870:self.ret()
+  elif r==0x1c1f90:
+   assert b==1;arr=self.alloc();self.ptr(arr+0x18,1);self.ret(arr)
+  elif r==0x14ba70:
+   boxed=self.alloc();self.integer(boxed+0x10,struct.unpack('<i',u.mem_read(b,4))[0]);self.ret(boxed)
+  elif r==0xe6bb50:
+   assert self.text[b]=='Client_ChooseTeam' and c==5
+   args=u.reg_read(UC_X86_REG_R9);boxed=self.q(args+0x20);value=struct.unpack('<i',u.mem_read(boxed+0x10,4))[0];self.selected.append(value)
+   u.reg_write(UC_X86_REG_RCX,self.player);u.reg_write(UC_X86_REG_RDX,value);u.reg_write(UC_X86_REG_R8,0);u.reg_write(UC_X86_REG_RIP,self.b+ex['client_choose_hook'])
   elif r==ex['choose_team_trampoline']:self.selected.append(b);u.reg_write(UC_X86_REG_RIP,self.b+ex['client_choose_hook'])
   elif r==0x14a510:
    arr=self.alloc(0x100);self.ptr(arr,a);self.ptr(arr+0x18,b);self.ret(arr)

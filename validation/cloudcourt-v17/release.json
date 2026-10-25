@@ -1,0 +1,18 @@
+{
+  "name": "Cloudcourt VR v17 review",
+  "base": "Cloudcourt-v16-menu-corrigido",
+  "files": 10,
+  "changed_game_files": 3,
+  "zip": "Cloudcourt-v17-revisao.zip",
+  "zip_bytes": 42501313,
+  "zip_sha256": "9089ad5aa29f088b9afaa697b825a9c06a5fd0cd969342b25d9dc92492450729",
+  "test_suites_passed": 17,
+  "installer_tests": "original install, repeated install/restore, previous checkpoint upgrade, unknown input and corrupt delta rejection passed",
+  "startup_checks": "indoor/menu 20 seconds; beach 15 seconds; no headset available",
+  "VR_playtest": false,
+  "live_two_PC_multiplayer": false,
+  "room_namespaces": [
+    "Cloudcourt-2v2-v17",
+    "Cloudcourt-4v4-v17"
+  ]
+}

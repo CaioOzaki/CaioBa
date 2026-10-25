@@ -100,6 +100,6 @@ try {
     }
     foreach($job in $jobs){Remove-Item -LiteralPath $job.new}
     if($Restore){Write-Host 'Os arquivos originais do pacote foram restaurados.'}
-    else {Write-Host 'Cloudcourt VR v16 checkpoint instalado. Abra o jogo pela Steam.'}
+    else {Write-Host "Cloudcourt VR: $($config.version) instalado. Abra o jogo pela Steam."}
     Write-Host "Backup da operacao: $stage"
 } catch {Write-Host $_.Exception.Message; exit 1}

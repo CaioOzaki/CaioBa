@@ -112,6 +112,9 @@ EXPORT V3 decode_spin(int packed){
 }
 static void activate_spin(void* ball,V3 spin){setspin(ball,spin);spinning_ball=ball;pending_time=0;}
 EXPORT void motion_hook(void* ball,V3 position,V3 velocity,_Bool hit,_Bool isThrow,int touchId,int team,int context,void* method){
+ /* A paused velocity estimator used to emit NaN/Inf. Never publish or apply
+  * an invalid frame: it would poison ball predictions and every bot's IK. */
+ if(!ball||!finitev(position)||!finitev(velocity)){pending_valid=0;pending_ball=0;return;}
  int has_spin=hit&&pending_valid&&pending_ball==ball;V3 spin=pending_spin;
  if(hit&&assisted_set(position,&velocity)){has_spin=1;spin=(V3){0,0,0};pending_spin=spin;}
  if(has_spin&&network_physics()){context=encode_spin(spin,context);spin=decode_spin(context);pending_spin=spin;}

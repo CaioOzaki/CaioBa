@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "ASLR_bases": [
+    "0x180000000",
+    "0x190000000"
+  ],
+  "before": "Stationary hand writes NaN velocity during pause; samples survive Resume.",
+  "after": "Tracking remains finite through actual ShowMenu, paused frames and Resume.",
+  "verified_consumers": [
+    "Original GetLinearVelocityEstimate",
+    "Original Hand.GetVelocity",
+    "Original GetAccelerationEstimate while paused"
+  ],
+  "calls_changed": [
+    {
+      "name": "tracked_velocity_real_time",
+      "rva": "0x327bea"
+    },
+    {
+      "name": "tracked_acceleration_real_time",
+      "rva": "0x32d666"
+    }
+  ],
+  "shipped_dll_also_exercised": true,
+  "scope": "Actual original x64 coroutine and pause controller with Unity API stubs; does not replace headset testing."
+}

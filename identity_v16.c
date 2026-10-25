@@ -70,17 +70,41 @@ static PendingTeam pending_teams[8];
 static void finish_team_changes(void){
  for(int i=0;i<8;i++){void* p=rooted(pending_teams[i].player);if(alive(p))switch_team(p,pending_teams[i].team);root_set(&pending_teams[i].player,0);}
 }
+static int has_team_membership(void* player){
+ void* rules=rooted(rules_root);if(!alive(rules))return 0;
+ void* teams=PTR(rules,0x60);if(!teams)return 0;
+ for(int i=0;i<2;i++){void* team=PTR(teams,0x20+i*8);if(team&&list_index(PTR(team,0x28),player)>=0)return 1;}
+ return 0;
+}
 EXPORT void client_choose_hook(void* player,int value,void* m){
+ if(!player)return;
  if((value&0xff00)==0x5600){
   int team=value&1,skin=(value>>2)&3;
-  if((value&0x20)&&INT(player,0x28)>=0){
+  if((value&0x20)&&has_team_membership(player)){
    if(net_rally_active){for(int i=0;i<8;i++)if(rooted(pending_teams[i].player)==player||!alive(rooted(pending_teams[i].player))){root_set(&pending_teams[i].player,player);pending_teams[i].team=team;break;}}
    else switch_team(player,team);
   }
-  else INT(player,0x28)=team;
+  /* A delayed appearance refresh can carry the team from before a swap.
+   * Never detach the team field from the authoritative membership lists. */
+  else if(!has_team_membership(player))INT(player,0x28)=team;
   remember_skin(player,skin);return;
  }
  INT(player,0x28)=value;
+}
+static void send_mod_choice(void* player,int value){
+ /* Original InvokeRpc_ChooseTeam sends AllBufferedViaServer (6). Appearance
+  * refreshes are frequent and must not accumulate or replay old team swaps.
+  * Initialize the same verified metadata and use AllViaServer (5), preserving
+  * the reliable server ordering and the existing RPC name/argument format. */
+ static int ready;
+ if(!ready){FN(0x1c21b0,void(*)(unsigned))(INT((void*)base(),0x1294f48));ready=1;}
+ void* view=FN(0x6054c0,void*(*)(void*,void*))(player,0);if(!view)return;
+ void* array_class=PTR((void*)base(),0x15260b8),*int_class=PTR((void*)base(),0x15269d0);
+ if(!array_class||!int_class)return;
+ void* args=FN(0x1c1f90,void*(*)(void*,int))(array_class,1);if(!args)return;
+ void* boxed=FN(0x14ba70,void*(*)(void*,void*))(int_class,&value);if(!boxed)return;
+ managed_field(args,0x20,boxed);
+ FN(0xe6bb50,void(*)(void*,void*,int,void*,void*))(view,str("Client_ChooseTeam"),5,args,0);
 }
 static void select_appearance(int skin,int change){
  void* player=online_local_player();if(!player||!network_physics())return;
@@ -88,7 +112,7 @@ static void select_appearance(int skin,int change){
  if(preferred_skin<0)preferred_skin=player_skin(player);
  if(skin>=0){preferred_skin=skin;FN(0xa12870,void(*)(void*,int,void*))(str("Cloudcourt.Skin"),skin,0);}
  if(change)team=1-team;
- choose_team_trampoline(player,0x5600|team|((preferred_skin&3)<<2)|(change?0x20:0),0);
+ send_mod_choice(player,0x5600|team|((preferred_skin&3)<<2)|(change?0x20:0));
 }
 EXPORT void button_press_hook(void* button,void* m){
  if(named(button,"PuloTeams")){select_appearance(-1,1);return;}

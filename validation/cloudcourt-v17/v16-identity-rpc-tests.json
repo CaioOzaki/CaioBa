@@ -1,0 +1,107 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "base": "0x180000000",
+      "format": 2,
+      "case": "appearance_does_not_change_roster"
+    },
+    {
+      "base": "0x180000000",
+      "format": 2,
+      "case": "delayed_appearance_after_swap"
+    },
+    {
+      "base": "0x180000000",
+      "format": 2,
+      "case": "unbuffered_ordered_rpc"
+    },
+    {
+      "base": "0x180000000",
+      "format": 2,
+      "case": "lobby_assignment"
+    },
+    {
+      "base": "0x180000000",
+      "format": 2,
+      "case": "full_target_team"
+    },
+    {
+      "base": "0x180000000",
+      "format": 4,
+      "case": "appearance_does_not_change_roster"
+    },
+    {
+      "base": "0x180000000",
+      "format": 4,
+      "case": "delayed_appearance_after_swap"
+    },
+    {
+      "base": "0x180000000",
+      "format": 4,
+      "case": "unbuffered_ordered_rpc"
+    },
+    {
+      "base": "0x180000000",
+      "format": 4,
+      "case": "lobby_assignment"
+    },
+    {
+      "base": "0x180000000",
+      "format": 4,
+      "case": "full_target_team"
+    },
+    {
+      "base": "0x190000000",
+      "format": 2,
+      "case": "appearance_does_not_change_roster"
+    },
+    {
+      "base": "0x190000000",
+      "format": 2,
+      "case": "delayed_appearance_after_swap"
+    },
+    {
+      "base": "0x190000000",
+      "format": 2,
+      "case": "unbuffered_ordered_rpc"
+    },
+    {
+      "base": "0x190000000",
+      "format": 2,
+      "case": "lobby_assignment"
+    },
+    {
+      "base": "0x190000000",
+      "format": 2,
+      "case": "full_target_team"
+    },
+    {
+      "base": "0x190000000",
+      "format": 4,
+      "case": "appearance_does_not_change_roster"
+    },
+    {
+      "base": "0x190000000",
+      "format": 4,
+      "case": "delayed_appearance_after_swap"
+    },
+    {
+      "base": "0x190000000",
+      "format": 4,
+      "case": "unbuffered_ordered_rpc"
+    },
+    {
+      "base": "0x190000000",
+      "format": 4,
+      "case": "lobby_assignment"
+    },
+    {
+      "base": "0x190000000",
+      "format": 4,
+      "case": "full_target_team"
+    }
+  ],
+  "failures": [],
+  "scope": "Compiled machine code with Unity/Photon stubs; real two-PC validation still required."
+}

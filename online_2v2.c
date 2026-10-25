@@ -39,7 +39,7 @@ static int online_reception(void* player){
 static void set_mod_version(void* app){
  online_version_ready=0;
  if(app){
-  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v16":"Cloudcourt-4v4-v16");
+  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v17":"Cloudcourt-4v4-v17");
   managed_field(app,0x28,version);online_version_ready=1;
  }
 }
@@ -104,6 +104,8 @@ EXPORT void net_new_rally_hook(void* rules,int team,void* m){
  FN(0x253e30,void(*)(void*,void*))(rules,0);
 }
 EXPORT void client_motion_hook(void* ball,V3 pos,V3 velocity,_Bool hit,int touch,int team,int context,void* m){
+ /* Reject corrupt network frames before they reach Rigidbody/AI prediction. */
+ if(!ball||!finitev(pos)||!finitev(velocity))return;
  int encoded=network_physics()&&hit&&((unsigned)context&0xf8000000u)==0x50000000u;
  V3 spin=encoded?decode_spin(context):(V3){0,0,0};
  if(encoded)context&=7;

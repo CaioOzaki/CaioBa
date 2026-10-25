@@ -245,6 +245,12 @@ for gid,g in gg.items():
   for o in effects:
    raw=bytearray(o.get_raw_data());raw[68:84]=graphic;o.set_raw_data(bytes(raw))
 
+# Repair glove anatomy after authoring the shared rig, including both poses.
+from fix_gloves_v16 import repair_hand_assets
+repair_hand_assets(files['resources.assets'])
+from fix_wall_boards_v17 import repair_wall_boards
+repair_wall_boards(files['level3'])
+
 # Apply the menu hit-test and shared VR splash fixes to every fresh rebuild.
 from fix_cloudcourt_menu_v16 import fix_menu_assets
 files['globalgamemanagers.assets']=UnityPy.load(str(R/'working/VolleyballFever_Data/globalgamemanagers.assets')).file

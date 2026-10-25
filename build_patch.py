@@ -125,6 +125,8 @@ assert p.get_data(site,7)==before
 hook=exports['net_new_rally_hook']+delta;offset=p.get_offset_from_rva(site)
 result[offset:offset+7]=b'\xe9'+struct.pack('<i',hook-site-5)+b'\x90\x90'
 patches.append(dict(name='net_new_rally',rva=site,length=7,original=before.hex(),hook=hook))
+from fix_pause_v16 import patch_pause_tracking
+patch_pause_tracking(result,p,patches)
 struct.pack_into('<H',result,p.FILE_HEADER.get_field_absolute_offset('NumberOfSections'),p.FILE_HEADER.NumberOfSections+4)
 struct.pack_into('<I',result,p.OPTIONAL_HEADER.get_field_absolute_offset('SizeOfImage'),align(final_end,4096))
 struct.pack_into('<II',result,exc.get_file_offset(),exception_rva,len(exception_bytes))
@@ -139,7 +141,7 @@ for item in patches:
     assert check.get_section_by_rva(item['hook']).Characteristics&0x20000000
 for section in check.sections:
     assert not (section.Name.startswith(b'.vf') and section.Characteristics&0x20000000 and section.Characteristics&0x80000000)
-manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v16 / Cloudcourt-4v4-v16','status':'v16 checkpoint; VR and live two-PC validation pending'}
+manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v17 / Cloudcourt-4v4-v17','status':'v17 review fixes; VR and live two-PC validation pending'}
 (R/'analysis/native-patch-manifest.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))
 
