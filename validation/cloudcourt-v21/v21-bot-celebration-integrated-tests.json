@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "actual_integrated_dll": true,
+  "sha256": "f6f03b7b2b6c085a1180c8930eb3778c39837c997e507528f6c5308aa80db3ff",
+  "cases": [
+    [
+      "0x180000000",
+      false
+    ],
+    [
+      "0x180000000",
+      true
+    ],
+    [
+      "0x190000000",
+      false
+    ],
+    [
+      "0x190000000",
+      true
+    ]
+  ],
+  "checks": [
+    "nearest same-team human selected",
+    "closer opponent ignored",
+    "losing bot no gesture/search",
+    "team changes retarget visual only",
+    "visual cached once",
+    "timer expiry hides",
+    "NewRally reset hides",
+    "no own-team human no gesture",
+    "ordinary baseline no Transform/Find/position/time calls"
+  ],
+  "scope": "Actual integrated native DLL with engine stubs; no live headset/two-PC claim."
+}

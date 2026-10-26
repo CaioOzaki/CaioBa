@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "actual_integrated_dll": true,
+  "sha256": "f6f03b7b2b6c085a1180c8930eb3778c39837c997e507528f6c5308aa80db3ff",
+  "cases": [
+    [
+      "0x180000000",
+      2
+    ],
+    [
+      "0x180000000",
+      4
+    ],
+    [
+      "0x190000000",
+      2
+    ],
+    [
+      "0x190000000",
+      4
+    ]
+  ],
+  "checks": [
+    "manifest call/jump targets verified",
+    "native Hand.Update trampoline attachment",
+    "one owned ball after20 alternating recalls",
+    "held transfer and no old-hand regrab",
+    "both physics velocities cleared",
+    "actual button dispatch closes and Change Team reopens",
+    "controller menu reopens",
+    "same match movement speed",
+    "jump gate only enabled in practice",
+    "owned-ball cleanup"
+  ],
+  "scope": "Integrated x64 native code with deterministic Unity/Photon API stubs; no physical headset or real two-PC claim."
+}

@@ -71,7 +71,7 @@ for base in (0x180000000,0x190000000):
  for _ in range(8):e.tracked_hands(.08);e.call('high_five_update',e.body)
  assert e.played==2
  # Skin selection is broadcast via an existing reliable RPC and decoded per player.
- button=e.alloc();e.names[button]='PuloSkin2';e.call('button_press_hook',button);assert e.selected[-1]==0x5c190044
+ button=e.alloc();e.names[button]='PuloSkin2';e.call('button_press_hook',button);assert e.selected[-1]==0x5c210044
  assert struct.unpack('<i',e.u.mem_read(e.player+0x28,4))[0]==0
  old_area=e.q(e.player+0x20);other=e.members[1][0];new_area=e.q(other+0x20)
  e.names[button]='PuloTeams';e.call('button_press_hook',button)

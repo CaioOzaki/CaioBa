@@ -52,7 +52,13 @@ for base in (0x180000000,0x190000000):
     assert [e.marker_active.get(g,False) for g in e.go_markers]==[not outside,outside],(fmt,online,x,z,hex(score),outside,e.marker_active)
     pos=e.pos[e.markers[int(outside)]];assert abs(pos[0]-actual[0])<1e-5 and abs(pos[2]-actual[2])<1e-5 and abs(pos[1]-actual[1]-.014)<1e-5
     assert not e.pack()&0x40,'Consumed contact must not leak into another point.'
-    e.call('net_new_rally_hook',e.game,0);assert not any(e.marker_active.values());checks+=1
+    # v21 keeps the exact point visible throughout the pause before the next
+    # serve. Only an actual serve-ball spawn/reveal consumes it (covered by
+    # test_serve_feedback_v21), rather than the earlier NewRally event.
+    visible_before=e.marker_active.copy();position_before=e.pos[e.markers[int(outside)]]
+    e.call('net_new_rally_hook',e.game,0)
+    assert e.marker_active==visible_before and e.pos[e.markers[int(outside)]]==position_before
+    checks+=1
    # Non-floor contact cannot manufacture a floor mark; non-ground faults do
    # not carry its flag. Malformed/NaN floor data never reaches scene geometry.
    e.floor_contact=False;e.call('landing_collision_hook',e.ball,collision);assert not e.pack()&0x40
@@ -83,5 +89,5 @@ for name in ('level1','level2','level3'):
  assert len(renderers)==2
  snapshot=after.save();assert not add_landing_marks(after,resources)['created'] and snapshot==after.save()
  asset_reports.append({'scene':name,'old_objects_unchanged':len(before.objects),'new_objects':15,'colliders_added':0,'triangles_per_active_mark':96})
-report={'passed':True,'native_cases':checks,'ASLR_bases':2,'actual_contact_sent_through_existing_RPC':True,'same_in_out_as_original_rules':True,'clears_at_new_rally':True,'no_effect_on_non_floor_faults':True,'assets':asset_reports,'VR_playtest':False}
+report={'passed':True,'native_cases':checks,'ASLR_bases':2,'actual_contact_sent_through_existing_RPC':True,'same_in_out_as_original_rules':True,'persists_at_new_rally':True,'spawn_lifetime_test':'test_serve_feedback_v21.py','no_effect_on_non_floor_faults':True,'assets':asset_reports,'VR_playtest':False}
 (R/'analysis/v20-landing-tests.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))

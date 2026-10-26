@@ -34,6 +34,10 @@ class FormationEngine(Engine):
   elif r==0x270680:self.ret(self.target)
   elif r==0x1c21b0:self.ret()
   elif r==0x3130b0:self.ret(self.grab)
+  elif r==0xb72b40:self.ret(f=10.)
+  # This isolated formation fixture has no AudioModule. The dedicated v21
+  # serve feedback harness exercises successful synthesis/playback separately.
+  elif r==0x14a920:self.ret(0)
   elif r==0xa0c080:self.ret(a!=b)
   elif r==0xa0be40:self.ret(a==b)
   elif r==12008720:self.ret(a in self.local_hands);

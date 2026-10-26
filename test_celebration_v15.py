@@ -24,6 +24,8 @@ class CelebrationEngine(SettingEngine):
   elif r==0x2405f0:self.message=self.text[b];self.ret()
   elif r==0xa0bfb0:self.ret(a!=0)
   elif r in (0xb72960,0xb72b10):self.ret(f=1/60)
+  elif r==0xb72b40:self.ret(f=10)
+  elif r in (0x7911d0,0x2402d0,0x240340):self.ret()
   elif r in (0x14a920,0x14a910,0x14a530,0x14a5a0,0x14b9c0,0x14a710,0x14acb0):self.ret(self.generic)
   elif r==0x14a4f0:assert b==4410;self.ret(self.samples)
   elif r==0x94f240:self.ret(self.audio)
@@ -48,8 +50,8 @@ for base in (0x180000000,0x190000000):
    e.call('bot_jump_hook',server);v=e.flt(server+0x98);assert abs((v*v-e.jump_speed**2)/19.62-.7)<1e-5;assert abs(e.flt(server+0xa0)-2*v/9.81)<1e-5
  value=e.alloc();e.integer(value,1)
  e.call('four_point_hook',e.game,1);e.call('score_box_hook',e.generic,value);assert e.boxed==0x4303
- e.call('client_end_hook',e.game,e.boxed,e.pv);assert 'VERMELHO +1' in e.message and '4 toques do time azul' in e.message and '<size=42%>' in e.message
- e.call('double_point_hook',e.game,0);e.integer(value,0);e.call('score_box_hook',e.generic,value);e.call('client_end_hook',e.game,e.boxed,e.pv);assert 'Dois toques' in e.message
+ e.call('client_end_hook',e.game,e.boxed,e.pv);assert 'RED +1' in e.message and 'Four touches by blue team' in e.message and '<size=42%>' in e.message
+ e.call('double_point_hook',e.game,0);e.integer(value,0);e.call('score_box_hook',e.generic,value);e.call('client_end_hook',e.game,e.boxed,e.pv);assert 'Double touch' in e.message
  e.online=True;e.flag('online_version_ready',1)
  e.tracked_hands(.5);e.call('high_five_update',e.body);assert e.played==0
  e.tracked_hands(.08);e.call('high_five_update',e.body);assert e.played==1

@@ -80,11 +80,14 @@ static int has_team_membership(void* player){
 }
 EXPORT void client_choose_hook(void* player,int value,void* m){
  if(!player)return;
+ if(value==0x5c220000){serve_feedback_remote_v21(player);return;}
  int modern=((unsigned)value&0xfffffc00u)==0x5c190000u;
- if(modern||(value&0xff00)==0x5600){
-  int team=value&1,face=modern?(value>>1)&15:(value>>2)&3,outfit=modern?(value>>5)&15:2;
+ int team=0,skin=0,change=0,tone=0,v21=appearance_decode_v21(value,&team,&skin,&change,&tone);
+ if(v21<0)return;
+ if(v21||modern||(value&0xff00)==0x5600){
+  int face=v21?skin%9:modern?(value>>1)&15:(value>>2)&3,outfit=v21?skin/9:modern?(value>>5)&15:2;
   if(face>=9||outfit>=9)return;
-  int skin=face+9*outfit,change=modern?(value&0x200):(value&0x20);
+  if(!v21){team=value&1;skin=face+9*outfit;change=modern?(value&0x200):(value&0x20);}
   if(change&&has_team_membership(player)){
    if(net_rally_active){for(int i=0;i<8;i++)if(rooted(pending_teams[i].player)==player||!alive(rooted(pending_teams[i].player))){root_set(&pending_teams[i].player,player);pending_teams[i].team=team;break;}}
    else switch_team(player,team);
@@ -92,7 +95,9 @@ EXPORT void client_choose_hook(void* player,int value,void* m){
   /* A delayed appearance refresh can carry the team from before a swap.
    * Never detach the team field from the authoritative membership lists. */
   else if(!has_team_membership(player))INT(player,0x28)=team;
-  remember_skin(player,skin);return;
+  remember_skin(player,skin);
+  if(v21){remember_hand_tone_v21(player,tone);remember_hand_pose_v21(player,appearance_pose_v21(value));}
+  return;
  }
  if(value==0||value==1)INT(player,0x28)=value;
 }
@@ -117,13 +122,15 @@ static void select_appearance(int skin,int change){
  void* player=online_local_player();if(!player||!network_physics())return;
  int team=INT(player,0x28);if(team<0||team>1)return;
  if(change)team=1-team;
- send_mod_choice(player,0x5c190000|team|((preferred_skin%9)<<1)|((preferred_skin/9)<<5)|(change?0x200:0));
+ send_mod_choice(player,appearance_pack_pose_v21(team,preferred_skin,change,preferred_hand_tone_v21,local_hand_pose_v21()));
 }
 EXPORT void button_press_hook(void* button,void* m){
  if(!ui_button_valid_v19(button))return;
  ui_click_v19(button);
  if(customization_button_v19(button))return;
- if(named(button,"PuloTeams")){select_appearance(-1,1);return;}
+ if(named(button,"CC_LobbyClose")){lobby_selector_hide_v21();return;}
+ if(named(button,"CC_LobbyChangeTeam")){lobby_selector_show_v21();return;}
+ if(named(button,"PuloTeams")){if(lobby_active())lobby_selector_show_v21();else select_appearance(-1,1);return;}
  const char* names[4]={"PuloSkin0","PuloSkin1","PuloSkin2","PuloSkin3"};
  for(int i=0;i<4;i++)if(named(button,names[i])){select_appearance(i,0);return;}
  button_press_trampoline(button,m);

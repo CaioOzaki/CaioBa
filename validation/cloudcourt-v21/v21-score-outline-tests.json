@@ -1,0 +1,92 @@
+{
+  "passed": true,
+  "cases": [
+    [
+      "0x180000000",
+      "Scoreboard"
+    ],
+    [
+      "0x180000000",
+      "CloudBoard0"
+    ],
+    [
+      "0x180000000",
+      "CloudBoard1"
+    ],
+    [
+      "0x180000000",
+      "Cloudcourt CLOUDCOURT VR",
+      "self"
+    ],
+    [
+      "0x180000000",
+      "Cloudcourt CLOUDCOURT VR",
+      "ancestor"
+    ],
+    [
+      "0x180000000",
+      "Cloudcourt Big rallies. Good company.",
+      "self"
+    ],
+    [
+      "0x180000000",
+      "Cloudcourt Big rallies. Good company.",
+      "ancestor"
+    ],
+    [
+      "0x180000000",
+      "score_outline_tmp_force_v21",
+      "popup outside scoreboard"
+    ],
+    [
+      "0x190000000",
+      "Scoreboard"
+    ],
+    [
+      "0x190000000",
+      "CloudBoard0"
+    ],
+    [
+      "0x190000000",
+      "CloudBoard1"
+    ],
+    [
+      "0x190000000",
+      "Cloudcourt CLOUDCOURT VR",
+      "self"
+    ],
+    [
+      "0x190000000",
+      "Cloudcourt CLOUDCOURT VR",
+      "ancestor"
+    ],
+    [
+      "0x190000000",
+      "Cloudcourt Big rallies. Good company.",
+      "self"
+    ],
+    [
+      "0x190000000",
+      "Cloudcourt Big rallies. Good company.",
+      "ancestor"
+    ],
+    [
+      "0x190000000",
+      "score_outline_tmp_force_v21",
+      "popup outside scoreboard"
+    ]
+  ],
+  "checks": [
+    "black opaque TMP Color32 uses verified Windows x64 ABI",
+    "TMP thickness applied after font assignment",
+    "UI.Text Outline added once through Unity API",
+    "outline uses text alpha",
+    "unrelated menu labels untouched",
+    "score labels do not intercept rays",
+    "exact actual title/tagline names accepted on self and ancestor transforms",
+    "near-match/unrelated menu names unchanged",
+    "explicit v21 popup helper applies black outline and raycast-off outside scoreboard",
+    "forced popup outline is repeatable and null-safe"
+  ],
+  "scope": "Compiled helper with engine stubs; headset rendering still needs visual confirmation."
+}

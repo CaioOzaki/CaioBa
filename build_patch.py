@@ -33,6 +33,8 @@ entries += [('clamp_player',0x31ad60),('button_press',0x461e90),('client_choose'
 from fix_gameplay_v19 import gameplay_v19_entries, V19_CALLS
 entries += gameplay_v19_entries(p)
 entries += [('landing_collision',0x77ee90)]
+from fix_lobby_v21 import LOBBY_ENTRIES_V21,patch_lobby_calls_v21
+entries += LOBBY_ENTRIES_V21
 if 'probe_start_hook' in exports:entries += [('probe_start',0xef74f0),('probe_solo',0xef4620)]
 for name,rva in entries:
     n=0
@@ -138,6 +140,7 @@ from fix_map_v19 import patch_map_calls_v19
 patch_map_calls_v19(result,p,patches,exports,delta)
 from fix_bot_v20 import patch_bot_identity_v20
 patch_bot_identity_v20(result,p,patches,exports,delta)
+patch_lobby_calls_v21(result,p,patches,exports,delta)
 from fix_pause_v16 import patch_pause_tracking
 patch_pause_tracking(result,p,patches)
 struct.pack_into('<H',result,p.FILE_HEADER.get_field_absolute_offset('NumberOfSections'),p.FILE_HEADER.NumberOfSections+4)
@@ -145,7 +148,6 @@ struct.pack_into('<I',result,p.OPTIONAL_HEADER.get_field_absolute_offset('SizeOf
 struct.pack_into('<II',result,exc.get_file_offset(),exception_rva,len(exception_bytes))
 struct.pack_into('<II',result,rel.get_file_offset(),reloc_rva,len(reloc_bytes))
 struct.pack_into('<I',result,p.OPTIONAL_HEADER.get_field_absolute_offset('CheckSum'),0)
-target.write_bytes(result)
 check=pefile.PE(data=result)
 assert check.OPTIONAL_HEADER.DATA_DIRECTORY[3].Size==len(exception_bytes)
 assert len(check.DIRECTORY_ENTRY_EXCEPTION)==len(exceptions)
@@ -154,7 +156,13 @@ for item in patches:
     assert check.get_section_by_rva(item['hook']).Characteristics&0x20000000
 for section in check.sections:
     assert not (section.Name.startswith(b'.vf') and section.Characteristics&0x20000000 and section.Characteristics&0x80000000)
-manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v20 / Cloudcourt-4v4-v20','status':'v20 alpha/material retry, unique bots, score outlines and floor marks; VR and live two-PC validation pending'}
+# Validate before replacing the working image; never truncate a mapped DLL.
+import os,tempfile
+with tempfile.NamedTemporaryFile(dir=target.parent,prefix='cloudcourt-build-',suffix='.tmp',delete=False) as staged:
+    staged.write(result);staged_path=pathlib.Path(staged.name)
+assert staged_path.resolve().parent==target.resolve().parent
+os.replace(staged_path,target)
+manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v21 / Cloudcourt-4v4-v21','status':'v21 urban seaside, immediate customization, hand tones and gestures, lobby recall and serve feedback; Quest3 and live two-PC validation pending'}
 (R/'analysis/native-patch-manifest.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))
 

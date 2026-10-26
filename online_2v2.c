@@ -39,7 +39,7 @@ static int online_reception(void* player){
 static void set_mod_version(void* app){
  online_version_ready=0;
  if(app){
-  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v20":"Cloudcourt-4v4-v20");
+  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v21":"Cloudcourt-4v4-v21");
   managed_field(app,0x28,version);online_version_ready=1;
  }
 }
@@ -95,14 +95,14 @@ EXPORT void online_setup_hook(void* rules,void* m){
 }
 EXPORT void online_awake_hook(void* page,void* m){
  online_awake_trampoline(page,m);
- label(text_component(page,0x40),"Criar sala");
- label(text_component(page,0x48),"Entrar na sala");
+ label(text_component(page,0x40),"CREATE ROOM");
+ label(text_component(page,0x48),"JOIN ROOM");
  map_label_v19();
 }
 /* Client_NewRally originally only tail-calls RefreshUI. Replace its exact
  * seven bytes instead of relocating that short relative jump. */
 EXPORT void net_new_rally_hook(void* rules,int team,void* m){
- landing_clear_v20();
+ serve_feedback_arm_v21();celebration_reset_v21();
  if(network_physics()){net_first_touch=1;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=1;}
  FN(0x253e30,void(*)(void*,void*))(rules,0);
 }
@@ -113,6 +113,7 @@ EXPORT void client_motion_hook(void* ball,V3 pos,V3 velocity,_Bool hit,int touch
  V3 spin=encoded?decode_spin(context):(V3){0,0,0};
  if(encoded)context&=7;
  client_motion_trampoline(ball,pos,velocity,hit,touch,team,context,m);
+ serve_feedback_motion_v21(ball,pos,velocity,hit,touch,team,context);
  if(network_physics()){
   if(encoded)activate_spin(ball,spin);
   else {if(spinning_ball==ball)spinning_ball=0;setspin(ball,(V3){0,0,0});}
@@ -127,6 +128,7 @@ EXPORT void client_end_hook(void* rules,int team,V3 pos,void* m){
  if((team&0xff00)==0x4300){reason=(team>>1)&15;marker=(team&0x40)!=0;outside=(team&0x80)!=0;team&=1;}
  if(network_physics()){net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;}
  client_end_trampoline(rules,team,pos,m);
+ celebration_point_v21(rules,team);
  if(marker&&(reason==3||reason==4||reason==6))landing_show_v20(pos,outside);
  if(reason)point_message(rules,team,reason);
  if(network_physics())finish_team_changes();

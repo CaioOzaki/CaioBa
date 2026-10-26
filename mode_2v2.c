@@ -68,6 +68,18 @@ static void landing_prepare_v20(void* ball,V3 center);
 static int landing_wire_flags_v20(void);
 static void landing_clear_v20(void);
 static void landing_show_v20(V3 point,int outside);
+EXPORT void score_outline_tmp_force_v21(void* text);
+EXPORT void avatar_hands_v21(void* body);
+EXPORT void celebration_point_v21(void* rules,int team);
+EXPORT void celebration_reset_v21(void);
+EXPORT void celebration_bot_v21(void* bot);
+static void serve_feedback_arm_v21(void);
+static void serve_feedback_motion_v21(void* ball,V3 p,V3 v,int hit,int touch,int team,int context);
+static void serve_feedback_human_v21(void* ball);
+static void serve_feedback_remote_v21(void* player);
+static void send_mod_choice(void* player,int value);
+EXPORT void lobby_selector_hide_v21(void);
+EXPORT void lobby_selector_show_v21(void);
 EXPORT void bots_roster_reset_v20(void* rules);
 EXPORT void bots_spawn_begin_v20(void* rules,int team,int slot);
 EXPORT void bots_spawn_end_v20(void);
@@ -392,6 +404,7 @@ static int mapped_slot(void* team,int slot){
 }
 static void prepare_match(void* o){
  landing_clear_v20();
+ serve_feedback_arm_v21();celebration_reset_v21();
  FLT(o,0x40)=.9f;
  hand_serve_reset();root_set(&local_player_root,0);
  root_set(&rules_root,o);reception_pending=0;reception_context=0;
@@ -438,13 +451,14 @@ EXPORT void add_player_hook(void* team,void* player,int slot,void* m){
 EXPORT _Bool front_row_hook(void* m){return doubles_enabled||quartet_enabled?0:FN(0xef32b0,_Bool(*)(void*))(m);}
 EXPORT float player_speed_hook(void* m){
  float speed=FN(0xef33b0,float(*)(void*))(m);
- return doubles_enabled||quartet_enabled?speed*doubles_player_speed:speed;
+ return doubles_enabled||quartet_enabled||lobby_active()?speed*doubles_player_speed:speed;
 }
 EXPORT void bot_body_hook(void* bot,void* m){
  float speed=FLT(bot,0x3c);if(doubles_enabled||quartet_enabled)FLT(bot,0x3c)=speed*(bot_has_human_mate(bot)?doubles_ally_speed:doubles_speed);
  void* rules=rooted(rules_root);void* area=PTR(bot,0x20);
  if(rules&&BYTE(rules,0x78)&&BYTE(rules,0x79)&&area&&BYTE(area,0x38)&&INT(bot,0x28)==INT(rules,0x7c))FLT(bot,0x3c)=0;
  bot_body_trampoline(bot,m);FLT(bot,0x3c)=speed;
+ celebration_bot_v21(bot);
 }
 /* Only the bot-serve placement reads through this call-site hook. Raising
  * the returned position leaves the court transform and human serve intact. */
@@ -493,11 +507,14 @@ EXPORT void* pass_target_hook(void* bot,void* m){
 #include "comfort_v14.c"
 #include "celebration_v15.c"
 #include "score_outline_v20.c"
+#include "avatar_style_v21.c"
 #include "identity_v16.c"
 #include "customization_v19.c"
+#include "hand_visuals_v21.c"
 #include "input_v19.c"
 #include "bots_v20.c"
 #include "landing_v20.c"
+#include "serve_feedback_v21.c"
 #include "lobby_v18.c"
 #include "map_v19.c"
 #include "gameplay_v19.c"

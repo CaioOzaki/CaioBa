@@ -56,7 +56,7 @@ for base in (0x180000000,0x190000000):
      assert e.team()==1 and e.contains(1,0x28,e.player) and not e.contains(0,0x28,e.player),'delayed skin packet detached team field from membership'
     elif name=='unbuffered_ordered_rpc':
      button=e.alloc();e.names[button]='PuloSkin2';e.call('button_press_hook',button)
-     assert e.rpc_sends==[(5,0x5c190044)],f'wrong RPC target or payload: {e.rpc_sends}'
+     assert e.rpc_sends==[(5,0x5c210044)],f'wrong RPC target or payload: {e.rpc_sends}'
     elif name=='lobby_assignment':
      for side in (0,1):e.integer(e.q(e.teams[side]+0x28)+0x18,0)
      e.call('client_choose_hook',e.player,0x5601)

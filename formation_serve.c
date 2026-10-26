@@ -108,6 +108,7 @@ EXPORT void* hand_find_hook(void* hand,void* m){
   void* center=PTR(hand,0x18);if(center){
    position_set(transform(ball),position(center));serve_visible(ball,1);
    root_set(&waiting_ball_root,0);
+   serve_feedback_human_v21(ball);
    /* The original Hand.Update starts interaction and owns release/throw. */
    return ball;
   }

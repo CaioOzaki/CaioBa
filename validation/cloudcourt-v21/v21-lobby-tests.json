@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "ASLR_bases": [
+    "0x180000000",
+    "0x190000000"
+  ],
+  "checks": [
+    "native held-object gate",
+    "native vtable attachment",
+    "one local ball after 30 alternating recalls",
+    "transfer while both triggers remain held",
+    "no old-hand reacquisition",
+    "zero velocities on recall",
+    "remote hands rejected",
+    "peer ownership preserved",
+    "UI ray clicks excluded",
+    "selector hidden practice active",
+    "menu input reopens selector",
+    "native NetworkPlayer.Update starts normal jump without team area only in lobby",
+    "cleanup destroys only owned balls"
+  ],
+  "scope": "Compiled x64/native Hand.Update and NetworkPlayer.Update with engine stubs; no real Unity physics, Quest or two-PC session claimed."
+}

@@ -1,0 +1,133 @@
+{
+  "passed": true,
+  "cases": [
+    [
+      "0x180000000",
+      2,
+      false,
+      "bot_spawn_and_cache"
+    ],
+    [
+      "0x180000000",
+      2,
+      false,
+      "human_native_trigger"
+    ],
+    [
+      "0x180000000",
+      2,
+      true,
+      "bot_spawn_and_cache"
+    ],
+    [
+      "0x180000000",
+      2,
+      true,
+      "human_native_trigger"
+    ],
+    [
+      "0x180000000",
+      4,
+      false,
+      "bot_spawn_and_cache"
+    ],
+    [
+      "0x180000000",
+      4,
+      false,
+      "human_native_trigger"
+    ],
+    [
+      "0x180000000",
+      4,
+      true,
+      "bot_spawn_and_cache"
+    ],
+    [
+      "0x180000000",
+      4,
+      true,
+      "human_native_trigger"
+    ],
+    [
+      "0x180000000",
+      "two isolated clients",
+      "server event accepted despite stale currentTeam; wrong player and lobby rejected"
+    ],
+    [
+      "0x180000000",
+      "lobby ball excluded"
+    ],
+    [
+      "0x190000000",
+      2,
+      false,
+      "bot_spawn_and_cache"
+    ],
+    [
+      "0x190000000",
+      2,
+      false,
+      "human_native_trigger"
+    ],
+    [
+      "0x190000000",
+      2,
+      true,
+      "bot_spawn_and_cache"
+    ],
+    [
+      "0x190000000",
+      2,
+      true,
+      "human_native_trigger"
+    ],
+    [
+      "0x190000000",
+      4,
+      false,
+      "bot_spawn_and_cache"
+    ],
+    [
+      "0x190000000",
+      4,
+      false,
+      "human_native_trigger"
+    ],
+    [
+      "0x190000000",
+      4,
+      true,
+      "bot_spawn_and_cache"
+    ],
+    [
+      "0x190000000",
+      4,
+      true,
+      "human_native_trigger"
+    ],
+    [
+      "0x190000000",
+      "two isolated clients",
+      "server event accepted despite stale currentTeam; wrong player and lobby rejected"
+    ],
+    [
+      "0x190000000",
+      "lobby ball excluded"
+    ]
+  ],
+  "bases": 2,
+  "actual_integrated_dll": true,
+  "sha256": "f6f03b7b2b6c085a1180c8930eb3778c39837c997e507528f6c5308aa80db3ff",
+  "checks": [
+    "marker persists during NewRally",
+    "only exact bot placement clears",
+    "native trigger required for human serve",
+    "whistle once per serve",
+    "audio source/clip cached",
+    "wrong player/team/lobby rejected",
+    "same human event on isolated clients",
+    "practice balls excluded"
+  ],
+  "scope": "Actual integrated native DLL with deterministic Unity/Photon stubs. No Quest or real two-PC claim."
+}

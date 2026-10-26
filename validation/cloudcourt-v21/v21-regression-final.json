@@ -1,0 +1,98 @@
+[
+  {
+    "test": "test_2v2.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_online_2v2.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_formation_serve.py",
+    "passed": true,
+    "tail": "",
+    "rerun_after_audio_fixture_stub": true
+  },
+  {
+    "test": "test_serve_delay.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_serve_rules.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_comfort_v14.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_celebration_v15.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_cloudcourt_v16.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_identity_rpc_v16.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_pause_v16.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_motion_finite_v17.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_setting_v18.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_input_v19.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_customization_v19.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_skin_cache_v20.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_bots_native_v20.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_bot_contact_v19.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_gameplay_v19.py",
+    "passed": true,
+    "tail": ""
+  },
+  {
+    "test": "test_score_outline_v20.py",
+    "passed": true,
+    "tail": ""
+  }
+]

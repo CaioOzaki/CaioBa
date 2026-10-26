@@ -1,0 +1,67 @@
+{
+  "menu": {
+    "close_button_transform": 1243,
+    "change_team_transform": 1254,
+    "close_action": "lobby_selector_hide_v21",
+    "show_action": "lobby_selector_show_v21",
+    "created": [
+      "Menu/Pages/InRoom/Buttons/CC_LobbyClose",
+      "Menu/Pages/InRoom/CC_LobbyChangeTeam"
+    ]
+  },
+  "nets": {
+    "level1": {
+      "path": "Environment/Net net",
+      "collider_id": 229,
+      "solid": true,
+      "center": [
+        0.0,
+        1.9230000972747803,
+        0.0
+      ],
+      "world_size": [
+        8.970000267028809,
+        0.8799999952316284,
+        0.05000000074505806
+      ],
+      "duplicate_colliders_added": 0
+    },
+    "level2": {
+      "path": "Environment/Net net",
+      "collider_id": 255,
+      "solid": true,
+      "center": [
+        0.0,
+        1.9230000972747803,
+        0.0
+      ],
+      "world_size": [
+        8.970000267028809,
+        0.8799999952316284,
+        0.05000000074505806
+      ],
+      "duplicate_colliders_added": 0
+    },
+    "level3": {
+      "path": "Environment/Net net",
+      "collider_id": 244,
+      "solid": true,
+      "center": [
+        0.0,
+        1.9230000972747803,
+        0.0
+      ],
+      "world_size": [
+        8.970000267028809,
+        0.8799999952316284,
+        0.05000000074505806
+      ],
+      "duplicate_colliders_added": 0
+    }
+  },
+  "passed": true,
+  "original_controller_bytes_preserved": true,
+  "scene_bytes_unchanged": true,
+  "idempotent": true,
+  "working_files_unchanged": true
+}

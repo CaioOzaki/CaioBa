@@ -24,15 +24,16 @@ EXPORT void* score_box_hook(void* klass,void* value){
 }
 static void point_message(void* rules,int team,int reason){
  static const char* causes[2][8]={
-  {"","4 toques do time vermelho","Dois toques seguidos do mesmo jogador vermelho","Bola no chao do time vermelho","Bola fora: ultimo toque vermelho","Saque vermelho dentro da quadra","Erro de saque do time vermelho","Bloqueio de saque pelo time vermelho"},
-  {"","4 toques do time azul","Dois toques seguidos do mesmo jogador azul","Bola no chao do time azul","Bola fora: ultimo toque azul","Saque azul dentro da quadra","Erro de saque do time azul","Bloqueio de saque pelo time azul"}
+  {"","Four touches by red team","Double touch by red team","Ball down on red side","Out: last touch by red team","Red team served inside the court","Service fault by red team","Serve blocked by red team"},
+  {"","Four touches by blue team","Double touch by blue team","Ball down on blue side","Out: last touch by blue team","Blue team served inside the court","Service fault by blue team","Serve blocked by blue team"}
  };
  if(!rules||team<0||team>1||reason<1||reason>7)return;
  void* text=PTR(rules,0x28);if(!text)return;
- const char* parts[4]={team?"<size=70%><color=#FF7278>VERMELHO +1</color></size>\n<size=42%>":"<size=70%><color=#75CFFF>AZUL +1</color></size>\n<size=42%>",causes[team][reason],"</size>",0};
+ const char* parts[4]={team?"<size=70%><color=#FF7278>RED +1</color></size>\n<size=42%>":"<size=70%><color=#75CFFF>BLUE +1</color></size>\n<size=42%>",causes[team][reason],"</size>",0};
  char message[240];int n=0;
  for(int p=0;parts[p];p++)for(int i=0;parts[p][i]&&n<239;i++)message[n++]=parts[p][i];message[n]=0;
  FN(0x2405f0,void(*)(void*,void*,void*))(text,str(message),0);
+ score_outline_tmp_force_v21(text);
 }
 static unsigned clap_clip,clap_source,clap_body;
 static unsigned hold_hand[2];static V3 hold_position;static float hold_time,clap_cooldown;

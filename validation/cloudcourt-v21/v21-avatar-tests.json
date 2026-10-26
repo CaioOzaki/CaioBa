@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "assets": {
+    "original_physics_scripts_meshes_textures_byte_identical": true,
+    "mirrored_meshes": 4,
+    "new_visual_only_nodes": 9,
+    "opaque_bc3_preserved": true,
+    "idempotent": true
+  },
+  "native": {
+    "packet_roundtrips": 9720,
+    "hand_pose_cases": 16,
+    "menu_initial_combinations": 486,
+    "preview_cache_invalidation_called_every_refresh": true,
+    "celebration_predicate_cases": 768
+  },
+  "scope": "Compiled production codec/menu with Unity stubs and serialized asset checks. No Quest or two-PC claim."
+}

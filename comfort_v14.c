@@ -130,5 +130,5 @@ static void setting_feedback(void* body){
  }
 }
 EXPORT void avatar_update_hook(void* body,void* m){
- avatar_update_trampoline(body,m);skin_body(body);setting_feedback(body);high_five_update(body);cloudcourt_avatar_tick(body);
+ avatar_update_trampoline(body,m);skin_body(body);setting_feedback(body);avatar_hands_v21(body);high_five_update(body);cloudcourt_avatar_tick(body);
 }
