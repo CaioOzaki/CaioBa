@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "rows": [
+    {
+      "base": "0x180000000",
+      "cached_ui_source": true,
+      "recreated_source_configured": true,
+      "listener_state_preserved": true,
+      "inactive_locked_silent": true,
+      "null_icall_safe": true
+    },
+    {
+      "base": "0x190000000",
+      "cached_ui_source": true,
+      "recreated_source_configured": true,
+      "listener_state_preserved": true,
+      "inactive_locked_silent": true,
+      "null_icall_safe": true
+    }
+  ],
+  "checks": [
+    "Only the UI AudioSource ignores AudioListener.pause",
+    "Resolver cached including null result",
+    "Cached source and clip across scene/button changes",
+    "Recreated source receives the setting",
+    "Disabled and inactive buttons stay silent"
+  ]
+}

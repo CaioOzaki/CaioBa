@@ -162,7 +162,7 @@ with tempfile.NamedTemporaryFile(dir=target.parent,prefix='cloudcourt-build-',su
     staged.write(result);staged_path=pathlib.Path(staged.name)
 assert staged_path.resolve().parent==target.resolve().parent
 os.replace(staged_path,target)
-manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v22 / Cloudcourt-4v4-v22','status':'v22 Done raycast repair, anatomical setting/thumbs, connected bot arm until whistle, historical looks, dry beach and fitted arena visuals; Quest3 and live two-PC validation pending'}
+manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v22 / Cloudcourt-4v4-v22','status':'v23 unified rounded hand geometry, slightly thinner default hands and pause-safe local UI click audio; v22 physics/network protocol retained; headset/two-PC validation pending'}
 (R/'analysis/native-patch-manifest.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))
 

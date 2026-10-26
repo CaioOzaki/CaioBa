@@ -26,6 +26,7 @@ class CelebrationEngine(SettingEngine):
   elif r in (0xb72960,0xb72b10):self.ret(f=1/60)
   elif r==0xb72b40:self.ret(f=10)
   elif r in (0x7911d0,0x2402d0,0x240340):self.ret()
+  elif r==0x14b030:self.ret(0) # Optional stripped AudioSource setter unavailable in this stub.
   elif r in (0x14a920,0x14a910,0x14a530,0x14a5a0,0x14b9c0,0x14a710,0x14acb0):self.ret(self.generic)
   elif r==0x14a4f0:assert b==4410;self.ret(self.samples)
   elif r==0x94f240:self.ret(self.audio)

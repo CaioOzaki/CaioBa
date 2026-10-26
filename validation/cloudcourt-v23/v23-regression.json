@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "native_sha256": "45863d71053ccc7b8143e13474ebe3636a207840f12670a97d5fce12a4d96d3c",
+  "suites": [
+    {
+      "test": "test_input_v19.py",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_pause_audio_v23.py",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_pause_v16.py",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_cloudcourt_v16.py",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_customization_v19.py",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_hand_visuals_integrated_v21.py",
+      "passed": true,
+      "tail": ""
+    }
+  ],
+  "scope": "Focused UI/pause/audio/cache regressions. Prior v22 gameplay/IK/network behavior unchanged; no headset claim."
+}

@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "baseline_listener_paused_max_samples": 0,
+  "fixed_listener_paused_resume_max_samples": 1646,
+  "fixed_listener_paused_leave_max_samples": 1646,
+  "leave_timeScale_stays_zero": true,
+  "listener_pause_preserved": true,
+  "persistent_mainmenu_source_reused": true,
+  "one_play_per_valid_click": true,
+  "disabled_click_silent": true,
+  "hardware_VR_tested": false
+}

@@ -67,6 +67,9 @@ class InputEngine:
         self.button = self.alloc()
         self.source_count, self.clip_count, self.played = 0, 0, 0
         self.audio_settings, self.samples = {}, None
+        self.pause_resolves, self.ignore_listener_pause = 0, set()
+        self.missing_pause_api, self.listener_paused = False, False
+        self.audible_plays = 0
         self.module, ui_stat, ui_class = self.alloc(), self.alloc(), self.alloc()
         self.ptr(base + 0x1542440, ui_class)
         self.ptr(ui_class + 0xb8, ui_stat)
@@ -148,6 +151,15 @@ class InputEngine:
             self.ret(obj)
         elif r == 0x94b570:
             self.ret(self.component_go.get(a, a))
+        elif r == 0x14b030:
+            name = bytes(u.mem_read(a, 128)).split(b'\0')[0].decode()
+            assert name == 'UnityEngine.AudioSource::set_ignoreListenerPause'
+            self.pause_resolves += 1
+            self.ret(0 if self.missing_pause_api else H + 0x83000)
+        elif addr == H + 0x83000:
+            assert b == 1
+            self.ignore_listener_pause.add(a)
+            self.ret()
         elif r == 0x94f410:
             assert self.strings[b] == 'Button'
             self.ret(self.go_buttons.get(a, 0))
@@ -181,6 +193,7 @@ class InputEngine:
             self.ret()
         elif r == 0xebbe30:
             self.played += 1
+            self.audible_plays += not self.listener_paused or a in self.ignore_listener_pause
             self.ret()
 
     def call(self, name, *args):

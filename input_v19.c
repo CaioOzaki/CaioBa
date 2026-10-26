@@ -6,6 +6,20 @@
 static unsigned ui_v19_controller[2];
 static unsigned char ui_v19_analog_held[2];
 static unsigned ui_v19_click_source,ui_v19_click_clip,ui_v19_button_name;
+static void (*ui_v23_ignore_listener_pause)(void*,_Bool);
+static int ui_v23_pause_api_checked;
+
+static void ui_audio_pause_safe_v23(void* source){
+ /* Headset focus can pause AudioListener independently of Time.timeScale.
+  * Keep only interface feedback audible; never unpause the global listener.
+  * The managed setter is stripped in this build, but its Unity icall remains. */
+ if(!ui_v23_pause_api_checked){
+  ui_v23_ignore_listener_pause=(void(*)(void*,_Bool))
+   FN(0x14b030,void*(*)(const char*))("UnityEngine.AudioSource::set_ignoreListenerPause");
+  ui_v23_pause_api_checked=1;
+ }
+ if(ui_v23_ignore_listener_pause)ui_v23_ignore_listener_pause(source,1);
+}
 
 static int ui_input_v19(int original_value){
  int pressed=original_value||FN(0x452d40,_Bool(*)(int,int,void*))(1,2,0);
@@ -56,6 +70,7 @@ static void ui_click_v19(void* button){
   FN(0xebc370,void(*)(void*,_Bool,void*))(source,0,0);
   FN(0xebc500,void(*)(void*,_Bool,void*))(source,0,0);
   FN(0xebc460,void(*)(void*,_Bool,void*))(source,0,0);
+  ui_audio_pause_safe_v23(source);
   root_set(&ui_v19_click_source,source);
  }
  if(!alive(rooted(ui_v19_click_clip))){
