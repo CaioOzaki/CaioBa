@@ -1,0 +1,99 @@
+{
+  "passed": true,
+  "cases": [
+    [
+      "0x180000000",
+      "unknown",
+      "projection, finite guards, normal/range guards, query ABI"
+    ],
+    [
+      "0x180000000",
+      "Indoor",
+      "projection, finite guards, normal/range guards, query ABI"
+    ],
+    [
+      "0x180000000",
+      "Beach",
+      "projection, finite guards, normal/range guards, query ABI"
+    ],
+    [
+      "0x180000000",
+      2,
+      false,
+      "in/out colors and x/z, one query per point, lifetime until actual spawn"
+    ],
+    [
+      "0x180000000",
+      2,
+      true,
+      "in/out colors and x/z, one query per point, lifetime until actual spawn"
+    ],
+    [
+      "0x180000000",
+      4,
+      false,
+      "in/out colors and x/z, one query per point, lifetime until actual spawn"
+    ],
+    [
+      "0x180000000",
+      4,
+      true,
+      "in/out colors and x/z, one query per point, lifetime until actual spawn"
+    ],
+    [
+      "0x190000000",
+      "unknown",
+      "projection, finite guards, normal/range guards, query ABI"
+    ],
+    [
+      "0x190000000",
+      "Indoor",
+      "projection, finite guards, normal/range guards, query ABI"
+    ],
+    [
+      "0x190000000",
+      "Beach",
+      "projection, finite guards, normal/range guards, query ABI"
+    ],
+    [
+      "0x190000000",
+      2,
+      false,
+      "in/out colors and x/z, one query per point, lifetime until actual spawn"
+    ],
+    [
+      "0x190000000",
+      2,
+      true,
+      "in/out colors and x/z, one query per point, lifetime until actual spawn"
+    ],
+    [
+      "0x190000000",
+      4,
+      false,
+      "in/out colors and x/z, one query per point, lifetime until actual spawn"
+    ],
+    [
+      "0x190000000",
+      4,
+      true,
+      "in/out colors and x/z, one query per point, lifetime until actual spawn"
+    ]
+  ],
+  "bases": 2,
+  "actual_integrated_dll": true,
+  "sha256": "3783a5541072fe1474ce9d4b0b9f0778558503779442d58046569056623cd76f",
+  "checks": [
+    "Windows x64 hidden Vector3 return and by-value query ABI",
+    "ray origin contact+15cm, downward40cm, default solid mask1, Ignore triggers1",
+    "Indoor/default2mm; Beach6mm accounts for4mm dry surface",
+    "positive projection removes contact slop",
+    "x/z and in/out color unchanged",
+    "slopes/walls/downward normals rejected",
+    "non-finite hit/input rejected",
+    "strict safe vertical window(-.20,.12)",
+    "one query per point and none per frame",
+    "marker persists at NewRally and clears only on actual serve spawn"
+  ],
+  "scope": "Actual compiled native hooks with deterministic Unity/Photon stubs; no headset or two-PC claim."
+}

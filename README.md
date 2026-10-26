@@ -1,6 +1,6 @@
 # Cloudcourt VR — v20
 
-Current checkpoint: **Cloudcourt-v21-orla-gestos**. [Release notes](CHECKPOINT-V21.md). Immediate customization previews, six hand tones, setting/thumbs-up gestures, own-team bot celebrations, original serve whistle, one-ball online practice, and the urban Beach. Both online formats use v21 rooms. Physical Quest 3 and live two-PC validation remain pending.
+Current checkpoint: **Cloudcourt-v22-correcoes**. [Corrective release notes](CHECKPOINT-V22.md). Fixes the real Done raycast failure, anatomical hands and connected bot arm until the serve whistle, historical bot looks, floor feedback and requested Beach/Indoor visuals. Both online formats use v22 rooms. Quest 3 and real two-PC playtests remain pending.
 
 - Fixed invisible customization previews: v19 BC7 compression corrupted alpha, especially in mipmaps. BC3 makes every mip opaque at the same 6 MB texture budget. Actual Unity desktop camera captures confirmed the before/after change. Avatar material binding now retries delayed and replaced materials; a native regression reproduces the old failure.
 - Nine own cartoon bots, including the requested curtain bangs/blonde streak/septum character and the tall, slim young man with square glasses and dark blue jeans. Continuous hair coverage and curved strands replace the old hair geometry. The host picks without repetition and sends the chosen existing database index through the original assignment RPC. [Bot gallery and own art](assets/bots-v20/README.md).

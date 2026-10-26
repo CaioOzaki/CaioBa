@@ -6,6 +6,26 @@ static void* landing_contact_ball_v20;
 static V3 landing_contact_v20,landing_pending_v20;
 static int landing_contact_valid_v20,landing_pending_valid_v20,landing_pending_out_v20;
 static unsigned landing_marks_v20[2];
+static float landing_surface_lift_v22(void){
+ void* k=PTR((void*)base(),0x15422a0),*s=k?PTR(k,0xb8):0,*venue=s?PTR(s,0):0;
+ /* The new dry beach surface is 4mm above its unchanged physical terrain.
+  * Leave only a 2mm anti-z-fighting gap above either visual court surface. */
+ return venue&&!v19_word(PTR(venue,0x18),"Indoor")?.006f:.002f;
+}
+EXPORT V3 landing_project_v22(V3 point){
+ if(!finitev(point))return point;
+ V3 origin=point;origin.y+=.15f;
+ unsigned char hit[64]={0};
+ /* Verified Unity2019 RaycastHit: point0, normal12, distance28, collider40.
+  * Query only the original default-layer solid ground, never trigger volumes.
+  * This is one query per point, not a per-frame operation. */
+ if(FN(0xec3e30,_Bool(*)(V3,V3,void*,float,int,int,void*))(origin,(V3){0,-1,0},hit,.4f,1,1,0)){
+  V3 floor=*(V3*)hit,normal=*(V3*)(hit+12);
+  float d=floor.y-point.y;
+  if(finitev(floor)&&finitev(normal)&&normal.y>.75f&&d>-.20f&&d<.12f)point.y=floor.y;
+ }
+ point.y+=landing_surface_lift_v22();return point;
+}
 
 EXPORT void landing_collision_hook(void* ball,void* collision,void* m){
  landing_contact_ball_v20=ball;landing_contact_valid_v20=0;
@@ -52,10 +72,11 @@ static void landing_clear_v20(void){
 }
 static void landing_show_v20(V3 point,int outside){
  if(!finitev(point))return;
+ point=landing_project_v22(point);
  landing_find_marks_v20();
  for(int i=0;i<2;i++){
   void* t=rooted(landing_marks_v20[i]);if(!alive(t))continue;
-  if(i==outside){point.y+=.014f;position_set(t,point);}
+  if(i==outside)position_set(t,point);
   FN(0x94f700,void(*)(void*,_Bool,void*))(gameobject(t),i==outside,0);
  }
 }

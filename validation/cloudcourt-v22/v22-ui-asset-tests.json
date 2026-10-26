@@ -1,0 +1,35 @@
+{
+  "changed_existing_ids": [
+    1143,
+    1146,
+    1232,
+    1236,
+    1243,
+    1248,
+    1253,
+    1257,
+    1264,
+    1268,
+    1275
+  ],
+  "created_ids": [],
+  "canvas_unchanged": true,
+  "modal_height": 400,
+  "done_center_y": -181,
+  "done_bottom_y": -197,
+  "reason": "v21 Done center -213 lay below the unchanged canvas collider at -200",
+  "passed": true,
+  "controls": [
+    "CC_FacePrev",
+    "CC_FaceNext",
+    "CC_OutfitPrev",
+    "CC_OutfitNext",
+    "CC_CustomizeBack",
+    "CC_HandTonePrev",
+    "CC_HandToneNext"
+  ],
+  "unchanged_outside_modal": true,
+  "idempotent": true,
+  "all_buttons_inside_original_canvas": true,
+  "modal_buttons_have_no_navigation_callbacks": true
+}

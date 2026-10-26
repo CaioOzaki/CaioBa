@@ -32,7 +32,7 @@ entries += [('lobby_enter',0x314c60),('lobby_start',0x3154d0),('lobby_ball_awake
 entries += [('clamp_player',0x31ad60),('button_press',0x461e90),('client_choose',0x30cb90),('ui_submit',0x2437d0),('intro_page',0x3168b0),('tmp_awake',0x42f790),('tmp_ui_awake',0xa28680),('ui_text_enable',0xe83720),('refresh_score',0x253e30),('in_room_ui',0x315840),('in_game_active',0x313f40)]
 from fix_gameplay_v19 import gameplay_v19_entries, V19_CALLS
 entries += gameplay_v19_entries(p)
-entries += [('landing_collision',0x77ee90)]
+entries += [('landing_collision',0x77ee90),('bot_ik',0xb64980)]
 from fix_lobby_v21 import LOBBY_ENTRIES_V21,patch_lobby_calls_v21
 entries += LOBBY_ENTRIES_V21
 if 'probe_start_hook' in exports:entries += [('probe_start',0xef74f0),('probe_solo',0xef4620)]
@@ -162,7 +162,7 @@ with tempfile.NamedTemporaryFile(dir=target.parent,prefix='cloudcourt-build-',su
     staged.write(result);staged_path=pathlib.Path(staged.name)
 assert staged_path.resolve().parent==target.resolve().parent
 os.replace(staged_path,target)
-manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v21 / Cloudcourt-4v4-v21','status':'v21 urban seaside, immediate customization, hand tones and gestures, lobby recall and serve feedback; Quest3 and live two-PC validation pending'}
+manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v22 / Cloudcourt-4v4-v22','status':'v22 Done raycast repair, anatomical setting/thumbs, connected bot arm until whistle, historical looks, dry beach and fitted arena visuals; Quest3 and live two-PC validation pending'}
 (R/'analysis/native-patch-manifest.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))
 

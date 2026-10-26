@@ -6,10 +6,12 @@ class LandingEngine(CloudEngine):
  def __init__(self,base):
   super().__init__(base);self.floor_contact=True;self.box_values=[];self.root_go=self.alloc();self.root_t=self.alloc();self.markers=[self.alloc(),self.alloc()];self.go_markers=[self.alloc(),self.alloc()]
   self.marker_active={};self.end_teams=[];self.radius=.11
+  self.ptr(base+0x15422a0,0) # Unknown venue: Indoor/default surface lift.
   bt=self.alloc();self.transforms[self.ball]=bt;klass=self.alloc(0x200);stat=self.alloc();self.ptr(base+0x15426f0,klass);self.ptr(klass+0xb8,stat);self.ptr(stat,self.ball)
  def hook(self,u,addr,size,user):
   r=addr-self.b;a,b,c=[u.reg_read(reg) for reg in (UC_X86_REG_RCX,UC_X86_REG_RDX,UC_X86_REG_R8)]
-  if r==ex['landing_collision_trampoline']:
+  if r==0xec3e30:self.ret(False) # Existing tests exercise no-hit fallback.
+  elif r==ex['landing_collision_trampoline']:
    if self.floor_contact:
     u.reg_write(UC_X86_REG_RCX,self.game);u.reg_write(UC_X86_REG_RDX,0);u.reg_write(UC_X86_REG_R8,0);u.reg_write(UC_X86_REG_RIP,self.b+ex['ground_point_hook'])
    else:self.ret()
@@ -50,7 +52,7 @@ for base in (0x180000000,0x190000000):
     e.vec(e.pv,wire);e.call('client_end_hook',e.game,score,e.pv)
     assert e.end_teams[-1]==0
     assert [e.marker_active.get(g,False) for g in e.go_markers]==[not outside,outside],(fmt,online,x,z,hex(score),outside,e.marker_active)
-    pos=e.pos[e.markers[int(outside)]];assert abs(pos[0]-actual[0])<1e-5 and abs(pos[2]-actual[2])<1e-5 and abs(pos[1]-actual[1]-.014)<1e-5
+    pos=e.pos[e.markers[int(outside)]];assert abs(pos[0]-actual[0])<1e-5 and abs(pos[2]-actual[2])<1e-5 and abs(pos[1]-actual[1]-.002)<1e-5
     assert not e.pack()&0x40,'Consumed contact must not leak into another point.'
     # v21 keeps the exact point visible throughout the pause before the next
     # serve. Only an actual serve-ball spawn/reveal consumes it (covered by

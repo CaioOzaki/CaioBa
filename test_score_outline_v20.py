@@ -29,10 +29,10 @@ class OutlineEngine(CloudEngine):
 def assert_tmp_outline(e,text):
  assert e.tmp[text]['rgba']==0xff000000 and abs(e.tmp[text]['width']-.18)<1e-6 and not e.rays[text]
 
-def assert_ui_outline(e,text):
+def assert_ui_outline(e,text,edge=2.5):
  before=e.created;e.call('score_outline_text_v20',text);e.call('score_outline_text_v20',text)
  assert e.created==before+1 and not e.rays[text]
- outline=e.outlines[text];assert e.shadow[outline]=={'color':(0,0,0,1),'distance':(2.5,2.5),'alpha':True}
+ outline=e.outlines[text];assert e.shadow[outline]=={'color':(0,0,0,1),'distance':(edge,edge),'alpha':True}
 
 cases=[]
 for base in (0x180000000,0x190000000):
@@ -46,7 +46,7 @@ for base in (0x180000000,0x190000000):
  for target in ('Cloudcourt CLOUDCOURT VR','Cloudcourt Big rallies. Good company.'):
   for location in ('self','ancestor'):
    text=e.named_text(target) if location=='self' else e.score_text(target)
-   assert_ui_outline(e,text);e.call('score_outline_tmp_v20',text);assert_tmp_outline(e,text)
+   assert_ui_outline(e,text,.75 if 'Big rallies.' in target else 1.25);e.call('score_outline_tmp_v20',text);assert_tmp_outline(e,text)
    cases.append((hex(base),target,location))
  # Preserve the original meaningful assertion: generic menu labels receive no
  # outline, added component or raycast mutation through either scoped helper.
@@ -70,6 +70,7 @@ for base in (0x180000000,0x190000000):
 report={'passed':True,'cases':cases,'checks':['black opaque TMP Color32 uses verified Windows x64 ABI','TMP thickness applied after font assignment','UI.Text Outline added once through Unity API','outline uses text alpha','unrelated menu labels untouched','score labels do not intercept rays'],
         'scope':'Compiled helper with engine stubs; headset rendering still needs visual confirmation.'}
 report['checks']+=['exact actual title/tagline names accepted on self and ancestor transforms',
+                   'tagline .75px / title 1.25px black edges; score outline unchanged at 2.5px',
                    'near-match/unrelated menu names unchanged',
                    'explicit v21 popup helper applies black outline and raycast-off outside scoreboard',
                    'forced popup outline is repeatable and null-safe']

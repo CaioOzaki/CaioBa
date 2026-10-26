@@ -68,6 +68,7 @@ static void landing_prepare_v20(void* ball,V3 center);
 static int landing_wire_flags_v20(void);
 static void landing_clear_v20(void);
 static void landing_show_v20(V3 point,int outside);
+static int v19_word(void* text,const char* word);
 EXPORT void score_outline_tmp_force_v21(void* text);
 EXPORT void avatar_hands_v21(void* body);
 EXPORT void celebration_point_v21(void* rules,int team);
@@ -313,7 +314,7 @@ static void* select_online(int format,void* m){
 EXPORT void main_menu_hook(void* o,void* argument,void* m){
  /* Entering another game from the main menu must not inherit doubles. Keep
   * the current match's speed if the user merely opens and closes the menu. */
- customization_close_v19();landing_clear_v20();doubles_requested=0;main_menu_trampoline(o,argument,m);show_button(o,0x30,0);
+ customization_close_v19();landing_clear_v20();celebration_reset_v21();doubles_requested=0;main_menu_trampoline(o,argument,m);show_button(o,0x30,0);
 }
 EXPORT void* solo_day_hook(void* o,void* m){
  if(online_selector)return select_online(4,m);

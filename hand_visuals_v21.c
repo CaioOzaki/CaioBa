@@ -51,66 +51,119 @@ EXPORT void avatar_hands_v21(void* body){
  for(int i=0;i<8;i++){void* mat=rooted(slot->materials[i]);if(mat)FN(0x956610,void(*)(void*,Q4,void*))(mat,hand_tone_colors_v21[tone],0);}
  slot->tone=ready_materials?tone:-1;
 }
+
+/* v22: same public point/reset API, now bounded by the serve whistle event.
+ * A display-only override of three existing skeleton bones runs AFTER FinalIK.
+ * RootMotion's pre-solver stage receives the restored animation pose. */
+TRAMP(void,bot_ik,(void* ik,void* m))
 static unsigned celebration_rules_v21;
 static int celebration_team_v21=-1;
-static float celebration_until_v21;
-typedef struct {unsigned bot,visual;int shown;} BotCelebrationV21;
+typedef struct {
+ unsigned bot,visual,ik,look,upper,lower,hand;int shown,posed,bound,displayed;
+ Q4 saved[3];V3 scale;V3 toward;
+} BotCelebrationV21;
 static BotCelebrationV21 bot_celebrations_v21[8];
-static void celebration_hide_v21(BotCelebrationV21* slot){
- if(!slot||!slot->shown)return;
- void* visual=rooted(slot->visual);if(alive(visual))visual_active_v21(visual,0);slot->shown=0;
+static Q4 bone_rotation_v22(void* t,int local){Q4 q;FN(local?0xb74b50:0xb74fd0,void(*)(Q4*,void*,void*))(&q,t,0);return q;}
+static void bone_rotation_set_v22(void* t,Q4 q,int local){FN(local?0xb754c0:0xb75750,void(*)(void*,Q4,void*))(t,q,0);}
+static V3 bone_scale_v22(void* t){V3 v;FN(0xb74bf0,void(*)(V3*,void*,void*))(&v,t,0);return v;}
+static void bone_scale_set_v22(void* t,V3 v){FN(0xb75560,void(*)(void*,V3,void*))(t,v,0);}
+static Q4 aim_minus_x_v22(V3 v){
+ float n=sqroot(dot(v,v));if(n<.0001f)return (Q4){0,0,0,1};v=mul(v,1/n);
+ Q4 q={0,v.z,-v.y,1-v.x};float d=q.y*q.y+q.z*q.z+q.w*q.w;
+ return d>.00001f?normalized(q):(Q4){0,1,0,0};
 }
-EXPORT void celebration_point_v21(void* rules,int scoring_team){
- root_set(&celebration_rules_v21,rules);celebration_team_v21=scoring_team>=0&&scoring_team<2?scoring_team:-1;
- celebration_until_v21=FN(0xb72b40,float(*)(void*))(0)+2.6f;
+static void celebration_restore_v22(BotCelebrationV21* s){
+ if(!s||!s->posed)return;
+ void* bones[3]={rooted(s->upper),rooted(s->lower),rooted(s->hand)};
+ for(int i=0;i<3;i++)if(alive(bones[i]))bone_rotation_set_v22(bones[i],s->saved[i],1);
+ if(alive(bones[2]))bone_scale_set_v22(bones[2],s->scale);
+ s->posed=0;
+}
+static void celebration_hide_v21(BotCelebrationV21* s){
+ if(!s)return;celebration_restore_v22(s);
+ if(s->displayed&&alive(rooted(s->visual)))visual_active_v21(rooted(s->visual),0);
+ s->shown=0;s->displayed=0;
+}
+EXPORT void celebration_point_v21(void* rules,int team){
+ for(int i=0;i<8;i++)celebration_hide_v21(&bot_celebrations_v21[i]);
+ root_set(&celebration_rules_v21,rules);celebration_team_v21=team>=0&&team<2?team:-1;
 }
 EXPORT void celebration_reset_v21(void){
- celebration_team_v21=-1;celebration_until_v21=0;root_set(&celebration_rules_v21,0);
+ celebration_team_v21=-1;root_set(&celebration_rules_v21,0);
  for(int i=0;i<8;i++)celebration_hide_v21(&bot_celebrations_v21[i]);
 }
-EXPORT int celebration_allowed_v21(int winner,int bot_team,int human_team,int rally_active,float now,float until){
- return winner>=0&&winner<2&&bot_team==winner&&human_team==winner&&!rally_active&&now<until;
+/* Legacy callable ABI kept for inspection tools; lifetime is event driven. */
+EXPORT int celebration_allowed_v21(int winner,int bot_team,int human_team,int rally,float now,float until){
+ (void)now;(void)until;return winner>=0&&winner<2&&bot_team==winner&&human_team==winner&&!rally;
+}
+static int celebration_bind_v22(BotCelebrationV21* s,void* bot){
+ void* reach=PTR(bot,0xb8);void* ik=reach?PTR(reach,0x28):0;void* refs=ik?PTR(ik,0x38):0;
+ if(!refs)return 0;
+ void* upper=PTR(refs,0x68),*lower=PTR(refs,0x70),*hand=PTR(refs,0x78);
+ if(!alive(upper)||!alive(lower)||!alive(hand))return 0;
+ void* visual=find_child(transform(bot),"CC_WinThumb");
+ void* base_mesh=find_child(transform(ik),"Base_mesh");
+ void* skin=base_mesh?FN(0x94f410,void*(*)(void*,void*,void*))(gameobject(base_mesh),str("SkinnedMeshRenderer"),0):0;
+ void* renderer=visual?FN(0x94f410,void*(*)(void*,void*,void*))(gameobject(visual),str("MeshRenderer"),0):0;
+ void* mat=skin?FN(0xa1af10,void*(*)(void*,void*))(skin,0):0;
+ if(!alive(visual)||!mat||!renderer)return 0;
+ /* UV palette0 samples this character's existing skin swatch. Never recolor
+  * the bot from the local player's preference or the neutral hand texture. */
+ FN(0xa1b0e0,void(*)(void*,void*,void*))(renderer,mat,0);
+ root_set(&s->visual,visual);root_set(&s->ik,ik);root_set(&s->look,PTR(reach,0x38));
+ root_set(&s->upper,upper);root_set(&s->lower,lower);root_set(&s->hand,hand);s->bound=1;return 1;
 }
 EXPORT void celebration_bot_v21(void* bot){
- if(!bot)return;
- BotCelebrationV21* slot=0;
- for(int i=0;i<8;i++)if(rooted(bot_celebrations_v21[i].bot)==bot){slot=&bot_celebrations_v21[i];break;}
- /* No Transform, Find, position or clock calls during ordinary play. */
+ if(!bot)return;BotCelebrationV21* s=0;
+ for(int i=0;i<8;i++)if(rooted(bot_celebrations_v21[i].bot)==bot){s=&bot_celebrations_v21[i];break;}
  if(celebration_team_v21<0||INT(bot,0x28)!=celebration_team_v21||(!doubles_enabled&&!quartet_enabled)){
-  celebration_hide_v21(slot);return;
+  celebration_hide_v21(s);return;
  }
  void* rules=rooted(rules_root);
- if(!rules||rules!=rooted(celebration_rules_v21)){celebration_hide_v21(slot);return;}
- int team=INT(bot,0x28),rally=network_physics()?net_rally_active:(rules&&BYTE(rules,0x78));
- if(rally){celebration_hide_v21(slot);return;}
- float now=FN(0xb72b40,float(*)(void*))(0);
- if(!celebration_allowed_v21(celebration_team_v21,team,team,rally,now,celebration_until_v21)){celebration_hide_v21(slot);return;}
- int active=1;
- void* target=0;float nearest=1.0e20f;V3 botp=position(transform(bot)),humanp={0,0,0};
- if(active&&finitev(botp)){
-  void* teams=PTR(rules,0x60);void* side=teams?PTR(teams,0x20+8*team):0;
-  void* list=side?PTR(side,0x38):0;void* array=list?PTR(list,0x10):0;int n=list?INT(list,0x18):0;
-  if(array&&n>0&&n<=4)for(int i=0;i<n;i++){
-   void* player=PTR(array,0x20+i*8);if(!alive(player)||INT(player,0x28)!=team)continue;
-   V3 p=player_court_position(player);if(!finitev(p))continue;float d=dot(sub(p,botp),sub(p,botp));
-   if(d<nearest){nearest=d;target=player;humanp=p;}
-  }
+ if(!rules||rules!=rooted(celebration_rules_v21)){celebration_hide_v21(s);return;}
+ /* NewRally may already set rally_active while waiting for serve. Only the
+  * actual serve whistle reset closes this point celebration. */
+ int team=INT(bot,0x28);void* target=0;float nearest=1.0e20f;
+ V3 botp=position(transform(bot)),humanp={0,0,0};
+ void* teams=PTR(rules,0x60),*side=teams?PTR(teams,0x20+8*team):0;
+ void* list=side?PTR(side,0x38):0,*array=list?PTR(list,0x10):0;int n=list?INT(list,0x18):0;
+ if(array&&n>0&&n<=4&&finitev(botp))for(int i=0;i<n;i++){
+  void* player=PTR(array,0x20+i*8);if(!alive(player)||INT(player,0x28)!=team)continue;
+  V3 p=player_court_position(player);if(!finitev(p))continue;float d=dot(sub(p,botp),sub(p,botp));
+  if(d<nearest){nearest=d;target=player;humanp=p;}
  }
- if(!target){celebration_hide_v21(slot);return;}
- if(!slot)for(int i=0;i<8;i++)if(!alive(rooted(bot_celebrations_v21[i].bot))){
-  slot=&bot_celebrations_v21[i];root_set(&slot->bot,bot);root_set(&slot->visual,0);slot->shown=0;break;
+ if(!target){celebration_hide_v21(s);return;}
+ if(!s)for(int i=0;i<8;i++)if(!alive(rooted(bot_celebrations_v21[i].bot))){
+  s=&bot_celebrations_v21[i];celebration_hide_v21(s);root_set(&s->bot,bot);s->bound=0;break;
  }
- if(!slot)return;
- if(!alive(rooted(slot->visual)))root_set(&slot->visual,find_child(transform(bot),"CC_WinThumb"));
- void* visual=rooted(slot->visual);if(!alive(visual))return;
- if(!slot->shown){visual_active_v21(visual,1);slot->shown=1;}
- /* Aim only this visual toward the chosen own-team human. The bot's body,
-  * movement, IK, arms and hit shapes retain their normal transforms. */
- V3 toward=sub(humanp,botp);toward.y=0;float len=sqroot(dot(toward,toward));if(len<.001f)return;
- toward=mul(toward,1/len);
- V3 place=add(botp,(V3){toward.x*.45f,1.35f,toward.z*.45f});position_set(visual,place);
- /* Palm (+X) faces the human and raised thumb (+Z) points up in world space.
-  * Compose the yaw with -90 degrees about X; only this decorative leaf moves. */
- float w=sqroot((1+toward.x)*.5f),y=w>.0001f?-toward.z/(2*w):1;
- FN(0xb75750,void(*)(void*,Q4,void*))(visual,(Q4){-w*.70710678f,y*.70710678f,y*.70710678f,w*.70710678f},0);
+ if(!s||(!s->bound&&!celebration_bind_v22(s,bot)))return;
+ V3 toward=sub(humanp,botp);toward.y=0;float length=sqroot(dot(toward,toward));
+ if(length<.001f){celebration_hide_v21(s);return;}
+ s->toward=mul(toward,1/length);s->shown=1;
+}
+static void celebration_pose_v22(BotCelebrationV21* s){
+ if(!s||!s->shown||celebration_team_v21<0)return;
+ void* bones[3]={rooted(s->upper),rooted(s->lower),rooted(s->hand)},*visual=rooted(s->visual);
+ if(!alive(bones[0])||!alive(bones[1])||!alive(bones[2])||!alive(visual))return;
+ if(s->posed)celebration_restore_v22(s);
+ for(int i=0;i<3;i++)s->saved[i]=bone_rotation_v22(bones[i],1);
+ s->scale=bone_scale_v22(bones[2]);s->posed=1;
+ /* Arm bone local -X is measured from the actual serialized right arm rig.
+  * Rotating it moves the existing skinned sleeve and forearm together. */
+ bone_rotation_set_v22(bones[0],aim_minus_x_v22((V3){s->toward.x*.65f,.76f,s->toward.z*.65f}),0);
+ bone_rotation_set_v22(bones[1],aim_minus_x_v22((V3){s->toward.x*.98f,.20f,s->toward.z*.98f}),0);
+ V3 wrist=position(bones[2]);
+ /* Collapse only the existing cosmetic hand bone, which has no collider;
+  * its replacement is placed at that moved wrist, never a face-level offset. */
+ bone_scale_set_v22(bones[2],(V3){.001f,.001f,.001f});
+ position_set(visual,wrist);
+ float w=sqroot((1+s->toward.z)*.5f),y=w>.0001f?s->toward.x/(2*w):1;
+ bone_rotation_set_v22(visual,(Q4){0,y,0,w},0);if(!s->displayed){visual_active_v21(visual,1);s->displayed=1;}
+}
+EXPORT void bot_ik_hook(void* ik,void* m){
+ BotCelebrationV21* s=0;
+ for(int i=0;i<8;i++)if(rooted(bot_celebrations_v21[i].ik)==ik||rooted(bot_celebrations_v21[i].look)==ik){s=&bot_celebrations_v21[i];break;}
+ if(s)celebration_restore_v22(s);
+ bot_ik_trampoline(ik,m);
+ if(s)celebration_pose_v22(s);
 }

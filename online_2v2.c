@@ -39,7 +39,7 @@ static int online_reception(void* player){
 static void set_mod_version(void* app){
  online_version_ready=0;
  if(app){
-  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v21":"Cloudcourt-4v4-v21");
+  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v22":"Cloudcourt-4v4-v22");
   managed_field(app,0x28,version);online_version_ready=1;
  }
 }
@@ -102,7 +102,7 @@ EXPORT void online_awake_hook(void* page,void* m){
 /* Client_NewRally originally only tail-calls RefreshUI. Replace its exact
  * seven bytes instead of relocating that short relative jump. */
 EXPORT void net_new_rally_hook(void* rules,int team,void* m){
- serve_feedback_arm_v21();celebration_reset_v21();
+ serve_feedback_arm_v21();
  if(network_physics()){net_first_touch=1;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=1;}
  FN(0x253e30,void(*)(void*,void*))(rules,0);
 }

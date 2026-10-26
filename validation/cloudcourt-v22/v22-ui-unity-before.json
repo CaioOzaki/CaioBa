@@ -1,0 +1,74 @@
+{
+  "rows": [
+    {
+      "control": "FaceNext",
+      "hit_count": 2,
+      "top_hit_is_target": true,
+      "panel_before": true,
+      "style_before": 31,
+      "tone_before": 0,
+      "unity_pointer_click_invoked": true,
+      "panel_after": true,
+      "style_after": 32,
+      "tone_after": 0
+    },
+    {
+      "control": "OutfitNext",
+      "hit_count": 2,
+      "top_hit_is_target": true,
+      "panel_before": true,
+      "style_before": 32,
+      "tone_before": 0,
+      "unity_pointer_click_invoked": true,
+      "panel_after": true,
+      "style_after": 41,
+      "tone_after": 0
+    },
+    {
+      "control": "HandToneNext",
+      "hit_count": 2,
+      "top_hit_is_target": true,
+      "panel_before": true,
+      "style_before": 41,
+      "tone_before": 0,
+      "unity_pointer_click_invoked": true,
+      "panel_after": true,
+      "style_after": 41,
+      "tone_after": 1
+    },
+    {
+      "control": "Done",
+      "hit_count": 0,
+      "top_hit_is_target": false,
+      "panel_before": true,
+      "style_before": 41,
+      "tone_before": 1,
+      "unity_pointer_click_invoked": false,
+      "panel_after": true,
+      "style_after": 41,
+      "tone_after": 1
+    },
+    {
+      "control": "Reopen and Done",
+      "hit_count": 0,
+      "top_hit_is_target": false,
+      "panel_before": true,
+      "style_before": 41,
+      "tone_before": 1,
+      "unity_pointer_click_invoked": false,
+      "panel_after": true,
+      "style_after": 41,
+      "tone_after": 1
+    }
+  ],
+  "before_screenshot": "C:\\Users\\Usuario\\.codex\\.chatgpt-projects\\g-p-6a346e6820e0819196b3dc8f2217a225\\output\\volleyball-mod\\tools\\u22-ui\\analysis\\customization-before-before.png",
+  "after_screenshot": "C:\\Users\\Usuario\\.codex\\.chatgpt-projects\\g-p-6a346e6820e0819196b3dc8f2217a225\\output\\volleyball-mod\\tools\\u22-ui\\analysis\\customization-before-after.png",
+  "actual_CurvedUI_GetObjectsHitByRay": true,
+  "unity_Button_OnPointerClick": true,
+  "direct_button_press_hook": false,
+  "working_or_live_modified": false,
+  "preferences_restored": true,
+  "menu": "C:\\Users\\Usuario\\.codex\\.chatgpt-projects\\g-p-6a346e6820e0819196b3dc8f2217a225\\output\\volleyball-mod\\versions\\cloudcourt-v21-antes-v22\\level0",
+  "passed": true,
+  "expected_done_closes": false
+}

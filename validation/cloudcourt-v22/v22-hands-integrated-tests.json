@@ -1,0 +1,59 @@
+{
+  "passed": true,
+  "actual_integrated_dll": true,
+  "sha256": "3783a5541072fe1474ce9d4b0b9f0778558503779442d58046569056623cd76f",
+  "cases": [
+    [
+      "0x180000000",
+      2,
+      false
+    ],
+    [
+      "0x180000000",
+      2,
+      true
+    ],
+    [
+      "0x180000000",
+      4,
+      false
+    ],
+    [
+      "0x180000000",
+      4,
+      true
+    ],
+    [
+      "0x190000000",
+      2,
+      false
+    ],
+    [
+      "0x190000000",
+      2,
+      true
+    ],
+    [
+      "0x190000000",
+      4,
+      false
+    ],
+    [
+      "0x190000000",
+      4,
+      true
+    ]
+  ],
+  "checks": [
+    "two ASLR bases",
+    "2v2/4v4 offline+online",
+    "Client_EndRally through bot_body through post-IK arm",
+    "NewRally and 12-second delay preserve connected gesture",
+    "serve placement/whistle clears once and restores skeletal pose/scale",
+    "original Bot fields byte-identical",
+    "no warm-frame Find/material/SetActive",
+    "main local both-GRAB eligible 2nd touch open mesh; release and 3rd touch restore thumb",
+    "remote RPC poses 0..4 and all six tones"
+  ],
+  "scope": "Actual main native DLL with hierarchical Unity/Photon API stubs; no headset or live two-PC claim."
+}

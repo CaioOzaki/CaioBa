@@ -1,0 +1,32 @@
+{
+  "checkpoint": "Cloudcourt-v22-correcoes",
+  "base": "Cloudcourt-v21-orla-gestos",
+  "verified_files": 17,
+  "zip_sha256": "832b5a2e84bebac63aad841cb71ad321f9d3d0932457c8237200013cc2733b87",
+  "previous_checkpoint": "distribution/Cloudcourt-v21-orla-gestos.zip",
+  "previous_backup": "versions/cloudcourt-v21-antes-v22",
+  "github_commit": null,
+  "requested_implementation_completed": true,
+  "final_asset_audit_passed": true,
+  "native_regression_suites_passed": 21,
+  "installer_cases_passed": 13,
+  "native_sha256": "3783a5541072fe1474ce9d4b0b9f0778558503779442d58046569056623cd76f",
+  "room_namespaces": [
+    "Cloudcourt-2v2-v22",
+    "Cloudcourt-4v4-v22"
+  ],
+  "VR_playtest": false,
+  "live_two_PC_multiplayer": false,
+  "waiting_only_for_user_playtest": true,
+  "zip_name": "Cloudcourt-v22-correcoes.zip",
+  "zip_bytes": 83862437,
+  "real_Unity_Done_raycast_verified": true,
+  "bot_celebration_until_serve_whistle": true,
+  "hand_tones": 6,
+  "skyline_triangles": 1572,
+  "sand_surface_triangles": 2,
+  "unchanged_colliders": 144,
+  "unchanged_collider_meshes": 76,
+  "startup_menu_indoor_seconds": 15,
+  "startup_beach_seconds": 15
+}

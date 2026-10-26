@@ -46,7 +46,7 @@ static void play_serve_whistle_v21(void* ball){
 }
 static void serve_feedback_spawn_v21(void* ball){
  if(!serve_feedback_pending_v21||!ball||lobby_is_ball(ball))return;
- serve_feedback_pending_v21=0;landing_clear_v20();play_serve_whistle_v21(ball);
+ serve_feedback_pending_v21=0;landing_clear_v20();celebration_reset_v21();play_serve_whistle_v21(ball);
 }
 static void serve_feedback_motion_v21(void* ball,V3 p,V3 v,int hit,int touch,int team,int context){
  /* Exact existing bot serve placement: no touch, stationary, context 3.

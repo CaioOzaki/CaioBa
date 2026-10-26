@@ -21,7 +21,7 @@ class IntegratedLobbyEngine(LobbyEngine):
  def update(self,hand,down):self.grab=down;self.call('lobby_hand_update_hook',hand)
 
 manifest=json.loads((R/'analysis/native-patch-manifest.json').read_text())
-assert manifest['network_version']=='Cloudcourt-2v2-v21 / Cloudcourt-4v4-v21'
+assert manifest['network_version']=='Cloudcourt-2v2-v22 / Cloudcourt-4v4-v22'
 patches={x['name']:x for x in manifest['patches']}
 for name in ('lobby_hand_update','lobby_update','lobby_jump_area'):
  item=patches[name];raw=p.get_data(item['rva'],5)
