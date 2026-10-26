@@ -1,5 +1,10 @@
 # Cloudcourt bot roster v20
 
+v20.1: BOT1's earlier middle-part hair geometry is restored at the user's
+request. Its face, clothing and opaque BC1 texture remain unchanged. The other
+eight characters retain their v20 hair improvements. The native roster and
+online protocol still use v20.
+
 Nine own procedural cartoon characters. The first seven faces preserve the
 existing Cloudcourt drawings; continuous hair caps and curved hair strands
 replace their previous geometry. BOT8 is the requested long black hair/curtain

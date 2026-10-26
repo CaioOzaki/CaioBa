@@ -25,7 +25,7 @@
   "hair_vertex_ranges": [
     [
       6194,
-      6913
+      6740
     ],
     [
       6194,
@@ -61,7 +61,7 @@
     ]
   ],
   "vertices": [
-    6913,
+    6740,
     7676,
     6768,
     7911,
@@ -72,7 +72,7 @@
     7203
   ],
   "triangles": [
-    12264,
+    11936,
     13472,
     12004,
     14044,
@@ -310,5 +310,6 @@
   "materials_and_rig_transforms_unchanged": true,
   "texture_format": "BC1/DXT1 opaque",
   "mip_levels": 9,
-  "character_texture_bytes": 33554304
+  "character_texture_bytes": 33554304,
+  "bot_1_hair_reference": "Pre-v20 middle part restored at user request"
 }

@@ -25,7 +25,7 @@
   "hair_vertex_ranges": [
     [
       6194,
-      6913
+      6740
     ],
     [
       6194,
@@ -61,7 +61,7 @@
     ]
   ],
   "vertices": [
-    6913,
+    6740,
     7676,
     6768,
     7911,
@@ -72,7 +72,7 @@
     7203
   ],
   "triangles": [
-    12264,
+    11936,
     13472,
     12004,
     14044,
@@ -88,5 +88,6 @@
     "8": "Light skin, long black curtain bangs, blonde streak, dark eyes, septum, black tee and trousers",
     "9": "Tall slender young light-skinned man, black square glasses, swept-back middle part, dark-blue jeans and black tee"
   },
-  "provenance": "Original procedural Cloudcourt artwork; rig bindings retained only for animation compatibility."
+  "provenance": "Original procedural Cloudcourt artwork; rig bindings retained only for animation compatibility.",
+  "bot_1_hair_reference": "Pre-v20 middle part restored at user request"
 }

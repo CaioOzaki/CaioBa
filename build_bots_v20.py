@@ -23,6 +23,11 @@ def authoring():
     source=ast.parse((R/'create_puloviva_characters.py').read_text(encoding='utf-8'))
     functions={'font','face','atlas','uv_palette','v3','aabb','render_model','Model'}
     source.body=[node for node in source.body if isinstance(node,(ast.FunctionDef,ast.ClassDef)) and node.name in functions]
+    # The user prefers BOT1's original middle part. Keep its exact pre-v20
+    # authoring function available without executing the legacy asset builder.
+    legacy=next(node for node in ast.parse((R/'create_puloviva_characters.py').read_text(encoding='utf-8')).body
+                if isinstance(node,ast.FunctionDef) and node.name=='character')
+    legacy.name='legacy_character_v19';source.body.append(legacy)
     scope=dict(Path=Path,np=np,copy=copy,struct=struct,math=math,Image=Image,ImageDraw=ImageDraw,ImageFont=ImageFont,A=A)
     scope.update(SKINS=['#e9b98d','#f0c5a6','#b98055','#f0c3a2','#e7b589','#744a39','#edbb9b','#f0c5ae','#ecc3a7'],
         HAIRS=['#171b24','#5a3929','#30261e','#342b27','#171b24','#f1f0e9','#392820','#111723','#302a2b'],
@@ -120,6 +125,7 @@ def character(scope,n):
     m.ellipsoid((0,2.55,0),(.50,.51,.44),12,0,'face',segments=32,rings=20)
     for x in (-.49,.49):m.ellipsoid((x,2.53,0),(.07,.11,.07),12,0,segments=12,rings=8)
     hair_start=len(m.v)
+    if n==0:return scope['legacy_character_v19'](0),hair_start
     scalp(m,.82 if n==5 else .95,2.08 if n in (3,7) else 1.72)
     if n in (0,8):
         for side in (-1,1):

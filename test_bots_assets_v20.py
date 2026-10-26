@@ -34,7 +34,13 @@ def validate(path,baseline=None):
         assert (skin[start:,0]==12).all(),'Hair does not follow the original head bone.'
         hair=row[start:,:3].copy()
         if n==8:hair/=[.82,1.10,.86]
-        assert np.any((np.abs(hair[:,0])<.10)&(hair[:,1]>2.40)&(hair[:,1]<2.70)&(hair[:,2]<-.44)), 'Scalp/nape coverage missing.'
+        if n==0:
+            # User explicitly restored this character's preferred legacy hair.
+            # Require exact old geometry instead of the v20 scalp silhouette.
+            legacy=old.objects[4322].read_typetree()
+            assert d['m_VertexData']==legacy['m_VertexData'] and d['m_IndexBuffer']==legacy['m_IndexBuffer']
+        else:
+            assert np.any((np.abs(hair[:,0])<.10)&(hair[:,1]>2.40)&(hair[:,1]<2.70)&(hair[:,2]<-.44)), 'Scalp/nape coverage missing.'
         ht=triangles[(triangles>=start).all(axis=1)];p=row[ht,:3];normal=row[ht,3:6].mean(axis=1)
         facing=(np.cross(p[:,1]-p[:,0],p[:,2]-p[:,0])*normal).sum(axis=1)
         assert (facing>=-1e-9).all(),'Hair face winding points inward.'

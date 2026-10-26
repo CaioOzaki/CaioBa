@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "changed_ids": [
+    3569,
+    4235,
+    4243,
+    4322
+  ],
+  "pre_v20_mesh_byte_fields_exact": true,
+  "body_vertex_bytes_unchanged": true,
+  "textures_materials_physics_rig_unchanged": true,
+  "idempotent": true,
+  "other_release_files_unchanged": 16,
+  "native_DLL_unchanged": true,
+  "online_namespace": "Cloudcourt-2v2-v20 / Cloudcourt-4v4-v20",
+  "VR_playtest": false
+}
