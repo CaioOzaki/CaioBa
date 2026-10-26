@@ -13,6 +13,7 @@ import numpy as np
 from PIL import Image
 from build_customization_art_v19 import (A,CELL,SIZE,FACE_NAMES,OUTFIT_NAMES,create_art,
                                          apply_customization_assets,named)
+from build_customization_fix_v20 import mip_report
 
 
 def mesh_rows(obj):
@@ -34,12 +35,15 @@ def validate(file,before=None):
         ptr=texenv['m_Texture'];assert ptr['m_FileID']==0
         obj=file.objects[ptr['m_PathID']];data=obj.read_typetree()
         assert data['m_Width']==data['m_Height']==SIZE and data['m_MipCount']==9
-        assert data['m_TextureFormat']==25 and data['m_StreamData']['size']==0
+        assert data['m_TextureFormat'] in (12,25) and data['m_StreamData']['size']==0
         assert data['m_TextureSettings']['m_WrapU']==data['m_TextureSettings']['m_WrapV']==1
         decoded=np.array(obj.read().image.convert('RGB'))
         expected=np.array(Image.open(A/('faces-atlas.png' if part=='face' else 'outfits-atlas.png')).convert('RGB'))
         error=np.abs(decoded.astype(np.int16)-expected.astype(np.int16))
-        assert error.mean()<1.5 and np.quantile(error,.999)<35,(part,error.mean(),np.quantile(error,.999))
+        limit=3.5 if data['m_TextureFormat']==12 else 1.5
+        assert error.mean()<limit and np.quantile(error,.999)<35,(part,error.mean(),np.quantile(error,.999))
+        if data['m_TextureFormat']==12:
+            assert all(x['opaque_pixels']==x['pixels'] for x in mip_report(obj.read())), 'BC3 avatar alpha must stay opaque at every mip.'
         types[part]=dict(material_id=material.path_id,texture_id=obj.path_id,decoded=decoded,
                         bytes=len(data['image data']),max_error=int(error.max()),mean_error=float(error.mean()))
     for meshid in (67,68):

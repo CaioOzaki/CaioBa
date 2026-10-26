@@ -32,6 +32,7 @@ entries += [('lobby_enter',0x314c60),('lobby_start',0x3154d0),('lobby_ball_awake
 entries += [('clamp_player',0x31ad60),('button_press',0x461e90),('client_choose',0x30cb90),('ui_submit',0x2437d0),('intro_page',0x3168b0),('tmp_awake',0x42f790),('tmp_ui_awake',0xa28680),('ui_text_enable',0xe83720),('refresh_score',0x253e30),('in_room_ui',0x315840),('in_game_active',0x313f40)]
 from fix_gameplay_v19 import gameplay_v19_entries, V19_CALLS
 entries += gameplay_v19_entries(p)
+entries += [('landing_collision',0x77ee90)]
 if 'probe_start_hook' in exports:entries += [('probe_start',0xef74f0),('probe_solo',0xef4620)]
 for name,rva in entries:
     n=0
@@ -114,6 +115,7 @@ for name,site,original_target,hookname in [
  ('four_touches',0x253de8,0x2533a0,'four_point_hook'),
  ('double_touch',0x253e10,0x2533a0,'double_point_hook'),
  ('grounded_point',0x252606,0x2533a0,'ground_point_hook'),
+ ('landing_position',0x258574,0x14ba70,'landing_position_box_hook'),
  ('front_row_setup',0x254181,0xef32b0,'front_row_hook'),
  ('front_row_rotation',0x2526d2,0xef32b0,'front_row_hook'),
  ('player_speed',0x31bf73,0xef33b0,'player_speed_hook'),
@@ -134,6 +136,8 @@ result[offset:offset+7]=b'\xe9'+struct.pack('<i',hook-site-5)+b'\x90\x90'
 patches.append(dict(name='net_new_rally',rva=site,length=7,original=before.hex(),hook=hook))
 from fix_map_v19 import patch_map_calls_v19
 patch_map_calls_v19(result,p,patches,exports,delta)
+from fix_bot_v20 import patch_bot_identity_v20
+patch_bot_identity_v20(result,p,patches,exports,delta)
 from fix_pause_v16 import patch_pause_tracking
 patch_pause_tracking(result,p,patches)
 struct.pack_into('<H',result,p.FILE_HEADER.get_field_absolute_offset('NumberOfSections'),p.FILE_HEADER.NumberOfSections+4)
@@ -150,7 +154,7 @@ for item in patches:
     assert check.get_section_by_rva(item['hook']).Characteristics&0x20000000
 for section in check.sections:
     assert not (section.Name.startswith(b'.vf') and section.Characteristics&0x20000000 and section.Characteristics&0x80000000)
-manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v19 / Cloudcourt-4v4-v19','status':'v19 bot timing, customization, input and online maps; VR and live two-PC validation pending'}
+manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v20 / Cloudcourt-4v4-v20','status':'v20 alpha/material retry, unique bots, score outlines and floor marks; VR and live two-PC validation pending'}
 (R/'analysis/native-patch-manifest.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))
 

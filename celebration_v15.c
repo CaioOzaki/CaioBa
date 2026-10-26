@@ -12,14 +12,14 @@ EXPORT void double_point_hook(void* rules,int winner,void* m){point_reason=2;FN(
 EXPORT void ground_point_hook(void* rules,int winner,void* m){
  point_reason=3;
  void* k=*(void**)(base()+0x15426f0);void* s=k?PTR(k,0xb8):0;void* ball=s?PTR(s,0):0;
- if(ball){V3 p=position(transform(ball));if(p.x>4.5f||p.x< -4.5f||p.z>9||p.z< -9)point_reason=4;}
+ if(ball){V3 p=position(transform(ball));landing_prepare_v20(ball,p);if(!(p.x> -4.5f&&p.x<4.5f&&p.z> -9.f&&p.z<9.f))point_reason=4;}
  if(serve_flight_team>=0)point_reason=6;
  FN(0x2533a0,void(*)(void*,int,void*))(rules,winner,m);
 }
 EXPORT void* score_box_hook(void* klass,void* value){
  int team=*(int*)value;
  int packed=team;
- if(team>=0&&team<=1&&(offline()||network_physics()))packed=0x4300|team|((point_reason?point_reason:3)<<1);
+ if(team>=0&&team<=1&&(offline()||network_physics()))packed=0x4300|team|((point_reason?point_reason:3)<<1)|landing_wire_flags_v20();
  return FN(0x14ba70,void*(*)(void*,void*))(klass,&packed);
 }
 static void point_message(void* rules,int team,int reason){

@@ -190,7 +190,7 @@ def create_art():
              'material_scale':[1.,1.], 'offset_formula':'(index % 3 / 3, (2 - index // 3) / 3)',
              'face_ids':dict(enumerate(FACE_NAMES)),'outfit_ids':dict(enumerate(OUTFIT_NAMES)),
              'default_outfit':2,'copyright':'Original procedural Cloudcourt artwork; no base-game image samples.',
-             'mip_levels':9,'texture_format':'BC7',
+             'mip_levels':9,'texture_format':'BC3/DXT5 opaque',
              'legacy_faces_preserved':[0,1,2,3], 'meshes':'Original v18 positions/normals/indices and hitboxes preserved; only avatar UVs are remapped.'}
     (A/'catalog.json').write_text(json.dumps(catalog,indent=2),encoding='utf-8')
     return face_atlas,body_atlas,catalog
@@ -219,8 +219,9 @@ def named(file,kind,name):
 
 def set_atlas(file,im,name):
     obj=named(file,'Texture2D',name) or clone(file,file.objects[1301])
-    # BC7's block encoder keeps nine valid levels down to a 6x6 image here.
-    texture=obj.read();texture.set_image(im,mipmap_count=9);texture.save();readable(obj)
+    # Explicit BC3 keeps alpha opaque at every mip. The old implicit BC7 path
+    # could encode transparent alpha while RGB-only authoring checks still passed.
+    texture=obj.read();texture.set_image(im.convert('RGBA'),target_format=12,mipmap_count=9);texture.save();readable(obj)
     data=obj.read_typetree();data['m_Name']=name;data['m_TextureSettings']['m_WrapU']=data['m_TextureSettings']['m_WrapV']=1
     # Bilinear+mipmaps gives readable expressions without shimmering in the Quest.
     data['m_TextureSettings']['m_FilterMode']=2

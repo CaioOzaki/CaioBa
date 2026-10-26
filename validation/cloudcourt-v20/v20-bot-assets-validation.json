@@ -1,0 +1,136 @@
+{
+  "passed": true,
+  "bots": [
+    {
+      "bot": 1,
+      "mesh": 4322,
+      "vertices": 6913,
+      "triangles": 12264,
+      "hair_vertices": 719
+    },
+    {
+      "bot": 2,
+      "mesh": 4323,
+      "vertices": 7676,
+      "triangles": 13472,
+      "hair_vertices": 1482
+    },
+    {
+      "bot": 3,
+      "mesh": 4324,
+      "vertices": 6768,
+      "triangles": 12004,
+      "hair_vertices": 574
+    },
+    {
+      "bot": 4,
+      "mesh": 4325,
+      "vertices": 7911,
+      "triangles": 14044,
+      "hair_vertices": 1717
+    },
+    {
+      "bot": 5,
+      "mesh": 4326,
+      "vertices": 7186,
+      "triangles": 12744,
+      "hair_vertices": 992
+    },
+    {
+      "bot": 6,
+      "mesh": 4327,
+      "vertices": 6913,
+      "triangles": 12264,
+      "hair_vertices": 719
+    },
+    {
+      "bot": 7,
+      "mesh": 4328,
+      "vertices": 6913,
+      "triangles": 12264,
+      "hair_vertices": 719
+    },
+    {
+      "bot": 8,
+      "mesh": 4329,
+      "vertices": 7331,
+      "triangles": 13004,
+      "hair_vertices": 1137
+    },
+    {
+      "bot": 9,
+      "mesh": 4330,
+      "vertices": 7203,
+      "triangles": 12784,
+      "hair_vertices": 1009
+    }
+  ],
+  "database": [
+    {
+      "identity": 1,
+      "database_index": 39,
+      "prefab": "SimpleCitizens_Runner_Black",
+      "mesh": 4322
+    },
+    {
+      "identity": 2,
+      "database_index": 12,
+      "prefab": "SimpleCitizens_Footballer_Black",
+      "mesh": 4323
+    },
+    {
+      "identity": 3,
+      "database_index": 30,
+      "prefab": "SimpleCitizens_Nerd_Black",
+      "mesh": 4324
+    },
+    {
+      "identity": 4,
+      "database_index": 21,
+      "prefab": "SimpleCitizens_Hippie_Black",
+      "mesh": 4325
+    },
+    {
+      "identity": 5,
+      "database_index": 15,
+      "prefab": "SimpleCitizens_Grandma_Black",
+      "mesh": 4326
+    },
+    {
+      "identity": 6,
+      "database_index": 18,
+      "prefab": "SimpleCitizens_Grandpa_Black",
+      "mesh": 4327
+    },
+    {
+      "identity": 7,
+      "database_index": 0,
+      "prefab": "SimpleCitizens_Biker_Black",
+      "mesh": 4328
+    },
+    {
+      "identity": 8,
+      "database_index": 45,
+      "prefab": "SimpleCitizens_Tourist_Black",
+      "mesh": 4329
+    },
+    {
+      "identity": 9,
+      "database_index": 6,
+      "prefab": "SimpleCitizens_Clown_Black",
+      "mesh": 4330
+    }
+  ],
+  "opaque_mips_verified": 432,
+  "average_DXT1_RGB_error": 2.1033987402915955,
+  "maximum_DXT1_RGB_error": 98,
+  "texture_bytes_before": 150994944,
+  "texture_bytes_after": 33554304,
+  "unrelated_objects_byte_identical": 4225,
+  "rig_transforms_materials_scripts_colliders_unchanged": true,
+  "seven_legacy_faces_pixel_identical": true,
+  "grandma_black_hair_and_wine_clothes_preserved": true,
+  "file_bytes": 52318248,
+  "scope": "Serialized geometry, textures and rig bindings; actual animated VR review remains required.",
+  "idempotent": true
+}

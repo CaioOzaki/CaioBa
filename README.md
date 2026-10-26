@@ -1,21 +1,19 @@
-# Cloudcourt VR — v19
+# Cloudcourt VR — v20
 
-Current checkpoint: **Cloudcourt-v19-customizacao**. [Changes and validation](CHECKPOINT-V19.md).
+Current checkpoint: **Cloudcourt-v20-personagens-menu**. [Release notes](CHECKPOINT-V20.md).
 
-- Bots jump through the real inlined Update path, reaching a 2m apex and timing attacks for descending sets. The approved player set trajectory and target remain unchanged.
-- Nine independent emoji faces and nine outfits, giving 81 combinations. Customize from the main menu or pause overlay; preferences persist and online peers receive each player's choice. [PNG previews and catalog](assets/customization-v19/README.md).
-- Quest A and both digital/analog triggers feed the same menu submit state. Valid button clicks play a cached 2D sound. Clicking UI in the lobby does not request a practice ball.
-- Beach sea/bird AudioSources disabled. Indoor and Beach are the available courts. The host chooses the online map before creating the room and all peers follow its Photon room property.
-- Best of three sets with a two-point lead: Indoor25 / Beach21. Sets/points options and the night court are hidden.
+- Fixed invisible customization previews: v19 BC7 compression corrupted alpha, especially in mipmaps. BC3 makes every mip opaque at the same 6 MB texture budget. Actual Unity desktop camera captures confirmed the before/after change. Avatar material binding now retries delayed and replaced materials; a native regression reproduces the old failure.
+- Nine own cartoon bots, including the requested curtain bangs/blonde streak/septum character and the tall, slim young man with square glasses and dark blue jeans. Continuous hair coverage and curved strands replace the old hair geometry. The host picks without repetition and sends the chosen existing database index through the original assignment RPC. [Bot gallery and own art](assets/bots-v20/README.md).
+- Character texture data reduced from 151 MB RGB24 to 33.6 MB opaque BC1 with verified mipmaps. Rig, IK and gameplay colliders preserved.
+- Black score outlines, reordered Settings, and gym banners moved clear of structural beams (12 previous bound intersections reduced to zero).
+- Floor points leave a green/red ring at the actual collision contact. The existing reliable EndRally RPC carries the mark and contact position to all peers. It clears at the next rally and has no collider or scoring effect.
 
-Room namespaces: **Cloudcourt-2v2-v19 / Cloudcourt-4v4-v19**. All friends need v19, the same format and region. Earlier v18 beach, audio, lobby and gameplay fixes are preserved.
+All friends need **v20**, the same region and format. Room namespaces: **Cloudcourt-2v2-v20 / Cloudcourt-4v4-v20**. Earlier approved physics, assisted sets, 2v2/4v4, lobby and appearance options remain.
 
-Build on a compatible local v18 working copy: compile `spin_mod.c`, run `build_patch.py`, then `build_cloudcourt_v19.py`. It applies only v19 UI/art/audio-source changes to existing assets. Do not run the old v16 assembly over this release. `package_cloudcourt_v19.py` builds and tests a reversible 17-file installer for the compatible original Steam build 9216628 or v18. Previous ZIPs remain local.
+Build on a compatible local v19 working copy: compile `spin_mod.c`, run `build_patch.py`, then `build_cloudcourt_v20.py`. These apply narrow upgrades in place. Do not reconstruct old v16 assets over the current version. `package_cloudcourt_v20.py` builds/tests a reversible 17-file installer for the compatible original Steam build 9216628 or v19. Earlier ZIPs remain local.
 
-Validation: `run_validation_v19.py` covers 23 native suites, including original Bot.Update and scoring control flow. `audit_assets_v19.py`, `test_menu_v19.py`, `test_customization_art_v19.py` and `test_silence_beach_v19.py` cover the final serialized assets. Controlled menu/Indoor and Beach startup checks passed. Engine stubs, UV sampling and startup checks do not establish actual Quest 3 comfort/input or live two-PC behavior; those still need playtesting.
+`run_validation_v20.py` covers 27 native suites. `audit_assets_v20.py` compares the final assets with the v19 backup, including whitelist, colliders, alpha and geometry checks. The Unity preview probe restores PlayerPrefs and runs only in its disposable copy. The final package also passed reversible installer checks and controlled menu/Indoor/Beach startup. These checks do not establish live avatar appearance in Quest 3 or real two-PC multiplayer; those playtests remain pending.
 
-Own compatible base game required. This repository contains mod sources, own procedural artwork and previously included CC0 effects with their licenses. It does not contain game DLLs, extracted original meshes/textures/audio, backups or distribution ZIPs. A clean clone alone is not a complete game build; compatible local assets, backups and tool dependencies are required. The cleaned branch continues to exclude abandoned experimental files.
+Own compatible base game required. This repository includes mod sources, own art and previously included CC0 audio with its licenses. Game DLLs, extracted original assets, backups and distribution ZIPs are not published. A clean clone requires compatible local assets, backups and tools before it can build. The cleaned branch still excludes abandoned experimental files.
 
-Visual identity: https://www.figma.com/design/1sIgjKcMItHmbLIu1dnch0?node-id=2-24
-
-Earlier release: [v18](CHECKPOINT-V18.md). [Sound credits](assets/audio-v18/CREDITS.md).
+Earlier release: [v19](CHECKPOINT-V19.md). [Audio credits](assets/audio-v18/CREDITS.md).

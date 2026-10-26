@@ -39,7 +39,7 @@ static int online_reception(void* player){
 static void set_mod_version(void* app){
  online_version_ready=0;
  if(app){
-  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v19":"Cloudcourt-4v4-v19");
+  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v20":"Cloudcourt-4v4-v20");
   managed_field(app,0x28,version);online_version_ready=1;
  }
 }
@@ -62,6 +62,7 @@ EXPORT _Bool connect_default_hook(void* m){
 }
 EXPORT void clear_teams_hook(void* rules,void* m){
  clear_teams_trampoline(rules,m);
+ bots_roster_reset_v20(rules);
  if(online_version_ready&&!offline()){prepare_match(rules);net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;}
 }
 static int team_population(int team,void* exclude){
@@ -101,6 +102,7 @@ EXPORT void online_awake_hook(void* page,void* m){
 /* Client_NewRally originally only tail-calls RefreshUI. Replace its exact
  * seven bytes instead of relocating that short relative jump. */
 EXPORT void net_new_rally_hook(void* rules,int team,void* m){
+ landing_clear_v20();
  if(network_physics()){net_first_touch=1;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=1;}
  FN(0x253e30,void(*)(void*,void*))(rules,0);
 }
@@ -121,9 +123,11 @@ EXPORT void client_motion_hook(void* ball,V3 pos,V3 velocity,_Bool hit,int touch
  }
 }
 EXPORT void client_end_hook(void* rules,int team,V3 pos,void* m){
- int reason=0;if((team&0xff00)==0x4300){reason=(team>>1)&15;team&=1;}
+ int reason=0,marker=0,outside=0;
+ if((team&0xff00)==0x4300){reason=(team>>1)&15;marker=(team&0x40)!=0;outside=(team&0x80)!=0;team&=1;}
  if(network_physics()){net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;}
  client_end_trampoline(rules,team,pos,m);
+ if(marker&&(reason==3||reason==4||reason==6))landing_show_v20(pos,outside);
  if(reason)point_message(rules,team,reason);
  if(network_physics())finish_team_changes();
 }

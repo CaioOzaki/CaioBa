@@ -7,7 +7,7 @@ marks by `build_customization_art_v19.py`; they use no base-game texture sample.
 The preview labels use the project's existing OFL-licensed Cloudcourt Bubble font.
 
 `faces-atlas.png` and `outfits-atlas.png` are separate 1536 by 1536 images, each
-with nine 512 by 512 cells. Runtime textures use BC7 with nine mip levels,
+with nine 512 by 512 cells. From v20, runtime textures use opaque BC3/DXT5 with nine mip levels,
 requiring 6,291,488 encoded bytes in total. Existing avatar meshes, renderers,
 positions, normals, triangle indices, bounds and colliders are preserved.
 
@@ -36,3 +36,9 @@ objects. Running the command-line builder requires a separate output path.
 atlas sampling, preserved legacy drawings, compressed data, mip levels, mesh
 invariants, unchanged unrelated objects and idempotence. These checks do not
 replace real headset and multiplayer review.
+
+The delivered v19 used BC7 with incorrect alpha in the encoded mipmaps. The v20
+repair replaces only texture payloads 1329/1330, preserving the 6,291,488-byte
+total. Tests now inspect alpha at every mip instead of discarding it through an
+RGB conversion. `build_customization_fix_v20.py` upgrades existing v19 assets;
+`set_atlas` in the authoring builder explicitly uses BC3 for future builds.

@@ -1,0 +1,75 @@
+{
+  "passed": true,
+  "files": {
+    "level0": {
+      "changed_ids": [
+        563,
+        564,
+        568,
+        580,
+        583,
+        603,
+        613,
+        629,
+        631,
+        635,
+        636,
+        637,
+        640,
+        645,
+        646,
+        656,
+        673,
+        675,
+        677,
+        705,
+        732,
+        736,
+        741,
+        742,
+        759,
+        771,
+        776,
+        782,
+        830,
+        841,
+        847,
+        861,
+        863,
+        880,
+        892,
+        896,
+        897,
+        915,
+        918,
+        939,
+        954,
+        957,
+        973,
+        977,
+        978,
+        979,
+        983
+      ],
+      "unchanged_objects": 1194
+    },
+    "level3": {
+      "changed_ids": [
+        262
+      ],
+      "unchanged_objects": 339
+    }
+  },
+  "checks": [
+    "strict object and byte-field whitelist",
+    "font references and button events unchanged",
+    "sets/points remain hidden",
+    "12 controls arranged without overlap",
+    "12 old banner/frame intersections removed",
+    "at least 27cm structural clearance",
+    "all colliders unchanged",
+    "idempotent in-memory transforms"
+  ],
+  "native_outline_helper": "score_outline_v20.c must be integrated after runtime font assignment; no copied MonoBehaviour schema",
+  "VR_render_tested": false
+}

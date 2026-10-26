@@ -87,21 +87,31 @@ static void skin_body(void* body){
  for(int i=0;i<8;i++)if(rooted(skins[i].body)==body){slot=&skins[i];break;}
  if(!slot)for(int i=0;i<8;i++)if(!alive(rooted(skins[i].body))){slot=&skins[i];break;}
  if(!slot)return;
+ int rebound=0;
  if(rooted(slot->body)!=body){
   root_set(&slot->body,body);slot->skin=-1;
-  const char* paths[2]={"Physical Head/Visual Head Root/Head","Physical Torso/Scaler (1)/Body"};
-  for(int i=0;i<2;i++){
+  for(int i=0;i<2;i++)root_set(&slot->materials[i],0);
+ }
+ /* An avatar can Update before its renderers/material instances are ready.
+  * Retry missing bindings and reapply to any replacement material. Recording
+  * a successful style with NULL materials made the old selection permanent. */
+ int ready=1;
+ const char* paths[2]={"Physical Head/Visual Head Root/Head","Physical Torso/Scaler (1)/Body"};
+ for(int i=0;i<2;i++){
+  if(!alive(rooted(slot->materials[i]))){
    void* t=find_child(transform(body),paths[i]);void* renderer=t?FN(0x94f410,void*(*)(void*,void*,void*))(gameobject(t),str("MeshRenderer"),0):0;
    root_set(&slot->materials[i],renderer?FN(0xa1ae90,void*(*)(void*,void*))(renderer,0):0);
+   rebound=1;
   }
+  ready&=alive(rooted(slot->materials[i]));
  }
- int skin=player_skin(player);if(slot->skin==skin)return;
- slot->skin=skin;
+ int skin=player_skin(player);if(slot->skin==skin&&ready&&!rebound)return;
  for(int i=0;i<2;i++){void* mat=rooted(slot->materials[i]);if(mat){
   int index=i==0?skin%9:skin/9;
   FN(0x9566d0,void(*)(void*,V2,void*))(mat,(V2){(index%3)/3.f,(2-index/3)/3.f},0);
   FN(0x956610,void(*)(void*,Q4,void*))(mat,(Q4){1,1,1,1},0);
  }}
+ slot->skin=ready?skin:-1;
 }
 typedef struct {unsigned root;Q4 saved,open;} Finger;
 static Finger fingers[30];static int finger_count,feedback_active;static unsigned feedback_body;

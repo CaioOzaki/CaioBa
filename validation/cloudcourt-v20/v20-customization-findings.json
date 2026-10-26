@@ -1,0 +1,47 @@
+{
+  "status": "completed",
+  "confirmed_cause": {
+    "objects": [
+      1329,
+      1330
+    ],
+    "format_v19": "BC7",
+    "source_alpha": 255,
+    "outfits_base_alpha_mean": 0.5705,
+    "face_lower_mips_alpha_mean_max": 0.89,
+    "explanation": "Encoded atlas alpha is almost zero although RGB is correct. UI/Default blends that alpha, making preview samples invisible. Original RGB-only tests discarded alpha and missed this defect.",
+    "actual_unity_reproduction": true,
+    "rawimage_texture_references_resolved": true
+  },
+  "fix": {
+    "builder": "build_customization_fix_v20.py",
+    "codec": "DXT5/BC3",
+    "all_9_mips_alpha": 255,
+    "gpu_bytes_both_atlases": 6291488,
+    "gpu_bytes_unchanged": true,
+    "modified_object_ids_only": [
+      1329,
+      1330
+    ],
+    "future_authoring": "build_customization_art_v19.py set_atlas now explicitly encodes RGBA into DXT5."
+  },
+  "verification": {
+    "encoded_alpha_all_mips": "PASS test_customization_v20.py; rejects old v19 and accepts corrected atlases.",
+    "structure_and_idempotence": "PASS; every unrelated object byte-identical and second repair identical.",
+    "unity_render": "PASS; actual Unity camera RenderTexture/ReadPixels PNG before and after, same style Crying / White Suit.",
+    "skin_cache": "PASS test_skin_cache_v20.py compiles exact v19/v20 skin_body as Windows x64 and proves retry/reapply for delayed, partial and replaced materials; old function fails.",
+    "preferences": "The probe snapshots and restores every value under Software\\Neuston\\Volleyball Fever. Selection is only overridden in process memory."
+  },
+  "evidence": {
+    "before": "analysis/v20-customization-preview-before.png",
+    "after": "analysis/v20-customization-preview-after.png",
+    "atlas_test": "analysis/v20-customization-regression.json",
+    "skin_cache_test": "analysis/v20-skin-cache-regression.json",
+    "reproduce": "probe_customization_v20.py --tag before-full ; probe_customization_v20.py --asset visuals-v20-ui/resources.assets --tag after-full"
+  },
+  "limitations": [
+    "No headset or two-client online session was run by this agent.",
+    "The additional proposed live-avatar prefab render was not implemented; skin_body evidence is native source execution with renderer/material mocks, not observation of a live avatar."
+  ],
+  "scope": "Only isolated fixture assets were written by this agent; no installed game, working asset or main DLL was rebuilt by this agent."
+}

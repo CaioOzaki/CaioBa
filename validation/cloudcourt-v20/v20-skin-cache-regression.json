@@ -1,0 +1,137 @@
+{
+  "v19": {
+    "source_sha256": "f3e20fbd143ca1dd98bea7f229b68b886d24ffda86aeb02fb263387686a5154b",
+    "cases": [
+      {
+        "mask": 16,
+        "observed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mask": 16,
+        "observed": [
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          200,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "v20": {
+    "source_sha256": "6a7898cb12d6fe1a9b921af835a3bd0fbdc131fe845ad387cbe1488192b4b72e",
+    "cases": [
+      {
+        "mask": 31,
+        "observed": [
+          6,
+          6,
+          0,
+          0,
+          100,
+          100,
+          100,
+          0,
+          100,
+          0,
+          100,
+          0,
+          0,
+          2,
+          4,
+          4,
+          6,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "mask": 19,
+        "observed": [
+          3,
+          3,
+          0,
+          0,
+          0,
+          200,
+          0,
+          0,
+          200,
+          200,
+          0,
+          0,
+          1,
+          3,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "passed": true,
+  "old_failure_proven": true,
+  "delayed_materials_retry": true,
+  "partial_materials_retry": true,
+  "replaced_materials_reapply": true,
+  "stable_materials_cached": true,
+  "independent_face_outfit_uvs": true,
+  "actual_source_compiled": true,
+  "scope": "Native Windows x64 execution of exact skin_body source with delayed/destroyed renderer/material mocks; not a VR or multiplayer session."
+}

@@ -146,10 +146,11 @@ static void style_tmp(void* text){
  if(font&&!alive(rooted(cartoon_tmp)))root_set(&cartoon_tmp,FN(0x201290,void*(*)(void*,void*))(font,0));
  if(alive(rooted(cartoon_tmp)))FN(0x23fb00,void(*)(void*,void*,void*))(text,rooted(cartoon_tmp),0);
  font_busy=0;
+ score_outline_tmp_v20(text);
 }
 EXPORT void tmp_awake_hook(void* text,void* m){tmp_awake_trampoline(text,m);style_tmp(text);}
 EXPORT void tmp_ui_awake_hook(void* text,void* m){tmp_ui_awake_trampoline(text,m);style_tmp(text);}
-EXPORT void ui_text_enable_hook(void* text,void* m){ui_text_enable_trampoline(text,m);void* f=bubble_font();if(f)FN(0xe84a40,void(*)(void*,void*,void*))(text,f,0);}
+EXPORT void ui_text_enable_hook(void* text,void* m){ui_text_enable_trampoline(text,m);void* f=bubble_font();if(f)FN(0xe84a40,void(*)(void*,void*,void*))(text,f,0);score_outline_text_v20(text);}
 static unsigned wall_scores[2];
 static void append_string(char* out,int* n,const char* s){for(int i=0;s[i]&&*n<230;i++)out[(*n)++]=s[i];}
 static void append_number(char* out,int* n,int value){if(value<0)value=0;if(value>999)value=999;if(value>=100)out[(*n)++]='0'+value/100;if(value>=10)out[(*n)++]='0'+(value/10)%10;out[(*n)++]='0'+value%10;}

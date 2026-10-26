@@ -1,0 +1,92 @@
+{
+  "count": 9,
+  "names": [
+    "Middle Part",
+    "Curly",
+    "Nerd",
+    "Long Hair",
+    "Grandma",
+    "Grandpa",
+    "Side Quiff",
+    "Curtain Streak",
+    "Tall Middle Part"
+  ],
+  "database_indices": [
+    39,
+    12,
+    30,
+    21,
+    15,
+    18,
+    0,
+    45,
+    6
+  ],
+  "hair_vertex_ranges": [
+    [
+      6194,
+      6913
+    ],
+    [
+      6194,
+      7676
+    ],
+    [
+      6194,
+      6768
+    ],
+    [
+      6194,
+      7911
+    ],
+    [
+      6194,
+      7186
+    ],
+    [
+      6194,
+      6913
+    ],
+    [
+      6194,
+      6913
+    ],
+    [
+      6194,
+      7331
+    ],
+    [
+      6194,
+      7203
+    ]
+  ],
+  "vertices": [
+    6913,
+    7676,
+    6768,
+    7911,
+    7186,
+    6913,
+    6913,
+    7331,
+    7203
+  ],
+  "triangles": [
+    12264,
+    13472,
+    12004,
+    14044,
+    12744,
+    12264,
+    12264,
+    13004,
+    12784
+  ],
+  "grandma_hair": "#171b24",
+  "grandma_shirt": "#762f49",
+  "new_profiles": {
+    "8": "Light skin, long black curtain bangs, blonde streak, dark eyes, septum, black tee and trousers",
+    "9": "Tall slender young light-skinned man, black square glasses, swept-back middle part, dark-blue jeans and black tee"
+  },
+  "provenance": "Original procedural Cloudcourt artwork; rig bindings retained only for animation compatibility."
+}

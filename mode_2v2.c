@@ -64,6 +64,13 @@ static int ui_input_v19(int value);
 static int ui_button_valid_v19(void* button);
 static void ui_click_v19(void* button);
 static int ui_pointer_over_button_v19(void);
+static void landing_prepare_v20(void* ball,V3 center);
+static int landing_wire_flags_v20(void);
+static void landing_clear_v20(void);
+static void landing_show_v20(V3 point,int outside);
+EXPORT void bots_roster_reset_v20(void* rules);
+EXPORT void bots_spawn_begin_v20(void* rules,int team,int slot);
+EXPORT void bots_spawn_end_v20(void);
 static void finish_team_changes(void);
 static int bot_has_human_mate(void* bot);
 static int player_is_airborne(void* player);
@@ -294,7 +301,7 @@ static void* select_online(int format,void* m){
 EXPORT void main_menu_hook(void* o,void* argument,void* m){
  /* Entering another game from the main menu must not inherit doubles. Keep
   * the current match's speed if the user merely opens and closes the menu. */
- customization_close_v19();doubles_requested=0;main_menu_trampoline(o,argument,m);show_button(o,0x30,0);
+ customization_close_v19();landing_clear_v20();doubles_requested=0;main_menu_trampoline(o,argument,m);show_button(o,0x30,0);
 }
 EXPORT void* solo_day_hook(void* o,void* m){
  if(online_selector)return select_online(4,m);
@@ -384,6 +391,7 @@ static int mapped_slot(void* team,int slot){
  return slot;
 }
 static void prepare_match(void* o){
+ landing_clear_v20();
  FLT(o,0x40)=.9f;
  hand_serve_reset();root_set(&local_player_root,0);
  root_set(&rules_root,o);reception_pending=0;reception_context=0;
@@ -401,6 +409,7 @@ static void prepare_match(void* o){
  }else {doubles_enabled=0;quartet_enabled=0;}
 }
 EXPORT void game_go_hook(void* o,void* m){
+ bots_roster_reset_v20(o);
  prepare_match(o);
  game_go_trampoline(o,m);
  void* teams=PTR(o,0x60);
@@ -415,7 +424,9 @@ EXPORT void spawn_bot_hook(void* o,void* prefab,int team,int slot,float yaw,void
   void* teams=PTR(o,0x60);
   if(teams&&team>=0&&team<2)slot=mapped_slot(PTR(teams,0x20+team*8),slot);
  }
+ bots_spawn_begin_v20(o,team,slot);
  spawn_bot_trampoline(o,prefab,team,slot,yaw,m);
+ bots_spawn_end_v20();
  if(doubles_enabled)doubles_spawned++;
 }
 EXPORT void add_player_hook(void* team,void* player,int slot,void* m){
@@ -481,9 +492,12 @@ EXPORT void* pass_target_hook(void* bot,void* m){
 #include "online_2v2.c"
 #include "comfort_v14.c"
 #include "celebration_v15.c"
+#include "score_outline_v20.c"
 #include "identity_v16.c"
 #include "customization_v19.c"
 #include "input_v19.c"
+#include "bots_v20.c"
+#include "landing_v20.c"
 #include "lobby_v18.c"
 #include "map_v19.c"
 #include "gameplay_v19.c"

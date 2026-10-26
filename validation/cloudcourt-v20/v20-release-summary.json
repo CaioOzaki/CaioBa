@@ -1,0 +1,36 @@
+{
+  "checkpoint": "Cloudcourt-v20-personagens-menu",
+  "implementation_complete": true,
+  "installed_verified_files": 17,
+  "native_suites_passed": 27,
+  "final_asset_audit_passed": true,
+  "native_sha256": "718e924b207a3117472a08c7c5f663a708b4827cba4f2c1aee74f15316958c77",
+  "zip_name": "Cloudcourt-v20-personagens-menu.zip",
+  "zip_bytes": 68542882,
+  "zip_sha256": "8caf86218c30330bf6ea69e27b7f90da5bc70cc2261719044f7b2749aed64d50",
+  "bot_identities": 9,
+  "bot_roster_cases": 480,
+  "bot_texture_bytes_before": 150994944,
+  "bot_texture_bytes_after": 33554304,
+  "player_atlas_bytes": 6291488,
+  "all_player_mips_opaque": true,
+  "preview_rendered_in_actual_Unity": true,
+  "skin_material_retry_x64_regression": true,
+  "landing_cases": 40,
+  "landing_uses_actual_contact_and_existing_reliable_RPC": true,
+  "banner_intersections_before": 12,
+  "banner_intersections_after": 0,
+  "room_namespaces": [
+    "Cloudcourt-2v2-v20",
+    "Cloudcourt-4v4-v20"
+  ],
+  "startup_checks": {
+    "menu_indoor_seconds": 15,
+    "beach_day_seconds": 15,
+    "controlled_without_VR": true
+  },
+  "live_avatar_visual_playtest": false,
+  "VR_playtest": false,
+  "live_two_PC_multiplayer": false,
+  "waiting_only_for_user_playtest": true
+}
