@@ -105,7 +105,7 @@ EXPORT void* hand_find_hook(void* hand,void* m){
  if(lobby_active())return ui_pointer_over_button_v19()?0:lobby_hand_ball(hand);
  void* ball=rooted(waiting_ball_root);void* rules=rooted(rules_root);
  if(ball&&rules&&BYTE(rules,0x7a)&&BYTE(ball,0x89)&&!BYTE(ball,0xd0)&&!PTR(hand,0x30)&&(offline()||network_physics())){
-  if(!spawn_trigger_v24(hand))return 0;
+  if(!spawn_trigger_v24(hand)||ui_pointer_over_button_v19())return 0;
   void* center=PTR(hand,0x18);if(center){
    position_set(transform(ball),position(center));serve_visible(ball,1);
    root_set(&waiting_ball_root,0);

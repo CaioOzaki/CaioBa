@@ -1,6 +1,6 @@
 # Cloudcourt VR — v20
 
-Current checkpoint: **Cloudcourt-v24-celebracao-graficos**. [Release notes](CHECKPOINT-V24.md). Bots celebrate toward the scoring teammate; trigger-only serve/lobby ball spawning, four persisted graphics presets and outfit-matched wrist sleeves. All online peers must use v24 rooms. Physics unchanged; actual Quest 3 rendering/FPS and two-PC tests remain pending.
+Current checkpoint: **Cloudcourt-v25-trigger-fix**. [Repair notes](CHECKPOINT-V25.md). Fixes analog-only trigger acquisition through the original native hand predicate and throw/release path. Digital input remains supported; GRAB/A alone cannot spawn balls. Retains all v24 features and room protocol. Physical Quest 3 confirmation remains pending.
 
 - Fixed invisible customization previews: v19 BC7 compression corrupted alpha, especially in mipmaps. BC3 makes every mip opaque at the same 6 MB texture budget. Actual Unity desktop camera captures confirmed the before/after change. Avatar material binding now retries delayed and replaced materials; a native regression reproduces the old failure.
 - Nine own cartoon bots, including the requested curtain bangs/blonde streak/septum character and the tall, slim young man with square glasses and dark blue jeans. Continuous hair coverage and curved strands replace the old hair geometry. The host picks without repetition and sends the chosen existing database index through the original assignment RPC. [Bot gallery and own art](assets/bots-v20/README.md).

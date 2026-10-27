@@ -1,0 +1,33 @@
+{
+  "checkpoint": "Cloudcourt-v25-trigger-fix",
+  "base": "Cloudcourt-v24-celebracao-graficos",
+  "verified_files": 17,
+  "zip_sha256": "fbcc3958b52a588f7fbc23012577c53c7766d879e7f8ec8152ad5528d1e2ce84",
+  "previous_checkpoint": "distribution/Cloudcourt-v24-celebracao-graficos.zip",
+  "previous_backup": "versions/cloudcourt-v24-antes-v25",
+  "github_commit": null,
+  "requested_implementation_completed": true,
+  "work_in_progress": false,
+  "final_asset_audit_passed": true,
+  "native_validation_suites_passed": 2,
+  "installer_cases_passed": 13,
+  "native_sha256": "f4a651ac6cdeb13a975dfde06921794c72b7062fb5171d0002243bbfc661d528",
+  "room_namespaces": [
+    "Cloudcourt-2v2-v24",
+    "Cloudcourt-4v4-v24"
+  ],
+  "VR_playtest": false,
+  "live_two_PC_multiplayer": false,
+  "waiting_only_for_user_playtest": true,
+  "zip_name": "Cloudcourt-v25-trigger-fix.zip",
+  "zip_bytes": 54244594,
+  "changed_game_files": [
+    "GameAssembly.dll"
+  ],
+  "previous_defect_reproduced": true,
+  "native_trigger_predicate_executed": true,
+  "integrated_cases": 18,
+  "cold_metadata_initialization_verified": true,
+  "controlled_startup_seconds": 15,
+  "unchanged_non_native_game_files": 16
+}

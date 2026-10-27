@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "native_sha256": "f4a651ac6cdeb13a975dfde06921794c72b7062fb5171d0002243bbfc661d528",
+  "changed_game_files": [
+    "GameAssembly.dll"
+  ],
+  "verified_files": 17,
+  "changed_production_c_sources": [
+    "formation_serve.c",
+    "spawn_input_v24.c"
+  ],
+  "unchanged_assets": 16,
+  "retained_v24_rooms": true,
+  "previous_defect_reproduced": true,
+  "analog_digital_independent": true,
+  "controlled_startup_seconds": 15,
+  "physical_Quest_tested": false,
+  "live_two_PC_tested": false,
+  "scope": "Two focused native suites and final startup; unaffected v24 artwork/physics/graphics/bot tests retained without rerunning."
+}

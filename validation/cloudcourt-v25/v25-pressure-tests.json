@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "base": "0x180000000",
+      "passed": true,
+      "cold_initializer_calls": 1,
+      "warm_initializer_calls": 0
+    },
+    {
+      "base": "0x190000000",
+      "passed": true,
+      "cold_initializer_calls": 1,
+      "warm_initializer_calls": 0
+    }
+  ],
+  "source_sha256": "f6b0eecdbe0e7bc50537c3ed16c24829b9a780d9146b94c8d273c12dd9c9653a",
+  "metadata_rvas": {
+    "flag": "0x150060e",
+    "token": "0x12a144c",
+    "initializer": "0x1c21b0"
+  },
+  "scope": "Compiled production predicate and actual original InterfaceFuncInvoker0; original grab result fixture; no hardware or full Hand.Update claim."
+}
