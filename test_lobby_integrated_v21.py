@@ -8,20 +8,22 @@ __file__=str(Path(__file__).with_name('test_lobby_v18.py'))
 exec(Path(__file__).read_text().split('\nchecks=[]')[0])
 class IntegratedLobbyEngine(LobbyEngine):
  def __init__(self,base):
-  self.selector_visible=True;self.menu_down=False;self.angular={}
+  self.selector_visible=True;self.menu_down=False;self.angular={};self.triggers=[False,False]
   super().__init__(base);self.menu=self.alloc();self.ptr(self.page+0x68,self.menu)
  def hook(self,u,addr,size,user):
-  r=addr-self.b;a,b=[u.reg_read(reg) for reg in (UC_X86_REG_RCX,UC_X86_REG_RDX)]
+  r=addr-self.b;a,b,c=[u.reg_read(reg) for reg in (UC_X86_REG_RCX,UC_X86_REG_RDX,UC_X86_REG_R8)]
+  if r==0xa2710 and a==4:self.ret(self.triggers[self.controllers.index(c)]);return
   if r==0xec5cd0:self.angular[a]=self.vec(b);self.ret()
   elif r==ex['lobby_update_trampoline']:self.ret()
   elif r==0x314470:self.ret(self.menu_down)
   elif r in (0x318350,0x3183d0):
    assert a==self.menu;self.selector_visible=r==0x3183d0;self.ret()
   else:super().hook(u,addr,size,user)
- def update(self,hand,down):self.grab=down;self.call('lobby_hand_update_hook',hand)
+ def update(self,hand,down):
+  self.grab=down;self.triggers[self.u.mem_read(hand+0x24,1)[0]]=down;self.call('lobby_hand_update_hook',hand)
 
 manifest=json.loads((R/'analysis/native-patch-manifest.json').read_text())
-assert manifest['network_version']=='Cloudcourt-2v2-v22 / Cloudcourt-4v4-v22'
+assert manifest['network_version']=='Cloudcourt-2v2-v24 / Cloudcourt-4v4-v24'
 patches={x['name']:x for x in manifest['patches']}
 for name in ('lobby_hand_update','lobby_update','lobby_jump_area'):
  item=patches[name];raw=p.get_data(item['rva'],5)

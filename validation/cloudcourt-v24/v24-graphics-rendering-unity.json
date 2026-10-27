@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "values": [
+    {
+      "preset": 0,
+      "texture_limit": 1,
+      "aniso": 0,
+      "shadows": 0,
+      "shadow_resolution": 0,
+      "soft_particles": 0,
+      "reflections": 0,
+      "shadow_distance": 15.0,
+      "lod": 0.6,
+      "aa": 0,
+      "xr_scale_readback": 0.0
+    },
+    {
+      "preset": 1,
+      "texture_limit": 0,
+      "aniso": 1,
+      "shadows": 1,
+      "shadow_resolution": 0,
+      "soft_particles": 0,
+      "reflections": 0,
+      "shadow_distance": 30.0,
+      "lod": 1.0,
+      "aa": 2,
+      "xr_scale_readback": 0.0
+    },
+    {
+      "preset": 2,
+      "texture_limit": 0,
+      "aniso": 2,
+      "shadows": 2,
+      "shadow_resolution": 1,
+      "soft_particles": 1,
+      "reflections": 1,
+      "shadow_distance": 60.0,
+      "lod": 1.4,
+      "aa": 4,
+      "xr_scale_readback": 0.0
+    },
+    {
+      "preset": 3,
+      "texture_limit": 0,
+      "aniso": 2,
+      "shadows": 2,
+      "shadow_resolution": 2,
+      "soft_particles": 1,
+      "reflections": 1,
+      "shadow_distance": 150.0,
+      "lod": 2.0,
+      "aa": 4,
+      "xr_scale_readback": 0.0
+    }
+  ],
+  "original_OVR_Update_does_not_override_preset": true,
+  "saved_pref": 1,
+  "PlayerPrefs_Save_resolved": true,
+  "fresh_process_startup_preset": "MEDIUM",
+  "fresh_process_startup_aa": 2,
+  "xr_enabled": false,
+  "xr_scale_headset_validation_pending": true,
+  "raycast_test_repeated": false,
+  "working_or_live_modified": false,
+  "preferences_restored": true,
+  "adaptive_apply_hook_preserved_LOW": true
+}

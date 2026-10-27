@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "native_preferences_presets_reload_bounds_unknown_buttons": true,
+  "serialized_menu_bounds_and_zero_callbacks": true,
+  "unchanged_canvas_geometry_and_original_references": true,
+  "default": "ULTRA",
+  "changed_existing_ids": [
+    145,
+    616,
+    640
+  ],
+  "added_count": 91,
+  "source_sha256": "96dff15e6d26e12100db85b989283d3a48a9a09d806e05c9677e81c805ff2120"
+}

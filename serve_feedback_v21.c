@@ -2,7 +2,7 @@
  * No downloaded sample or third-party recording is redistributed. */
 static unsigned serve_whistle_source_v21,serve_whistle_clip_v21;
 static int serve_feedback_pending_v21=1;
-static void serve_feedback_arm_v21(void){serve_feedback_pending_v21=1;}
+static void serve_feedback_arm_v21(void){serve_feedback_pending_v21=1;celebration_serve_clear_v24();}
 static void play_serve_whistle_v21(void* ball){
  if(!alive(rooted(serve_whistle_source_v21))){
   void* domain=FN(0x14a920,void*(*)(void))();

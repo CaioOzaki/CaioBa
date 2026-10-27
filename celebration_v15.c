@@ -19,7 +19,7 @@ EXPORT void ground_point_hook(void* rules,int winner,void* m){
 EXPORT void* score_box_hook(void* klass,void* value){
  int team=*(int*)value;
  int packed=team;
- if(team>=0&&team<=1&&(offline()||network_physics()))packed=0x4300|team|((point_reason?point_reason:3)<<1)|landing_wire_flags_v20();
+ if(team>=0&&team<=1&&(offline()||network_physics()))packed=0x4300|team|((point_reason?point_reason:3)<<1)|landing_wire_flags_v20()|celebration_wire_v24(rooted(rules_root),team);
  return FN(0x14ba70,void*(*)(void*,void*))(klass,&packed);
 }
 static void point_message(void* rules,int team,int reason){

@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "native_sha256": "c718b7d6154d4786238a34d17aadacf7077861bc4104fc166c25015593990622",
+  "suites": [
+    {
+      "test": "test_spawn_input_v24.py",
+      "source_sha256": "1161f76237b961d7b6244e92a386779d964170189e09946fa08f9c8c2af9cdc9",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_online_2v2.py",
+      "source_sha256": "096c523b579a94a0a66562fb612626c744a87fe5ac060a7972155e488bdf9a31",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_lobby_integrated_v21.py",
+      "source_sha256": "8706d1bc98d8a318cbc42ec69b224cb226e3008e6b0767bd68fa1a06538fb12e",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_pause_v16.py",
+      "source_sha256": "a3b08bb97fd6c607a3760f486f92b0157926701c57465c7f09408cdc8b12c966",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_pause_audio_v23.py",
+      "source_sha256": "d921d7dbd85ebe140d450e193092c077d8a2f354be0da4332fd782c1e0db7b15",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_customization_v19.py",
+      "source_sha256": "2923a886062fbe46ce0a7959c99be410434b5643f53f7ad7ca27fd3a55825796",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_hand_visuals_integrated_v21.py",
+      "source_sha256": "6d138f9ef9d842bfe4662e205681fa54adb0581d977d33c4e708bb0133908dae",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_serve_roster_integrated_v21.py",
+      "source_sha256": "84beec8c63a06acedec3537761b34a7fa7ae0628e8c5174d27fb812cc78a1cb9",
+      "passed": true,
+      "tail": ""
+    },
+    {
+      "test": "test_landing_projection_v22.py",
+      "source_sha256": "53d4bd4350eb9a214ffab567d2835e907e20e83c45c8da7f8784e6967399beb1",
+      "passed": true,
+      "tail": ""
+    }
+  ],
+  "scope": "Final compiled trigger, lobby, network/protocol, pause/audio, appearance and scoring regressions; no headset or real two-PC claim."
+}

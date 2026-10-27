@@ -123,7 +123,7 @@ EXPORT void lobby_hand_update_hook(void* hand,void* m){
  if(lobby_active()&&lobby_local_hand(hand)){
   int i=BYTE(hand,0x24)?1:0;
   if(rooted(lobby_hands[i])!=hand){root_set(&lobby_hands[i],hand);lobby_trigger_down[i]=0;}
-  int down=FN(0x3130b0,_Bool(*)(void*,void*))(hand,0);
+  int down=spawn_trigger_v24(hand);
   if(down&&!lobby_trigger_down[i]&&!ui_pointer_over_button_v19()){
    void* held=PTR(hand,0x30);
    /* Match objects and another client's ball must never be stolen. */

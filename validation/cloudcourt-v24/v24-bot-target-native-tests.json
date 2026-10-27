@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "checks": 129,
+  "wire_checks": 60,
+  "ace_checks": 9,
+  "production_sha256": "769538455d8c51bddda2b905c1afcb2996e0f0411658db48eb0f68459a5735d0",
+  "cases": [
+    "winner actual human last touch takes precedence over distance/receiver",
+    "opponent final touch and bot point choose human randomly once",
+    "stable full-width Photon touchId ordering across reversed peer rosters",
+    "head aims at recipient after arm IK and hostile native ball-look pass",
+    "moving recipient updates head and hand to same human without retargeting",
+    "disconnected live objects rejected by roster membership",
+    "team-switch fallback stable and same-team only",
+    "no-human hides",
+    "reset restores all four bones and hand scale",
+    "cached frame loop does not call Random/Find/SetActive"
+  ],
+  "scope": "Compiled production celebration C; deterministic calibrated LookAt and hierarchical transform stubs, not live headset/multiplayer validation"
+}

@@ -39,7 +39,7 @@ static int online_reception(void* player){
 static void set_mod_version(void* app){
  online_version_ready=0;
  if(app){
-  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v22":"Cloudcourt-4v4-v22");
+  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v24":"Cloudcourt-4v4-v24");
   managed_field(app,0x28,version);online_version_ready=1;
  }
 }
@@ -124,11 +124,13 @@ EXPORT void client_motion_hook(void* ball,V3 pos,V3 velocity,_Bool hit,int touch
  }
 }
 EXPORT void client_end_hook(void* rules,int team,V3 pos,void* m){
- int reason=0,marker=0,outside=0;
- if((team&0xff00)==0x4300){reason=(team>>1)&15;marker=(team&0x40)!=0;outside=(team&0x80)!=0;team&=1;}
+ int wire=team,reason=0,marker=0,outside=0,packed=(team&0xff00)==0x4300;
+ if(packed){reason=(team>>1)&15;marker=(team&0x40)!=0;outside=(team&0x80)!=0;team&=1;}
  if(network_physics()){net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;}
  client_end_trampoline(rules,team,pos,m);
- celebration_point_v21(rules,team);
+ if(packed&&((unsigned)wire&0xff000000u)==0x24000000u)celebration_point_wire_v24(rules,team,wire);
+ else if(network_physics())celebration_point_wire_v24(rules,team,0);
+ else celebration_point_v21(rules,team);
  if(marker&&(reason==3||reason==4||reason==6))landing_show_v20(pos,outside);
  if(reason)point_message(rules,team,reason);
  if(network_physics())finish_team_changes();

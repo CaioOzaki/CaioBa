@@ -127,6 +127,7 @@ static void select_appearance(int skin,int change){
 EXPORT void button_press_hook(void* button,void* m){
  if(!ui_button_valid_v19(button))return;
  ui_click_v19(button);
+ if(graphics_button_v24(button))return;
  if(customization_button_v19(button))return;
  if(named(button,"CC_LobbyClose")){lobby_selector_hide_v21();return;}
  if(named(button,"CC_LobbyChangeTeam")){lobby_selector_show_v21();return;}
@@ -178,6 +179,7 @@ EXPORT void in_room_ui_hook(void* page,void* m){
 }
 EXPORT void in_game_active_hook(void* page,void* arg,void* m){
  customization_close_v19();
+ graphics_close_v24();
  in_game_active_trampoline(page,arg,m);
  const char* names[5]={"PuloTeams","PuloSkin0","PuloSkin1","PuloSkin2","PuloSkin3"};
  for(int i=0;i<5;i++){void* t=find_child(transform(page),names[i]);if(t)FN(0x94f700,void(*)(void*,_Bool,void*))(gameobject(t),i==0&&network_physics(),0);}

@@ -59,6 +59,9 @@ static int preferred_style(void);
 static void ensure_preferences_v19(void);
 static int customization_button_v19(void* button);
 static void customization_close_v19(void);
+static void graphics_start_v24(void);
+static int graphics_button_v24(void* button);
+static void graphics_close_v24(void);
 static void map_label_v19(void);
 static int ui_input_v19(int value);
 static int ui_button_valid_v19(void* button);
@@ -71,7 +74,11 @@ static void landing_show_v20(V3 point,int outside);
 static int v19_word(void* text,const char* word);
 EXPORT void score_outline_tmp_force_v21(void* text);
 EXPORT void avatar_hands_v21(void* body);
+EXPORT void avatar_sleeves_v24(void* body);
 EXPORT void celebration_point_v21(void* rules,int team);
+EXPORT int celebration_wire_v24(void* rules,int team);
+EXPORT void celebration_point_wire_v24(void* rules,int team,int wire);
+static void celebration_serve_touch_v24(void* rules,int player,int team);
 EXPORT void celebration_reset_v21(void);
 EXPORT void celebration_bot_v21(void* bot);
 static void serve_feedback_arm_v21(void);
@@ -180,6 +187,9 @@ EXPORT void tracked_touch_hook(void* rules,int player,int team,void* m){
    else deferred_serve_point=1-team;
    return;
   }
+  /* Native PlayerTouchedBall ignores the accepted human serve until its
+   * coroutine enables ballInPlay. Preserve display-only ace attribution. */
+  if(serving&&member&&!isbot&&!BYTE(rules,0x78))celebration_serve_touch_v24(rules,player,team);
   serve_flight_team=serving?team:-1;
  }
  if(doubles_enabled&&rules&&BYTE(rules,0x78)){
@@ -314,7 +324,8 @@ static void* select_online(int format,void* m){
 EXPORT void main_menu_hook(void* o,void* argument,void* m){
  /* Entering another game from the main menu must not inherit doubles. Keep
   * the current match's speed if the user merely opens and closes the menu. */
- customization_close_v19();landing_clear_v20();celebration_reset_v21();doubles_requested=0;main_menu_trampoline(o,argument,m);show_button(o,0x30,0);
+ customization_close_v19();graphics_close_v24();landing_clear_v20();celebration_reset_v21();doubles_requested=0;main_menu_trampoline(o,argument,m);show_button(o,0x30,0);
+ graphics_start_v24();
 }
 EXPORT void* solo_day_hook(void* o,void* m){
  if(online_selector)return select_online(4,m);
@@ -503,6 +514,7 @@ EXPORT void* pass_target_hook(void* bot,void* m){
  }
  return target;
 }
+#include "spawn_input_v24.c"
 #include "formation_serve.c"
 #include "online_2v2.c"
 #include "comfort_v14.c"
@@ -511,7 +523,9 @@ EXPORT void* pass_target_hook(void* bot,void* m){
 #include "avatar_style_v21.c"
 #include "identity_v16.c"
 #include "customization_v19.c"
+#include "graphics_v24.c"
 #include "hand_visuals_v21.c"
+#include "sleeves_v24.c"
 #include "input_v19.c"
 #include "bots_v20.c"
 #include "landing_v20.c"

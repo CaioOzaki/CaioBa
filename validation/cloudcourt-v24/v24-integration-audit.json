@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "native_sha256": "c718b7d6154d4786238a34d17aadacf7077861bc4104fc166c25015593990622",
+  "verified_game_files": 17,
+  "changed_game_files": [
+    "GameAssembly.dll",
+    "VolleyballFever_Data/resources.assets",
+    "VolleyballFever_Data/level0"
+  ],
+  "unchanged_game_files": 14,
+  "composed_assets": {
+    "resources.assets": "08a9b25be170e4450f1193ea5fd5a022be16faf93b15e00c35959e750d50ea0e",
+    "level0": "a8f0638e3b46e4414fbbf890b4371e5296b1bece5bad614e51d237aa25ae1656"
+  },
+  "source_sha256": {
+    "avatar_style_v21.c": "23dc1a833ef4d87c2c8a1eb8efa4579b52586b84d3733ea4af47fe9d55113bb6",
+    "bots_v20.c": "de4be814e19e7bdf24b091a45ff19b508b32cb5cd0b0ffdc962d3ffc725dfff8",
+    "celebration_v15.c": "228f278d46eb93d6a07f7ae9f337ae1930cb0a70f2cba62463a40975a5cc76b3",
+    "comfort_v14.c": "45775b70c3f5877f3ee792da22509cd117d22e052ff6933af06066e67ceb56f6",
+    "customization_v19.c": "503f9a6ff57c91e3e820f84e05071634f2508ab82735b3c2d514529e4c53aa53",
+    "formation_serve.c": "e6bdbd0143d0ae6773ff726e686a8f2d681c253b650927f46935157ed14a1cd9",
+    "gameplay_v19.c": "6ae091bac795fee7b042c11289525ec1c7d33f30fb708e4d93fed5691b3f1dcd",
+    "graphics_v24.c": "9f70238cce6a70098a66297eda14024dca959750d238bfb428c55d5235fc0ecf",
+    "hand_visuals_v21.c": "769538455d8c51bddda2b905c1afcb2996e0f0411658db48eb0f68459a5735d0",
+    "identity_v16.c": "ff18e4a719f8cf27a7150b72e5df582c9e574f6c79f0448f127cf09ee381143a",
+    "input_v19.c": "53cb80aa8ac3a658fd39335c90173b4ed83146160af17961f167eb6b9a47bd07",
+    "landing_v20.c": "f5bc683634805fe18b7b255c62af60e19c7bcd7c5f0a96b5c844a162034cd2da",
+    "lobby_v18.c": "afaef4381e4a7a465827442ac0e31cdf3164be768f244979143f5c7f8fb383e1",
+    "map_v19.c": "b227d31e02f7f1de0cc61e9ee477f0e2e28eacbe540497f4ecbbf8e50cefc580",
+    "mode_2v2.c": "0890be42eb5bfc53b5c315dab98e399a8f05a00c47a9190e59d0a3320909bbe0",
+    "online_2v2.c": "25d34ef9ec0c88d7073ce6a0f12baea48f2aa5e6e98cfd7a33b676719a02e676",
+    "score_outline_v20.c": "fe6094442d37cca1e0823c5996d0015f462c85c086fce5bd75f4c4d0237be066",
+    "serve_feedback_v21.c": "3f50ea199c58c2e8f3ca4d9b8bb7e7a84dd0e8b56475702a35a23e223c2465c2",
+    "sleeves_v24.c": "4b60e74bcc9f66f7784592784fde18736edb4cd9a414dd504f084412becd4c3a",
+    "spawn_input_v24.c": "14dfd903ca450c1db5166819af28c5fc736415b377feafcb99c07b8e151a0e59",
+    "spin_mod.c": "800320329c433872d5201d317cc6409523d2c51fa7db4bf424b6d955d0dcf63b"
+  },
+  "original_physics_source_unchanged": true,
+  "controlled_startup_seconds": 15,
+  "graphics_probe_source_matches_final": true,
+  "room_namespaces": [
+    "Cloudcourt-2v2-v24",
+    "Cloudcourt-4v4-v24"
+  ],
+  "physical_Quest_tested": false,
+  "live_two_PC_tested": false
+}

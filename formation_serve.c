@@ -81,7 +81,7 @@ static void hand_serve_reset(void){
  for(int i=0;i<2;i++){root_set(&attack_receiver[i],0);wing_turn[i]=0;}
 }
 /* Replace just the waiting-ball placement in LocalPlayerServe. The ball
- * stays frozen and invisible until either hand asks to grab it. */
+ * stays frozen and invisible until either hand presses its trigger. */
 EXPORT void hand_serve_position_hook(void* t,V3 p,void* m){
  if(offline()||network_physics())p=(V3){0,-100,0};
  FN(0xb756b0,SetVec)(t,p,m);
@@ -105,6 +105,7 @@ EXPORT void* hand_find_hook(void* hand,void* m){
  if(lobby_active())return ui_pointer_over_button_v19()?0:lobby_hand_ball(hand);
  void* ball=rooted(waiting_ball_root);void* rules=rooted(rules_root);
  if(ball&&rules&&BYTE(rules,0x7a)&&BYTE(ball,0x89)&&!BYTE(ball,0xd0)&&!PTR(hand,0x30)&&(offline()||network_physics())){
+  if(!spawn_trigger_v24(hand))return 0;
   void* center=PTR(hand,0x18);if(center){
    position_set(transform(ball),position(center));serve_visible(ball,1);
    root_set(&waiting_ball_root,0);

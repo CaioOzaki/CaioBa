@@ -1,0 +1,45 @@
+{
+  "checkpoint": "Cloudcourt-v24-celebracao-graficos",
+  "base": "Cloudcourt-v23-maos-audio",
+  "verified_files": 17,
+  "zip_sha256": "1153a2414d3357ee335af0da9bec82bd6f4b892c8f0ca44a5bac07ea04645e3a",
+  "previous_checkpoint": "distribution/Cloudcourt-v23-maos-audio.zip",
+  "previous_backup": "versions/cloudcourt-v23-antes-v24",
+  "github_commit": null,
+  "requested_implementation_completed": true,
+  "work_in_progress": false,
+  "final_asset_audit_passed": true,
+  "native_regression_suites_passed": 10,
+  "installer_cases_passed": 13,
+  "native_sha256": "c718b7d6154d4786238a34d17aadacf7077861bc4104fc166c25015593990622",
+  "room_namespaces": [
+    "Cloudcourt-2v2-v24",
+    "Cloudcourt-4v4-v24"
+  ],
+  "graphics_default": "ULTRA",
+  "graphics_presets": [
+    "LOW",
+    "MEDIUM",
+    "HIGH",
+    "ULTRA"
+  ],
+  "VR_playtest": false,
+  "live_two_PC_multiplayer": false,
+  "waiting_only_for_user_playtest": true,
+  "zip_name": "Cloudcourt-v24-celebracao-graficos.zip",
+  "zip_bytes": 62367989,
+  "changed_game_files": [
+    "GameAssembly.dll",
+    "VolleyballFever_Data/resources.assets",
+    "VolleyballFever_Data/level0"
+  ],
+  "controlled_startup_seconds": 15,
+  "real_Unity_graphics_raycast_and_getters": true,
+  "real_Unity_saved_graphics_reload": true,
+  "authoritative_point_recipient": true,
+  "trigger_only_spawn": true,
+  "per_player_outfit_sleeves": true,
+  "original_physics_source_unchanged": true,
+  "component_native_tests_passed": 3,
+  "authored_asset_suites_passed": 2
+}

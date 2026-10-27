@@ -61,6 +61,7 @@ static void customization_close_v19(void){
 }
 static int customization_button_v19(void* button){
  if(named(button,"CC_CustomizeOpen")){
+  graphics_close_v24();
   void* panel=customization_panel_v19();if(panel){customization_refresh_v19();FN(0x94f700,void(*)(void*,_Bool,void*))(gameobject(panel),1,0);}return 1;
  }
  if(named(button,"CC_CustomizeBack")){customization_close_v19();return 1;}
