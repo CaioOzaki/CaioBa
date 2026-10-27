@@ -35,6 +35,7 @@ entries += gameplay_v19_entries(p)
 entries += [('landing_collision',0x77ee90),('bot_ik',0xb64980)]
 entries += [('graphics_adaptive_start',0x2641d0),('graphics_adaptive_apply',0x264080),('graphics_ovr_update',0x457fd0)]
 entries += [('hand_input_v25',0x3130b0)]
+entries += [('elbow_bend_v27',0xeeabe0)]
 from fix_lobby_v21 import LOBBY_ENTRIES_V21,patch_lobby_calls_v21
 entries += LOBBY_ENTRIES_V21
 if 'probe_start_hook' in exports:entries += [('probe_start',0xef74f0),('probe_solo',0xef4620)]
@@ -164,7 +165,7 @@ with tempfile.NamedTemporaryFile(dir=target.parent,prefix='cloudcourt-build-',su
     staged.write(result);staged_path=pathlib.Path(staged.name)
 assert staged_path.resolve().parent==target.resolve().parent
 os.replace(staged_path,target)
-manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v24 / Cloudcourt-4v4-v24','status':'v26 session, lobby holding/barrier, body pose, SDF outline, preview lifetime, per-map own ball art and restart-safe graphics repairs; v24 wire protocol retained; physical validation pending'}
+manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v24 / Cloudcourt-4v4-v24','status':'v27 player viewer-right/anatomical-left outward elbow correction; original analytic solve and tracked wrist retained; v26 features/v24 wire retained; physical validation pending'}
 (R/'analysis/native-patch-manifest.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))
 

@@ -541,6 +541,7 @@ EXPORT void* pass_target_hook(void* bot,void* m){
 #include "map_v19.c"
 #include "gameplay_v19.c"
 #include "ball_style_v26.c"
+#include "elbow_v27.c"
 #ifdef MODE_PROBE
 /* Built only in the disposable validation binary. Commands are consumed on
  * Unity's main thread, never invoked by an external thread. */

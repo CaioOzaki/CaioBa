@@ -1,0 +1,56 @@
+{
+  "passed": true,
+  "source_sha256": "d5f73c3d27a1d08213797dfbd472799e6ec0a284ba5508b3081eea220e45822e",
+  "resources_sha256": "451cf14f4bb79a990c3cf52c8921146ff04187ab2ce98f21f3bdaf06af9e8c57",
+  "builder_sha256": "ef0abe4eb9d4354f5226ad8d1cd62f5055cc9dab403ae7c1a1751202d8a944d9",
+  "texture_data_sha256": "a9c6349e89018029b74fd921461082577d482f544f4b955a75195f0cbf68cf30",
+  "changed_existing_ids": [
+    40
+  ],
+  "added_ids": [],
+  "removed_ids": [],
+  "changed_texture_fields": [
+    "image data"
+  ],
+  "all_other_object_bytes_identical": true,
+  "metadata_gpu_budget_invariants": {
+    "all_non_pixel_texture_fields_identical": true,
+    "width": 2048,
+    "height": 1024,
+    "texture_format": 3,
+    "mipmap_count": 12,
+    "gpu_bytes": 8388609,
+    "complete_image_size": 8388609,
+    "source_gpu_bytes": 8388609,
+    "mesh62_unchanged": true,
+    "material3_unchanged": true,
+    "colliders_and_physics_unchanged": true,
+    "uv_x_range": [
+      0.0,
+      0.5
+    ],
+    "venue_offsets": [
+      0,
+      0.5
+    ]
+  },
+  "art_validation": {
+    "no_text_logo_badge_drawing_calls": true,
+    "indoor_v26_pixels_outside_badges_identical": true,
+    "serialized_base_mip_equals_authored_atlas": true,
+    "beach_reference_images_inspected": true,
+    "beach_perpendicular_panel_groups": 6,
+    "beach_broad_panels": 18,
+    "visual_review_actual_mesh_views_per_venue": 4,
+    "visual_review_passed": true,
+    "runtime_vr_tested": false
+  },
+  "image_paths": [
+    "C:\\Users\\Usuario\\.codex\\.chatgpt-projects\\g-p-6a346e6820e0819196b3dc8f2217a225\\output\\volleyball-mod\\assets\\cloudcourt-v27\\ball-indoor.png",
+    "C:\\Users\\Usuario\\.codex\\.chatgpt-projects\\g-p-6a346e6820e0819196b3dc8f2217a225\\output\\volleyball-mod\\assets\\cloudcourt-v27\\ball-beach.png",
+    "C:\\Users\\Usuario\\.codex\\.chatgpt-projects\\g-p-6a346e6820e0819196b3dc8f2217a225\\output\\volleyball-mod\\assets\\cloudcourt-v27\\ball-dual-atlas.png",
+    "C:\\Users\\Usuario\\.codex\\.chatgpt-projects\\g-p-6a346e6820e0819196b3dc8f2217a225\\output\\volleyball-mod\\assets\\cloudcourt-v27\\actual-ball-mesh-preview.png"
+  ],
+  "resources_path": "C:\\Users\\Usuario\\.codex\\.chatgpt-projects\\g-p-6a346e6820e0819196b3dc8f2217a225\\output\\volleyball-mod\\visuals-v27-balls\\resources.assets",
+  "source_path": "C:\\Users\\Usuario\\.codex\\.chatgpt-projects\\g-p-6a346e6820e0819196b3dc8f2217a225\\output\\volleyball-mod\\versions\\cloudcourt-v27-antes-sem-escrita\\resources.assets"
+}

@@ -48,7 +48,7 @@ try {
     if(-not (Test-Path -LiteralPath (Join-Path $game 'VolleyballFever.exe'))){throw 'Pasta do jogo incorreta.'}
     $required=@('GameAssembly.dll','VolleyballFever_Data/resources.assets','VolleyballFever_Data/level1','VolleyballFever_Data/level2','VolleyballFever_Data/level3','VolleyballFever_Data/sharedassets1.assets','VolleyballFever_Data/sharedassets3.assets','VolleyballFever_Data/sharedassets0.assets','VolleyballFever_Data/level0')
     $allowed=$required+@('VolleyballFever_Data/globalgamemanagers.assets')
-    if($config.version -in @('Cloudcourt-v18-praia-lobby','Cloudcourt-v19-customizacao','Cloudcourt-v20-personagens-menu','Cloudcourt-v20-1-middle-part','Cloudcourt-v21-orla-gestos','Cloudcourt-v22-correcoes','Cloudcourt-v23-maos-audio','Cloudcourt-v24-celebracao-graficos','Cloudcourt-v25-trigger-fix','Cloudcourt-v26-session-repair')){
+    if($config.version -in @('Cloudcourt-v18-praia-lobby','Cloudcourt-v19-customizacao','Cloudcourt-v20-personagens-menu','Cloudcourt-v20-1-middle-part','Cloudcourt-v21-orla-gestos','Cloudcourt-v22-correcoes','Cloudcourt-v23-maos-audio','Cloudcourt-v24-celebracao-graficos','Cloudcourt-v25-trigger-fix','Cloudcourt-v26-session-repair','Cloudcourt-v27-avatar-elbow')){
         $required+=@('VolleyballFever_Data/globalgamemanagers.assets','VolleyballFever_Data/sharedassets2.assets','VolleyballFever_Data/sharedassets4.assets','VolleyballFever_Data/resources.resource','VolleyballFever_Data/sharedassets0.resource','VolleyballFever_Data/sharedassets1.resource','VolleyballFever_Data/sharedassets2.resource','VolleyballFever_Data/sharedassets4.resource')
         $allowed=$required
         if($config.files.Count -ne 17){throw 'Manifesto de 17 arquivos incompleto.'}
