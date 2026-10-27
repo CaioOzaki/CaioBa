@@ -24,6 +24,12 @@ EXPORT void score_outline_tmp_force_v21(void* text){
  /* Color32 occupies one 32-bit value in the Windows x64 ABI: RGBA 0,0,0,255. */
  FN(0x2402d0,void(*)(void*,unsigned,void*))(text,0xff000000u,0);
  FN(0x240340,void(*)(void*,float,void*))(text,.18f,0);
+ /* Width/color alone do not activate the OUTLINE_ON SDF shader variant.
+  * Operate on TMP's instance material after any font replacement, never the
+  * shared font asset. The popup is reused by both points and set messages. */
+ void* material=FN(0x23e790,void*(*)(void*,void*))(text,0);
+ if(material&&FN(0x955630,_Bool(*)(void*,void*,void*))(material,str("_OutlineWidth"),0))
+  FN(0x9550e0,void(*)(void*,void*,void*))(material,str("OUTLINE_ON"),0);
 }
 EXPORT void score_outline_tmp_v20(void* text){if(v20_is_score(text))score_outline_tmp_force_v21(text);}
 static unsigned v20_outline_type;

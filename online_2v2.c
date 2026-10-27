@@ -9,6 +9,21 @@ TRAMP(void,client_motion,(void* ball,V3 pos,V3 velocity,_Bool hit,int touch,int 
 TRAMP(void,client_end,(void* rules,int team,V3 pos,void* m))
 static int net_first_touch=0,net_serve_team=-1;
 static int net_touch_team=-1,net_touch_count=0,net_rally_active=0;
+static void lobby_session_reset_v26(void);
+static void pending_teams_reset_v26(void);
+static void online_session_reset_v26(void){
+ ball_style_reset_v26();
+ /* Menu entry ends this mod's match epoch. Persistent controllers and room
+  * pages survive scene unload, so alive() alone cannot validate their caches. */
+ lobby_session_reset_v26();pending_teams_reset_v26();hand_serve_reset();
+ bots_roster_reset_v20(0);root_set(&rules_root,0);root_set(&local_player_root,0);
+ net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;
+ reception_pending=0;reception_context=0;serve_flight_team=-1;serve_fault=0;deferred_serve_point=-1;
+ player_airborne=0;root_set(&jumping_player_root,0);
+ pending_valid=0;pending_ball=0;spinning_ball=0;pending_time=0;
+ doubles_enabled=0;quartet_enabled=0;doubles_spawned=0;doubles_team_counts[0]=doubles_team_counts[1]=0;
+ for(int i=0;i<2;i++){root_set(&spawn_triggers_v25[i].controller,0);spawn_triggers_v25[i].held=0;}
+}
 static int network_physics(void){return online_version_ready&&!offline();}
 static void* network_player_statics(void){
  /* NetworkPlayer class metadata is initialized by the original lobby. */
@@ -103,7 +118,11 @@ EXPORT void online_awake_hook(void* page,void* m){
  * seven bytes instead of relocating that short relative jump. */
 EXPORT void net_new_rally_hook(void* rules,int team,void* m){
  serve_feedback_arm_v21();
- if(network_physics()){net_first_touch=1;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=1;}
+ if(network_physics()){
+  /* Clients do not execute host Go(). Bind a new scene's rules before any
+   * local eligibility/serve helpers read the previous match's rooted rules. */
+  if(rooted(rules_root)!=rules)prepare_match(rules);
+  net_first_touch=1;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=1;}
  FN(0x253e30,void(*)(void*,void*))(rules,0);
 }
 EXPORT void client_motion_hook(void* ball,V3 pos,V3 velocity,_Bool hit,int touch,int team,int context,void* m){

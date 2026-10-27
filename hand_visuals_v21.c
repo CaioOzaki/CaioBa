@@ -53,7 +53,7 @@ EXPORT void avatar_hands_v21(void* body){
 }
 
 /* v22: same public point/reset API, now bounded by the serve whistle event.
- * A display-only override of arm bones and the head runs AFTER FinalIK.
+ * A display-only override of the skeleton root, arm and head runs AFTER FinalIK.
  * RootMotion's pre-solver stage receives the restored animation pose. */
 TRAMP(void,bot_ik,(void* ik,void* m))
 static unsigned celebration_rules_v21;
@@ -62,8 +62,8 @@ static unsigned celebration_target_v24;
 static unsigned celebration_serve_rules_v24;
 static int celebration_serve_id_v24=-1,celebration_serve_team_v24=-1;
 typedef struct {
- unsigned bot,visual,ik,look,upper,lower,hand,head,headbone;int shown,posed,bound,displayed;
- Q4 saved[4];V3 scale;V3 toward,recipient;
+ unsigned bot,visual,ik,look,upper,lower,hand,head,headbone,rig;int shown,posed,bound,displayed;
+ Q4 saved[5];V3 scale;V3 toward,recipient;
 } BotCelebrationV21;
 static BotCelebrationV21 bot_celebrations_v21[8];
 static V3 celebration_gaze_v24(void* player){
@@ -76,7 +76,7 @@ static V3 celebration_gaze_v24(void* player){
  * even when each peer's List insertion order differs. Never use distance or
  * the pass/receive target to attribute a winning hit. */
 static int celebration_humans_v24(void* rules,int team,void** players,int* ids){
- if(!rules||team<0||team>1)return 0;
+ if(!alive(rules)||team<0||team>1)return 0;
  void* teams=PTR(rules,0x60),*side=teams?PTR(teams,0x20+8*team):0;
  void* list=side?PTR(side,0x38):0,*array=list?PTR(list,0x10):0;int n=list?INT(list,0x18):0,count=0;
  if(!array||n<0||n>4)return 0;
@@ -122,8 +122,8 @@ static Q4 aim_minus_x_v22(V3 v){
 }
 static void celebration_restore_v22(BotCelebrationV21* s){
  if(!s||!s->posed)return;
- void* bones[4]={rooted(s->upper),rooted(s->lower),rooted(s->hand),rooted(s->head)};
- for(int i=0;i<4;i++)if(alive(bones[i]))bone_rotation_set_v22(bones[i],s->saved[i],1);
+ void* bones[5]={rooted(s->upper),rooted(s->lower),rooted(s->hand),rooted(s->head),rooted(s->rig)};
+ for(int i=0;i<5;i++)if(alive(bones[i]))bone_rotation_set_v22(bones[i],s->saved[i],1);
  if(alive(bones[2]))bone_scale_set_v22(bones[2],s->scale);
  s->posed=0;
 }
@@ -131,6 +131,16 @@ static void celebration_hide_v21(BotCelebrationV21* s){
  if(!s)return;celebration_restore_v22(s);
  if(s->displayed&&alive(rooted(s->visual)))visual_active_v21(rooted(s->visual),0);
  s->shown=0;s->displayed=0;
+}
+static void celebration_unbind_v26(BotCelebrationV21* s){
+ celebration_hide_v21(s);
+ unsigned* handles[10]={&s->bot,&s->visual,&s->ik,&s->look,&s->upper,&s->lower,&s->hand,&s->head,&s->headbone,&s->rig};
+ for(int i=0;i<10;i++)root_set(handles[i],0);
+ s->bound=0;
+}
+static int celebration_rig_alive_v26(BotCelebrationV21* s){
+ return alive(rooted(s->bot))&&alive(rooted(s->visual))&&alive(rooted(s->ik))&&alive(rooted(s->look))&&
+  alive(rooted(s->upper))&&alive(rooted(s->lower))&&alive(rooted(s->hand))&&alive(rooted(s->rig))&&alive(rooted(s->head));
 }
 EXPORT void celebration_point_wire_v24(void* rules,int team,int wire){
  for(int i=0;i<8;i++)celebration_hide_v21(&bot_celebrations_v21[i]);
@@ -146,17 +156,24 @@ EXPORT void celebration_reset_v21(void){
  celebration_serve_clear_v24();
  celebration_team_v21=-1;root_set(&celebration_rules_v21,0);
  root_set(&celebration_target_v24,0);
- for(int i=0;i<8;i++)celebration_hide_v21(&bot_celebrations_v21[i]);
+ for(int i=0;i<8;i++)celebration_unbind_v26(&bot_celebrations_v21[i]);
 }
 /* Legacy callable ABI kept for inspection tools; lifetime is event driven. */
 EXPORT int celebration_allowed_v21(int winner,int bot_team,int human_team,int rally,float now,float until){
  (void)now;(void)until;return winner>=0&&winner<2&&bot_team==winner&&human_team==winner&&!rally;
 }
 static int celebration_bind_v22(BotCelebrationV21* s,void* bot){
- void* reach=PTR(bot,0xb8);void* ik=reach?PTR(reach,0x28):0;void* refs=ik?PTR(ik,0x38):0;
+ void* reach=PTR(bot,0xb8);if(!alive(reach))return 0;
+ void* ik=PTR(reach,0x28),*look=PTR(reach,0x38);if(!alive(ik)||!alive(look))return 0;
+ void* refs=PTR(ik,0x38);
  if(!refs)return 0;
  void* upper=PTR(refs,0x68),*lower=PTR(refs,0x70),*hand=PTR(refs,0x78);
  if(!alive(upper)||!alive(lower)||!alive(hand))return 0;
+ /* Root_jnt is the skinned skeleton only: no collider, Rigidbody or bot
+  * movement script. Never turn transform(bot) or the model/IK component. */
+ void* rig=find_child(transform(ik),"Root_jnt");
+ void* solver=PTR(look,0x38),*headbone=solver?PTR(solver,0x68):0,*head=headbone?PTR(headbone,0x10):0;
+ if(!alive(rig)||rig==transform(bot)||rig==transform(ik)||!alive(head))return 0;
  void* visual=find_child(transform(bot),"CC_WinThumb");
  void* base_mesh=find_child(transform(ik),"Base_mesh");
  void* skin=base_mesh?FN(0x94f410,void*(*)(void*,void*,void*))(gameobject(base_mesh),str("SkinnedMeshRenderer"),0):0;
@@ -166,19 +183,19 @@ static int celebration_bind_v22(BotCelebrationV21* s,void* bot){
  /* UV palette0 samples this character's existing skin swatch. Never recolor
   * the bot from the local player's preference or the neutral hand texture. */
  FN(0xa1b0e0,void(*)(void*,void*,void*))(renderer,mat,0);
- root_set(&s->visual,visual);root_set(&s->ik,ik);root_set(&s->look,PTR(reach,0x38));
- void* look=rooted(s->look),*solver=look?PTR(look,0x38):0,*headbone=solver?PTR(solver,0x68):0;
- root_set(&s->headbone,headbone);root_set(&s->head,headbone?PTR(headbone,0x10):0);
+ root_set(&s->visual,visual);root_set(&s->ik,ik);root_set(&s->look,look);root_set(&s->rig,rig);
+ root_set(&s->headbone,headbone);root_set(&s->head,head);
  root_set(&s->upper,upper);root_set(&s->lower,lower);root_set(&s->hand,hand);s->bound=1;return 1;
 }
 EXPORT void celebration_bot_v21(void* bot){
  if(!bot)return;BotCelebrationV21* s=0;
  for(int i=0;i<8;i++)if(rooted(bot_celebrations_v21[i].bot)==bot){s=&bot_celebrations_v21[i];break;}
+ if(!alive(bot)){if(s)celebration_unbind_v26(s);return;}
  if(celebration_team_v21<0||INT(bot,0x28)!=celebration_team_v21||(!doubles_enabled&&!quartet_enabled)){
   celebration_hide_v21(s);return;
  }
  void* rules=rooted(rules_root);
- if(!rules||rules!=rooted(celebration_rules_v21)){celebration_hide_v21(s);return;}
+ if(!alive(rules)||rules!=rooted(celebration_rules_v21)){celebration_hide_v21(s);return;}
  /* NewRally may already set rally_active while waiting for serve. Only the
   * actual serve whistle reset closes this point celebration. */
  int team=INT(bot,0x28);void* target=rooted(celebration_target_v24);
@@ -190,20 +207,26 @@ EXPORT void celebration_bot_v21(void* bot){
  if(!eligible){target=n?humans[0]:0;root_set(&celebration_target_v24,target);}
  if(!target||!finitev(botp)){celebration_hide_v21(s);return;}humanp=player_court_position(target);
  if(!s)for(int i=0;i<8;i++)if(!alive(rooted(bot_celebrations_v21[i].bot))){
-  s=&bot_celebrations_v21[i];celebration_hide_v21(s);root_set(&s->bot,bot);s->bound=0;break;
+  s=&bot_celebrations_v21[i];celebration_unbind_v26(s);root_set(&s->bot,bot);break;
  }
- if(!s||(!s->bound&&!celebration_bind_v22(s,bot)))return;
+ if(!s)return;
+ if(s->bound&&!celebration_rig_alive_v26(s)){celebration_unbind_v26(s);root_set(&s->bot,bot);}
+ if(!s->bound&&!celebration_bind_v22(s,bot))return;
  V3 toward=sub(humanp,botp);toward.y=0;float length=sqroot(dot(toward,toward));
  if(length<.001f){celebration_hide_v21(s);return;}
  s->toward=mul(toward,1/length);s->recipient=celebration_gaze_v24(target);s->shown=1;
 }
 static void celebration_pose_v22(BotCelebrationV21* s){
  if(!s||!s->shown||celebration_team_v21<0)return;
- void* bones[4]={rooted(s->upper),rooted(s->lower),rooted(s->hand),rooted(s->head)},*visual=rooted(s->visual);
- if(!alive(bones[0])||!alive(bones[1])||!alive(bones[2])||!alive(visual))return;
+ if(!celebration_rig_alive_v26(s)){celebration_unbind_v26(s);return;}
+ void* bones[5]={rooted(s->upper),rooted(s->lower),rooted(s->hand),rooted(s->head),rooted(s->rig)},*visual=rooted(s->visual);
  if(s->posed)celebration_restore_v22(s);
- for(int i=0;i<4;i++)if(alive(bones[i]))s->saved[i]=bone_rotation_v22(bones[i],1);
+ for(int i=0;i<5;i++)s->saved[i]=bone_rotation_v22(bones[i],1);
  s->scale=bone_scale_v22(bones[2]);s->posed=1;
+ /* Turn the complete visible skeleton with the teammate, including torso,
+  * legs and idle arm. Original local rotations return before every solver. */
+ float w=sqroot((1+s->toward.z)*.5f),y=w>.0001f?s->toward.x/(2*w):1;
+ bone_rotation_set_v22(bones[4],(Q4){0,y,0,w},0);
  /* Arm bone local -X is measured from the actual serialized right arm rig.
   * Rotating it moves the existing skinned sleeve and forearm together. */
  bone_rotation_set_v22(bones[0],aim_minus_x_v22((V3){s->toward.x*.65f,.76f,s->toward.z*.65f}),0);
@@ -213,7 +236,6 @@ static void celebration_pose_v22(BotCelebrationV21* s){
   * its replacement is placed at that moved wrist, never a face-level offset. */
  bone_scale_set_v22(bones[2],(V3){.001f,.001f,.001f});
  position_set(visual,wrist);
- float w=sqroot((1+s->toward.z)*.5f),y=w>.0001f?s->toward.x/(2*w):1;
  bone_rotation_set_v22(visual,(Q4){0,y,0,w},0);if(!s->displayed){visual_active_v21(visual,1);s->displayed=1;}
  /* ReachForBall.Update writes the ball look position every frame. Aim the
   * actual calibrated head bone AFTER both existing FinalIK passes, so that
@@ -221,11 +243,29 @@ static void celebration_pose_v22(BotCelebrationV21* s){
   * game's LookAtBone method respects this rig's initialized local axis. */
  void* headbone=rooted(s->headbone);
  if(alive(bones[3])&&headbone){
+  /* Every SimpleCitizens head has identity bind rotation. Remove the native
+   * ball-look twist before aiming, so its roll cannot survive this gesture. */
+  bone_rotation_set_v22(bones[3],(Q4){0,0,0,1},1);
   V3 direction=sub(s->recipient,position(bones[3]));float len=sqroot(dot(direction,direction));
-  if(finitev(direction)&&len>.001f)FN(0xafe880,void(*)(void*,V3,float,void*))(headbone,mul(direction,1/len),1.f,0);
+  if(finitev(direction)&&len>.001f){
+   /* Relative to the turned body: at most 60 degrees sideways and 35 degrees
+    * up/down, even when a tracked recipient head is briefly implausible. */
+   V3 right={s->toward.z,0,-s->toward.x};float front=dot(direction,s->toward),side=dot(direction,right);
+   if(front<.001f)front=.001f;float limit=front*1.73205f;
+   if(side>limit)side=limit;if(side< -limit)side= -limit;
+   V3 constrained=add(mul(s->toward,front),mul(right,side));
+   len=sqroot(dot(constrained,constrained));limit=len*.700208f;
+   /* Horizontal yaw first, then vertical pitch: a single shortest-arc
+    * diagonal aim introduces neck roll when yaw and pitch combine. */
+   FN(0xafe880,void(*)(void*,V3,float,void*))(headbone,mul(constrained,1/len),1.f,0);
+   constrained.y=direction.y>limit?limit:(direction.y< -limit? -limit:direction.y);
+   len=sqroot(dot(constrained,constrained));
+   FN(0xafe880,void(*)(void*,V3,float,void*))(headbone,mul(constrained,1/len),1.f,0);
+  }
  }
 }
 EXPORT void bot_ik_hook(void* ik,void* m){
+ if(!alive(ik))return;
  BotCelebrationV21* s=0;
  for(int i=0;i<8;i++)if(rooted(bot_celebrations_v21[i].ik)==ik||rooted(bot_celebrations_v21[i].look)==ik){s=&bot_celebrations_v21[i];break;}
  if(s)celebration_restore_v22(s);

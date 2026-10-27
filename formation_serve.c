@@ -75,8 +75,19 @@ static void serve_visible(void* ball,int visible){
  void* renderer=ball?PTR(ball,0x40):0;
  if(renderer)FN(10597104,void(*)(void*,_Bool,void*))(renderer,visible!=0,0);
 }
+/* Both serve and practice acquire a frozen ball above the palm. Native
+ * StartInteraction only reparents; it does not freeze a live Rigidbody. */
+static int hand_ball_place_v26(void* ball,void* hand){
+ void* center=hand?PTR(hand,0x18):0;if(!ball||!center)return 0;
+ V3 p=position(center);if(!finitev(p))return 0;
+ float radius=FN(0x77fe10,float(*)(void*,void*))(ball,0);
+ if(!(radius>.02f&&radius<.5f))radius=.105f;
+ p.y+=radius+.025f;
+ position_set(transform(ball),p);return 1;
+}
 static void hand_serve_reset(void){
- void* ball=rooted(waiting_ball_root);if(ball)serve_visible(ball,1);
+ void* ball=rooted(waiting_ball_root);
+ if(ball&&FN(0xa0bfb0,_Bool(*)(void*,void*))(ball,0))serve_visible(ball,1);
  root_set(&waiting_ball_root,0);
  for(int i=0;i<2;i++){root_set(&attack_receiver[i],0);wing_turn[i]=0;}
 }
@@ -106,8 +117,8 @@ EXPORT void* hand_find_hook(void* hand,void* m){
  void* ball=rooted(waiting_ball_root);void* rules=rooted(rules_root);
  if(ball&&rules&&BYTE(rules,0x7a)&&BYTE(ball,0x89)&&!BYTE(ball,0xd0)&&!PTR(hand,0x30)&&(offline()||network_physics())){
   if(!spawn_trigger_v24(hand)||ui_pointer_over_button_v19())return 0;
-  void* center=PTR(hand,0x18);if(center){
-   position_set(transform(ball),position(center));serve_visible(ball,1);
+  if(hand_ball_place_v26(ball,hand)){
+   serve_visible(ball,1);
    root_set(&waiting_ball_root,0);
    serve_feedback_human_v21(ball);
    /* The original Hand.Update starts interaction and owns release/throw. */

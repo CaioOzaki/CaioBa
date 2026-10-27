@@ -1,0 +1,13 @@
+# v26 online/lobby audit
+
+Concrete causes and corrections:
+
+- Original `Volleyball.StartInteraction` at 0x77f660 only marks interaction and reparents; it never freezes the Rigidbody. Native `LocalPlayerServe.MoveNext` calls `InvokeRpc_FreezePhysics` at 0x259572 before acquisition. Lobby recall now uses that same reliable RPC, spawns off court before positioning, and shares the serve helper placing the ball radius + 2.5 cm above the palm. Original release/ChangeMotion unfreezes physics and keeps native throw handling.
+- Original `NetworkPlayer.Update` at 0x31c250 routes locomotion into `SmoothMove`, whose setter at 0x31c202 bypassed hooked `ClampToPlayArea`. The actual setter now applies the same symmetric world-space torso boundary. The rule accepts a current local assigned online player without relying on host-only `Go` format initialization. Avatar update applies the boundary for room-scale walking as well; remote body updates do not move local tracking.
+- Original host match setup initializes mod rules and flags, while client `Client_NewRally` only refreshes UI. A fresh client rules identity now prepares its mod state before setting rally tracking.
+- Menu room-leave and each new lobby entry reset waiting balls, per-hand analog hysteresis/controller roots, jump/reception/serve/spin/rally tracking, bot roster, queued team changes and practice references. Menu activation over a live room preserves its match. Page/controller/player objects can remain alive across scenes; root liveness alone did not validate session state.
+- Beach day Environment/Net net lacked MeshRenderer; night and Indoor placeholders were disabled. Asset helper restores day renderer, runtime binds the existing renderer once per Environment identity after asynchronous readiness and enables it during lobby only. Start/reset hides it. No second net/collider is instantiated. Asset agent owns serialized repair and Indoor antenna geometry.
+
+Changed production source: formation_serve.c, lobby_v18.c, online_2v2.c, identity_v16.c (barrier + queued teams reset), mode_2v2.c (declarations + guarded menu reset), comfort_v14.c (local room-scale barrier call). map_v19.c unchanged.
+
+Validation: test_online_state_v26.py compiles exact production functions (including waiting-ball, bot-roster and queued-team resets; independent ball-style reset is stubbed) into an isolated x64 DLL and executes original Hand.Update against deterministic Unity/Photon stubs at two ASLR bases, 2v2/4v4 and host/cold-client eligibility, two consecutive sessions reusing persistent page/hands. This does not establish live Unity/Quest or real two-PC behavior. Root owns production DLL/build/install, asset helper application, and integration regressions.

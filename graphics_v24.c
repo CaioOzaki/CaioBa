@@ -19,7 +19,9 @@ static const char* graphics_details_v24[4]={
  "95% render scale | 4x MSAA\nFull textures | Soft shadows, 60 m | Full effects",
  "100% render scale | 4x MSAA\nFull textures | Soft shadows, 150 m | Full effects"
 };
-static int graphics_loaded_v24,graphics_selected_v24=3,graphics_api_checked_v24;
+/* Selection is saved for the next process. Unity/OVR may still own eye buffers
+ * from the current preset, so never mix AA/texture/scale changes mid-session. */
+static int graphics_loaded_v24,graphics_selected_v24=3,graphics_running_v26=3,graphics_api_checked_v24;
 static unsigned graphics_overlay_v24;
 static void (*graphics_texture_v24)(int),(*graphics_aniso_v24)(int),(*graphics_shadows_v24)(int);
 static void (*graphics_shadow_resolution_v24)(int),(*graphics_particles_v24)(_Bool),(*graphics_reflections_v24)(_Bool);
@@ -49,11 +51,14 @@ static void graphics_refresh_v24(void){
  if(menu)child_label_v19(menu,"Pages/Settings/CC_GraphicsOpen/Text",settings[graphics_selected_v24]);
  if(!panel)return;
  child_label_v19(panel,"CC_GraphicsDetails",graphics_details_v24[graphics_selected_v24]);
+ child_label_v19(panel,"CC_GraphicsLocal",graphics_selected_v24!=graphics_running_v26?
+  "Restart Cloudcourt to apply. Current session keeps its graphics.":
+  "Changes are saved and take effect after restarting Cloudcourt.");
  for(int i=0;i<4;i++)child_label_v19(panel,buttons[i],i==graphics_selected_v24?selected[i]:graphics_names_v24[i]);
 }
 static void graphics_apply_v24(int index){
  if(index<0||index>3)index=3;
- graphics_selected_v24=index;graphics_resolve_v24();
+ graphics_running_v26=index;graphics_resolve_v24();
  const GraphicsPresetV24* p=&graphics_presets_v24[index];
  FN(0xa12bf0,void(*)(int,void*))(p->aa,0);
  FN(0xed8cf0,void(*)(float,void*))(p->scale,0);
@@ -70,6 +75,8 @@ static void graphics_start_v24(void){
  if(!graphics_loaded_v24){
   graphics_loaded_v24=1;
   int selected=FN(0xa12690,int(*)(void*,int,void*))(str("Cloudcourt.Graphics.v24"),3,0);
+  if(selected<0||selected>3)selected=3;
+  graphics_selected_v24=selected;
   graphics_apply_v24(selected);
  }
  graphics_refresh_v24();
@@ -88,7 +95,8 @@ static int graphics_button_v24(void* button){
  int index=named(button,"CC_GraphicsLow")?0:named(button,"CC_GraphicsMedium")?1:
            named(button,"CC_GraphicsHigh")?2:named(button,"CC_GraphicsUltra")?3:-1;
  if(index<0)return 0;
- graphics_loaded_v24=1;graphics_apply_v24(index);
+ if(!graphics_loaded_v24)graphics_start_v24();
+ graphics_selected_v24=index;
  FN(0xa12870,void(*)(void*,int,void*))(str("Cloudcourt.Graphics.v24"),index,0);
  if(graphics_save_v24)graphics_save_v24();
  graphics_refresh_v24();return 1;
@@ -100,14 +108,14 @@ TRAMP(void,graphics_adaptive_start,(void* o,void* m))
 TRAMP(void,graphics_adaptive_apply,(void* o,void* m))
 EXPORT void graphics_adaptive_start_hook(void* o,void* m){
  graphics_adaptive_start_trampoline(o,m);
- if(!graphics_loaded_v24)graphics_start_v24();else graphics_apply_v24(graphics_selected_v24);
+ if(!graphics_loaded_v24)graphics_start_v24();else graphics_apply_v24(graphics_running_v26);
 }
 EXPORT void graphics_adaptive_apply_hook(void* o,void* m){
  /* Exact original body 264080..2640CC only reads resolutionScaleStep and
   * sets XR scale. It has no events or other side effects to preserve.
   * Avoid allocating old-scale eye buffers immediately before new-scale ones. */
  if(!graphics_loaded_v24)graphics_start_v24();
- else FN(0xed8cf0,void(*)(float,void*))(graphics_presets_v24[graphics_selected_v24].scale,0);
+ else FN(0xed8cf0,void(*)(float,void*))(graphics_presets_v24[graphics_running_v26].scale,0);
 }
 /* OVRManager.Update (457FD0) can override both knobs every frame. These are
  * rendering-only fields: useRecommendedMSAALevel +25 and

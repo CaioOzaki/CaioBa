@@ -16,16 +16,38 @@ static int text_equals(void* s,const char* word){
  return i==n;
 }
 static int named(void* component,const char* name){return text_equals(FN(0xa0bdd0,void*(*)(void*,void*))(gameobject(component),0),name);}
+/* Movement and teleport use distinct native paths. Enforce the same world
+ * torso boundary at both; online eligibility does not depend on host Go(). */
+static V3 clamp_player_position_v26(void* player,V3 desired){
+ if(!player||!finitev(desired)||lobby_active())return desired;
+ if(network_physics()){
+  /* Photon/local avatar objects can survive room leave with an old area. */
+  if(!FN(0x61efc0,_Bool(*)(void*))(0)||player!=online_local_player()||!PTR(player,0x20))return desired;
+ }else if(!doubles_enabled&&!quartet_enabled)return desired;
+ int team=INT(player,0x28);if(team<0||team>1)return desired;
+ void* t=transform(player);if(!t)return desired;
+ V3 current=position(t);void* body=PTR(player,0x80);void* torso=body?PTR(body,0x38):0;
+ V3 center=torso?position(torso):current;if(!finitev(current)||!finitev(center))return desired;
+ float z=desired.z+center.z-current.z;
+ if(team==0&&z>-.18f)desired.z+=-.18f-z;
+ if(team==1&&z<.18f)desired.z+=.18f-z;
+ return desired;
+}
+static void clamp_local_player_v26(void* body){
+ void* player=network_physics()?online_local_player():rooted(local_player_root);
+ if(!body||!player||PTR(player,0x80)!=body)return;
+ void* t=transform(player);if(!t)return;
+ V3 p=position(t),q=clamp_player_position_v26(player,p);
+ if(q.z!=p.z)position_set(t,q);
+}
 EXPORT void clamp_player_hook(void* player,void* m){
  if(lobby_active())return;
  clamp_player_trampoline(player,m);
- if((!doubles_enabled&&!quartet_enabled)||!player)return;
- int team=INT(player,0x28);if(team<0||team>1)return;
- void* body=PTR(player,0x80);void* torso=body?PTR(body,0x38):0;
- void* t=transform(player);V3 p=position(t),center=torso?position(torso):p;
- float change=team==0?(center.z>-.18f?-.18f-center.z:0):(center.z<.18f?.18f-center.z:0);
- if(change){p.z+=change;position_set(t,p);}
+ if(!player)return;void* t=transform(player);if(!t)return;
+ V3 p=position(t),q=clamp_player_position_v26(player,p);
+ if(q.z!=p.z)position_set(t,q);
 }
+
 typedef struct {unsigned player;int skin;} SkinChoice;
 static SkinChoice choices[8];static int preferred_skin=-1,preferred_map,preferences_loaded;
 static int chosen_skin(void* player){for(int i=0;i<8;i++)if(rooted(choices[i].player)==player)return choices[i].skin;return -1;}
@@ -69,6 +91,9 @@ static int switch_team(void* player,int target){
 }
 typedef struct {unsigned player;int team;} PendingTeam;
 static PendingTeam pending_teams[8];
+static void pending_teams_reset_v26(void){
+ for(int i=0;i<8;i++){root_set(&pending_teams[i].player,0);pending_teams[i].team=-1;}
+}
 static void finish_team_changes(void){
  for(int i=0;i<8;i++){void* p=rooted(pending_teams[i].player);if(alive(p))switch_team(p,pending_teams[i].team);root_set(&pending_teams[i].player,0);}
 }

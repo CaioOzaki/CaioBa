@@ -61,6 +61,7 @@ static int lobby_active(void);
 static int lobby_is_ball(void* ball);
 static float lobby_step_time(void* ball,float dt);
 static void lobby_adopt_ball(void* ball);
+EXPORT void ball_appearance_v26(void* ball);
 static void setspin(void* ball,V3 spin){
     void* rb=*(void**)((char*)ball+0x98);
     void* local=*(void**)((char*)ball+0x30);
@@ -138,6 +139,7 @@ EXPORT void late_hook(void* ball,void* method){
     /* Cached Photon instantiations may arrive before the room page activates. */
     if(lobby_active())lobby_adopt_ball(ball);
     late_trampoline(ball,method);
+    ball_appearance_v26(ball);
     frame_callbacks++;
     int practice=lobby_is_ball(ball);
     if(ball!=spinning_ball&&!practice)return;

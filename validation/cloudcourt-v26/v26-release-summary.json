@@ -1,0 +1,36 @@
+{
+  "checkpoint": "Cloudcourt-v26-session-repair",
+  "base": "Cloudcourt-v25-trigger-fix",
+  "verified_files": 17,
+  "zip_sha256": "2026ff2d0a2e478ccb9e637d0f02dc0a2b4dbf87950eddc719620001668fe9a0",
+  "previous_checkpoint": "distribution/Cloudcourt-v25-trigger-fix.zip",
+  "previous_backup": "versions/cloudcourt-v25-antes-v26",
+  "github_commit": null,
+  "requested_implementation_completed": true,
+  "work_in_progress": false,
+  "final_asset_audit_passed": true,
+  "native_validation_suites_passed": 7,
+  "installer_cases_passed": 13,
+  "native_sha256": "2c860f7a8f9a74fc1ce1cc09ece86653eebbdc54796edfc2f5ea72f1f8fbd65b",
+  "room_namespaces": [
+    "Cloudcourt-2v2-v24",
+    "Cloudcourt-4v4-v24"
+  ],
+  "VR_playtest": false,
+  "live_two_PC_multiplayer": false,
+  "waiting_only_for_user_playtest": true,
+  "zip_name": "Cloudcourt-v26-session-repair.zip",
+  "zip_bytes": 62719626,
+  "changed_game_files": [
+    "GameAssembly.dll",
+    "VolleyballFever_Data/resources.assets",
+    "VolleyballFever_Data/level1",
+    "VolleyballFever_Data/level3",
+    "VolleyballFever_Data/level0"
+  ],
+  "unchanged_game_files": 12,
+  "graphics_changes_require_restart": true,
+  "actual_unity_ui_material_probes": true,
+  "deterministic_online_two_session_cases": 8,
+  "controlled_startup_seconds": 15
+}

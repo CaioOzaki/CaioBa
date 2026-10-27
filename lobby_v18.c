@@ -15,6 +15,30 @@ static unsigned char lobby_trigger_down[2];
 static float lobby_spin_time[32];
 static int lobby_transitioning,lobby_menu_down;
 static float lobby_spawn_at;
+static unsigned lobby_net_environment_v26,lobby_net_renderer_v26;
+static float lobby_net_retry_v26;
+static void lobby_net_reset_v26(void){
+ void* renderer=rooted(lobby_net_renderer_v26);
+ if(alive(renderer))FN(0xa1b2f0,void(*)(void*,_Bool,void*))(renderer,0,0);
+ root_set(&lobby_net_renderer_v26,0);root_set(&lobby_net_environment_v26,0);lobby_net_retry_v26=0;
+}
+static void lobby_net_tick_v26(void){
+ void* klass=PTR((void*)base(),0x15422a0);void* stat=klass?PTR(klass,0xb8):0;
+ void* environment=stat?PTR(stat,0):0;
+ if(!alive(environment))return;
+ if(rooted(lobby_net_environment_v26)!=environment){
+  lobby_net_reset_v26();root_set(&lobby_net_environment_v26,environment);
+ }
+ if(alive(rooted(lobby_net_renderer_v26)))return;
+ float now=FN(0xb72b40,float(*)(void*))(0);if(now<lobby_net_retry_v26)return;lobby_net_retry_v26=now+.25f;
+ /* Environment is loaded asynchronously after page activation. Bind once
+  * ready, retrying only while missing; these are the existing native net
+  * colliders with their repaired renderer, not a second gameplay net. */
+ void* go=FN(0x94f3d0,void*(*)(void*,void*))(str("Environment/Net net"),0);
+ void* renderer=go?FN(0x94f410,void*(*)(void*,void*,void*))(go,str("MeshRenderer"),0):0;
+ if(!alive(renderer))return;
+ root_set(&lobby_net_renderer_v26,renderer);FN(0xa1b2f0,void(*)(void*,_Bool,void*))(renderer,1,0);
+}
 static int lobby_active(void){
  if(!network_physics()||lobby_transitioning)return 0;
  void* page=rooted(lobby_page);
@@ -54,12 +78,18 @@ static void lobby_remove_ball(unsigned* root){
  root_set(root,0);
 }
 static void lobby_cleanup(void){
+ lobby_net_reset_v26();
  for(int i=0;i<32;i++)lobby_remove_ball(&lobby_balls[i]);root_set(&lobby_local_ball,0);
  root_set(&lobby_pending_hand,0);root_set(&lobby_pending_ball,0);
  for(int i=0;i<2;i++){root_set(&lobby_hands[i],0);lobby_trigger_down[i]=0;}lobby_menu_down=0;
 }
+static void lobby_session_reset_v26(void){
+ lobby_transitioning=1;lobby_cleanup();root_set(&lobby_page,0);
+ lobby_spawn_at=0;lobby_transitioning=0;
+}
 EXPORT void lobby_enter_hook(void* page,void* arg,void* m){
- lobby_transitioning=1;lobby_cleanup();root_set(&lobby_page,page);lobby_spawn_at=0;
+ online_session_reset_v26();
+ lobby_transitioning=1;root_set(&lobby_page,page);lobby_spawn_at=0;
  lobby_enter_trampoline(page,arg,m);lobby_transitioning=0;
 }
 EXPORT void lobby_start_hook(void* page,void* m){
@@ -95,7 +125,9 @@ static void* lobby_recall_ball(void* hand){
   for(int i=0;i<32;i++){void* candidate=rooted(lobby_balls[i]);if(alive(candidate)&&lobby_owned(candidate)){ball=candidate;break;}}
   if(!ball){
    float now=FN(0xb72b40,float(*)(void*))(0);if(now<lobby_spawn_at)return 0;
-   Q4 q={0,0,0,1};void* go=FN(0x60fb50,void*(*)(void*,V3,Q4,unsigned char,void*,void*))(str("Volleyball"),p,q,0,0,0);
+   /* Instantiate off court, then apply the native serve freeze before it
+    * can overlap a physical hand or floor. */
+   Q4 q={0,0,0,1};void* go=FN(0x60fb50,void*(*)(void*,V3,Q4,unsigned char,void*,void*))(str("Volleyball"),(V3){0,-100,0},q,0,0,0);
    if(!go)return 0;
    ball=FN(0x94f410,void*(*)(void*,void*,void*))(go,str("Volleyball"),0);
    if(!ball||!lobby_is_ball(ball))return 0;
@@ -104,8 +136,11 @@ static void* lobby_recall_ball(void* hand){
   root_set(&lobby_local_ball,ball);
  }
  lobby_detach(ball);
- /* Original Hand.Update owns attachment, release and throwing velocity. */
- position_set(transform(ball),p);return ball;
+ /* Reuse LocalPlayerServe's native reliable freeze on every recall. Its
+  * release path publishes ChangeMotion, which unfreezes physics on all peers. */
+ FN(0x77ea70,void(*)(void*,void*))(ball,0);
+ if(!hand_ball_place_v26(ball,hand))return 0;
+ serve_visible(ball,1);return ball;
 }
 static void* lobby_hand_ball(void* hand){
  /* Only a fresh press can attach. A trigger still held in the old hand must
@@ -148,6 +183,7 @@ EXPORT void lobby_selector_show_v21(void){
 EXPORT void lobby_update_hook(void* page,void* m){
  lobby_update_trampoline(page,m);
  if(!lobby_active())return;
+ lobby_net_tick_v26();
  /* Native input helper reads global controllers and no InGame fields. */
  int down=FN(0x314470,_Bool(*)(void*,void*))(0,0);
  if(down&&!lobby_menu_down)lobby_selector_show_v21();lobby_menu_down=down;
@@ -162,6 +198,9 @@ EXPORT float lobby_move_clamp_hook(float value,float low,float high,void* m){
 EXPORT void lobby_move_position_hook(void* t,V3 p,void* m){
  if(lobby_active()){
   if(p.x< -10)p.x=-10;if(p.x>10)p.x=10;if(p.z< -15)p.z=-15;if(p.z>15)p.z=15;
+ }else{
+  void* player=online_local_player();
+  if(player&&transform(player)==t)p=clamp_player_position_v26(player,p);
  }
  FN(0xb756b0,SetVec)(t,p,m);
 }

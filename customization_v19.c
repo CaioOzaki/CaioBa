@@ -49,8 +49,20 @@ static void customization_refresh_v19(void){
    * tesselated and curved vertex lists. Invalidate that cache on every click.
    * Verified dump.cs: CurvedUIVertexEffect.SetDirty RVA 0x24bb80. */
   void* effect=FN(0x94f410,void*(*)(void*,void*,void*))(gameobject(t),str("CurvedUIVertexEffect"),0);
-  if(effect)FN(0x24bb80,void(*)(void*,void*))(effect,0);
+  if(effect){
+   FN(0x24bb80,void(*)(void*,void*))(effect,0);
+   FN(0x24cfc0,void(*)(void*,_Bool,void*))(effect,1,0);
+  }
   FN(0x790530,void(*)(void*,void*))(raw,0);
+  /* A surviving CurvedUI preview can retain a curved mesh from before a
+   * gameplay scene. Re-enter only the noninteractive preview lifecycle, the
+   * same path that made closing/reopening the whole panel refresh its image.
+   * Neither the panel, buttons nor page/match lifecycle is re-entered. */
+  void* go=gameobject(t);
+  if(FN(0x94f9a0,_Bool(*)(void*,void*))(go,0)){
+   FN(0x94f700,void(*)(void*,_Bool,void*))(go,0,0);
+   FN(0x94f700,void(*)(void*,_Bool,void*))(go,1,0);
+  }
  }
  void* swatch=find_child(panel,"CC_HandToneSwatch");
  void* graphic=swatch?FN(0x94f410,void*(*)(void*,void*,void*))(gameobject(swatch),str("Image"),0):0;

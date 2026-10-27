@@ -33,6 +33,9 @@ static int member_role(void* member);
 static int quartet_setup(void* bot);
 static void* quartet_pass(void* bot,void* target,void* m);
 static void hand_serve_reset(void);
+static void online_session_reset_v26(void);
+static void ball_style_reset_v26(void);
+static void clamp_local_player_v26(void* body);
 EXPORT int solo_stage=0; /* 0 format selector, 4 original courts, 2 doubles courts */
 EXPORT int doubles_requested=0;
 EXPORT float doubles_speed=1.40f;
@@ -324,7 +327,11 @@ static void* select_online(int format,void* m){
 EXPORT void main_menu_hook(void* o,void* argument,void* m){
  /* Entering another game from the main menu must not inherit doubles. Keep
   * the current match's speed if the user merely opens and closes the menu. */
- customization_close_v19();graphics_close_v24();landing_clear_v20();celebration_reset_v21();doubles_requested=0;main_menu_trampoline(o,argument,m);show_button(o,0x30,0);
+ customization_close_v19();graphics_close_v24();landing_clear_v20();celebration_reset_v21();
+ /* StartPage can also be opened over a live match. Reset the old online
+  * epoch only after leaving its room; lobby entry handles same-room replay. */
+ if(!offline()&&!FN(0x61efc0,_Bool(*)(void*))(0))online_session_reset_v26();
+ doubles_requested=0;main_menu_trampoline(o,argument,m);show_button(o,0x30,0);
  graphics_start_v24();
 }
 EXPORT void* solo_day_hook(void* o,void* m){
@@ -533,6 +540,7 @@ EXPORT void* pass_target_hook(void* bot,void* m){
 #include "lobby_v18.c"
 #include "map_v19.c"
 #include "gameplay_v19.c"
+#include "ball_style_v26.c"
 #ifdef MODE_PROBE
 /* Built only in the disposable validation binary. Commands are consumed on
  * Unity's main thread, never invoked by an external thread. */

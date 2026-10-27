@@ -164,7 +164,7 @@ with tempfile.NamedTemporaryFile(dir=target.parent,prefix='cloudcourt-build-',su
     staged.write(result);staged_path=pathlib.Path(staged.name)
 assert staged_path.resolve().parent==target.resolve().parent
 os.replace(staged_path,target)
-manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v24 / Cloudcourt-4v4-v24','status':'v25 analog trigger pressure repaired through native acquisition/release and trigger-only spawn; v24 rooms/features retained; headset validation pending'}
+manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v24 / Cloudcourt-4v4-v24','status':'v26 session, lobby holding/barrier, body pose, SDF outline, preview lifetime, per-map own ball art and restart-safe graphics repairs; v24 wire protocol retained; physical validation pending'}
 (R/'analysis/native-patch-manifest.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))
 
