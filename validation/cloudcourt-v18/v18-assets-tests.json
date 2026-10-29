@@ -1,8 +1,0 @@
-{
-  "passed": true,
-  "audio_clips": 22,
-  "all_external_banks_decoded": true,
-  "non_audio_objects_preserved": true,
-  "palm_triangles": 512,
-  "beach_shader_binaries_and_colliders_preserved": true
-}

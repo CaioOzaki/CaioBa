@@ -182,13 +182,13 @@ def test_package(manifest):
 def add_docs_and_zip():
     """Package current v26 reference art and genuine dependency credits only."""
     for source,target in [
-        ('CHECKPOINT-V25.md','CHECKPOINT-V25.md'),
-        ('assets/cloudcourt-v16/Baloo2-OFL.txt','Baloo2-OFL.txt'),
-        ('assets/audio-v18/CREDITS.md','BASE-AUDIO-CREDITS.md'),
-        ('assets/audio-v18/impact/License.txt','Kenney-Impact-License.txt'),
-        ('assets/audio-v18/interface/License.txt','Kenney-Interface-License.txt')]:
+        ('CHECKPOINT-V26.md','CHECKPOINT-V26.md'),
+        ('assets/shared/fonts/Baloo2-OFL.txt','Baloo2-OFL.txt'),
+        ('assets/shared/audio/CREDITS.md','BASE-AUDIO-CREDITS.md'),
+        ('assets/shared/audio/impact/License.txt','Kenney-Impact-License.txt'),
+        ('assets/shared/audio/interface/License.txt','Kenney-Interface-License.txt')]:
         shutil.copyfile(R/source,OUT/target)
-    whistle=R/'assets/audio-v22/CREDITS.md'
+    whistle=R/'assets/shared/audio/SERVE-WHISTLE-CREDITS.md'
     if whistle.exists():shutil.copyfile(whistle,OUT/'AUDIO-CREDITS.md')
     else:
         (OUT/'AUDIO-CREDITS.md').write_text(
@@ -208,7 +208,7 @@ def add_docs_and_zip():
         required={r[k]['name'] for r in config['files'] for k in ('forward','reverse','upgrade','previous_reverse') if k in r}
         # Explicit payload list excludes stale release previews and notes.
         docs=['Instalar.cmd','Restaurar.cmd','Aplicar-mod.ps1','patch.json','README.txt',
-              'CHECKPOINT-V25.md','ART-CREDITS.md','AUDIO-CREDITS.md','BASE-AUDIO-CREDITS.md',
+              'CHECKPOINT-V26.md','ART-CREDITS.md','AUDIO-CREDITS.md','BASE-AUDIO-CREDITS.md',
               'Kenney-Impact-License.txt','Kenney-Interface-License.txt','Baloo2-OFL.txt']
         for name in sorted(required|set(docs)):archive.write(OUT/name,VERSION+'/'+name)
         for source,target in previews:

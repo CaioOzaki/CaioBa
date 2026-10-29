@@ -12,7 +12,7 @@ def _set_readable_data(self,data):
  _original_set_raw_data(self,data)
  self.reader=EndianBinaryReader(data,endian=self.reader.endian);self.byte_start=0;self.byte_size=len(data)
 ObjectReader.set_raw_data=_set_readable_data
-BASE=R/'versions/v15-rostos-antes-puloviva';OUT=R/'visuals-v16';A=R/'assets/cloudcourt-v16';A.mkdir(exist_ok=True)
+BASE=R/'versions/v15-rostos-antes-puloviva';OUT=R/'visuals-v16';A=R/'assets/shared/fonts';A.mkdir(exist_ok=True)
 env=UnityPy.load(str(R/'working/VolleyballFever_Data'))
 files={}
 for name in ['resources.assets','sharedassets0.assets','sharedassets1.assets','sharedassets3.assets','level0','level1','level2','level3']:

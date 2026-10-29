@@ -162,7 +162,7 @@ def build_scene_assets(files):
 def preview_settings(menu,path):
     from PIL import Image,ImageDraw,ImageFont
     _,ts,paths=hierarchy(menu);image=Image.new('RGB',(1100,940),'#172b46');draw=ImageDraw.Draw(image)
-    font=R/'assets/cloudcourt-v16/CloudcourtBubble.ttf'
+    font=R/'assets/shared/fonts/CloudcourtBubble.ttf'
     draw.text((550,55),'CLOUDCOURT',font=ImageFont.truetype(str(font),54),anchor='mm',fill='#fff1dc')
     draw.text((550,112),'SETTINGS',font=ImageFont.truetype(str(font),30),anchor='mm',fill='#ffcf58')
     for names in SETTINGS_ROWS:

@@ -45,3 +45,19 @@ Source generators and original assets are provided here; see
 [original lofi licensing](assets/cloudcourt-v28/LOFI-LICENSE.txt),
 [art notes](assets/cloudcourt-v28/README.md) and retained dependency credits.
 The game's standard matches retain best-of-three Indoor25/Beach21 scoring.
+
+## Retained releases
+
+The main tree keeps the current release and the previous two as our permanent
+repository policy. Shared component filenames may carry older feature suffixes;
+these are dependencies of the retained releases, not additional old releases.
+
+| Release | Role | Original source snapshot |
+| --- | --- | --- |
+| v28 | Current | [v28 source](https://github.com/CaioOzaki/CaioBa/tree/0946e4b914c568093153866d9df096f7ce6a15a5) |
+| v27 | Previous | [v27 source](https://github.com/CaioOzaki/CaioBa/tree/aa3c19b2f02a836581cebd41ebe71e4d670ede5e) |
+| v26 | Previous | [v26 source](https://github.com/CaioOzaki/CaioBa/tree/455aed7b3ca99c9b830362ef1bb7d9c789030068) |
+
+Shared fonts and sound inputs are in assets/shared/, with their notices intact.
+Local ZIPs/backups and the normal Git commit history are preserved. See
+[repository policy](REPOSITORY-POLICY.md).

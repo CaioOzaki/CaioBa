@@ -175,7 +175,7 @@ def create_art():
         back=copy.deepcopy(model);back.v=[[-x*.94,y*.94,-z*.94] for x,y,z in model.v];back.n=[[-x,y,-z] for x,y,z in model.n]
         scope['render_model'](back,im,400).save(A/f'bot-{n+1:02d}-costas.png')
     gallery=Image.new('RGB',(1500,1800),'#e4ebed');draw=ImageDraw.Draw(gallery)
-    titlefont=ImageFont.truetype(str(R/'assets/cloudcourt-v16/CloudcourtBubble.ttf'),24)
+    titlefont=ImageFont.truetype(str(R/'assets/shared/fonts/CloudcourtBubble.ttf'),24)
     for i in range(9):
         x=(i%3)*500;y=(i//3)*600;gallery.paste(Image.open(A/f'bot-{i+1:02d}-modelo.png'),(x,y))
         draw.text((x+250,y+535),f'{i+1}. {NAMES[i]}',font=titlefont,fill='#172b46',anchor='mm')

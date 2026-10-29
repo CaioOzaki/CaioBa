@@ -9,7 +9,7 @@ sys.path.insert(0,str(R/'tools/python'))
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
 import UnityPy
-A=R/'assets/cloudcourt-v16';A.mkdir(parents=True,exist_ok=True)
+A=R/'assets/shared/fonts';A.mkdir(parents=True,exist_ok=True)
 OUT=R/'characters-v16';OUT.mkdir(exist_ok=True)
 BASE=R/'versions/v13-antes-personagens'
 SKINS=['#e9b98d','#f0c5a6','#b98055','#f0c3a2','#e7b589','#744a39','#edbb9b']

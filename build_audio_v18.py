@@ -6,7 +6,7 @@ from pathlib import Path
 import sys,json,struct,wave,io,hashlib,shutil
 R=Path(__file__).resolve().parent;sys.path.insert(0,str(R/'tools/python'))
 import numpy as np,UnityPy,fmod_toolkit
-A=R/'assets/audio-v18';A.mkdir(exist_ok=True);W=R/'working/VolleyballFever_Data';SR=22050
+A=R/'assets/shared/audio';A.mkdir(exist_ok=True);W=R/'working/VolleyballFever_Data';SR=22050
 rng=np.random.default_rng(1818)
 def tone(freq,dur=.5):
  t=np.arange(round(dur*SR))/SR;env=np.minimum(t/.007,1)*np.exp(-t*7/max(dur,.1))

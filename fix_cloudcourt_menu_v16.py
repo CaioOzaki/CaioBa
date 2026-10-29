@@ -30,11 +30,11 @@ def splash_logo():
     draw.arc((876, 118, 1172, 414), 190, 355, fill=blue, width=25)
     draw.arc((900, 110, 1194, 416), 62, 225, fill=coral, width=25)
     draw.arc((850, 152, 1146, 448), 267, 63, fill=navy, width=16)
-    font = str(R / 'assets/cloudcourt-v16/CloudcourtBubble.ttf')
+    font = str(R / 'assets/shared/fonts/CloudcourtBubble.ttf')
     draw.text((1024, 532), 'CLOUDCOURT', font=ImageFont.truetype(font, 216), anchor='mm', fill=cream)
     draw.rounded_rectangle((912, 674, 1136, 766), radius=35, fill=gold)
     draw.text((1024, 710), 'VR', font=ImageFont.truetype(font, 76), anchor='mm', fill=navy)
-    image.save(R / 'assets/cloudcourt-v16/logo.png')
+    image.save(R / 'assets/shared/fonts/logo.png')
     return image
 
 

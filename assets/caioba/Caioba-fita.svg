@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="512" viewBox="0 0 1024 512">
-<rect width="1024" height="512" fill="#e9e7db"/>
-<rect x="0" y="8" width="1024" height="6" fill="#18828e"/>
-<rect x="0" y="215" width="1024" height="7" fill="#18828e"/>
-<rect x="0" y="380" width="1024" height="5" fill="#18828e"/>
-<text x="260" y="100" transform="rotate(0 260 100)" dominant-baseline="central" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="42" fill="#185064">CAIOBA</text>
-<text x="770" y="100" transform="rotate(0 770 100)" dominant-baseline="central" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="42" fill="#185064">CAIOBA</text>
-</svg>

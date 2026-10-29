@@ -179,12 +179,12 @@ def add_docs_and_zip():
     """Package current v27 reference art and genuine dependency credits only."""
     for source,target in [
         ('CHECKPOINT-V27.md','CHECKPOINT-V27.md'),
-        ('assets/cloudcourt-v16/Baloo2-OFL.txt','Baloo2-OFL.txt'),
-        ('assets/audio-v18/CREDITS.md','BASE-AUDIO-CREDITS.md'),
-        ('assets/audio-v18/impact/License.txt','Kenney-Impact-License.txt'),
-        ('assets/audio-v18/interface/License.txt','Kenney-Interface-License.txt')]:
+        ('assets/shared/fonts/Baloo2-OFL.txt','Baloo2-OFL.txt'),
+        ('assets/shared/audio/CREDITS.md','BASE-AUDIO-CREDITS.md'),
+        ('assets/shared/audio/impact/License.txt','Kenney-Impact-License.txt'),
+        ('assets/shared/audio/interface/License.txt','Kenney-Interface-License.txt')]:
         shutil.copyfile(R/source,OUT/target)
-    whistle=R/'assets/audio-v22/CREDITS.md'
+    whistle=R/'assets/shared/audio/SERVE-WHISTLE-CREDITS.md'
     if whistle.exists():shutil.copyfile(whistle,OUT/'AUDIO-CREDITS.md')
     else:
         (OUT/'AUDIO-CREDITS.md').write_text(
