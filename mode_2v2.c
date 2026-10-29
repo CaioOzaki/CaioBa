@@ -13,6 +13,7 @@ TRAMP(void*,online_entry,(void* o,void* m))
 TRAMP(void,main_menu,(void* o,void* argument,void* m))
 TRAMP(void*,solo_day,(void* o,void* m))
 TRAMP(void*,solo_night,(void* o,void* m))
+TRAMP(void*,solo_bomb_v28,(void* o,void* m))
 TRAMP(void*,solo_back,(void* o,void* m))
 TRAMP(void*,solo_start,(void* o,void* env,_Bool bomb,void* m))
 TRAMP(void,game_go,(void* o,void* m))
@@ -50,6 +51,10 @@ static unsigned page_root,day_text_root,night_text_root;
 static unsigned rules_root;
 EXPORT int online_version_ready=0;
 EXPORT int online_format=2;
+EXPORT int online_bomb_v28=0;
+static int net_last_id_v28=-1;
+static int net_first_touch=0,net_serve_team=-1;
+static int net_touch_team=-1,net_touch_count=0,net_rally_active=0;
 EXPORT int online_selector=0;
 static unsigned online_start_root;
 static int online_mode(void){return online_version_ready&&online_format==2&&!offline();}
@@ -59,6 +64,18 @@ static int network_physics(void);
 static int chosen_skin(void* player);
 static void cloudcourt_avatar_tick(void* body);
 static int preferred_style(void);
+static int settings_button_v28(void* button);
+static void settings_close_v28(void);
+static float audio_gain_v28(int category);
+static void customization_reset_v28(void);
+static void customization_preferences_v28(void);
+static void customization_mirror_refresh_v28(void* panel);
+static int customization_button_v28(void* button);
+static int appearance_receive_v28(void* player,int value);
+static int appearance_pack_v28(void);
+static int player_cosmetic_v28(void* player,int arms);
+EXPORT void avatar_cosmetics_v28(void* body);
+
 static void ensure_preferences_v19(void);
 static int customization_button_v19(void* button);
 static void customization_close_v19(void);
@@ -122,6 +139,7 @@ static void root_set(unsigned* h,void* obj){
 static void managed_field(void* obj,int offset,void* value){
  FN(0x14ac30,void(*)(void*,void**,void*))(obj,(void**)((char*)obj+offset),value);
 }
+#include "rules_bomb_v28.c"
 /* Yield AFTER any rotation has completed and BEFORE the serve placement.
  * State 1 proceeds directly only when the serving team has not changed;
  * state 2 resumes after the existing rotation pause. Private states 101/102
@@ -181,7 +199,7 @@ EXPORT void tracked_touch_hook(void* rules,int player,int team,void* m){
    V3 p=player_airborne&&rooted(jumping_player_root)==member?jump_takeoff:player_court_position(member);
    fault=team==0?p.z>=-9.0f:p.z<=9.0f;
   }else if(member&&serve_flight_team==1-team){
-   fault=isbot?BYTE(member,0x80):player_is_airborne(member);
+   fault=v28_block(rules,player,team);
   }
   if(fault){
    point_reason=serving?5:serve_flight_team==team?6:7;
@@ -198,7 +216,14 @@ EXPORT void tracked_touch_hook(void* rules,int player,int team,void* m){
  if(doubles_enabled&&rules&&BYTE(rules,0x78)){
   reception_pending=BYTE(rules,0x79)&&team==1;
  }
+ /* Apply the exception only to a first opponent interception, never a serve
+  * or a teammate's set. Keep native Bomb fuse/explosion decisions intact. */
+ int block=rules&&!BYTE(rules,0x68)&&BYTE(rules,0x78)&&!BYTE(rules,0x79)&&serve_flight_team<0&&
+           team>=0&&team<2&&INT(rules,0x7c)==1-team&&(accepted_block_v28||v28_block(rules,player,team));
  tracked_touch_trampoline(rules,player,team,m);
+ if(block&&BYTE(rules,0x78)&&INT(rules,0x7c)==team&&INT(rules,0x98)==player){
+  INT(rules,0x9c)=v28_indoor()?0:1;INT(rules,0x98)=-1;
+ }
 }
 /* The parent jump routine enters cooldown state 3 after landing. The
  * player's jumping bool stays set during cooldown, so it is not suitable
@@ -220,7 +245,7 @@ static int receiving_serve(void* bot){
 EXPORT void bot_assess_hook(void* bot,void* m){
  int receiving=receiving_serve(bot);unsigned char allow=BYTE(bot,0x38);
  void* rules=rooted(rules_root);
- int no_block=(doubles_enabled||quartet_enabled)&&bot_has_human_mate(bot)&&rules&&INT(rules,0x7c)!=INT(bot,0x28);
+ int no_block=0; /* Teammate bots may make legitimate net blocks. */
  if(receiving||no_block)BYTE(bot,0x38)=0;
  bot_assess_trampoline(bot,m);BYTE(bot,0x38)=allow;
  /* Update inlines the jump decision: only the High tactic initiates it. */
@@ -249,7 +274,7 @@ EXPORT int reception_assist_hook(void* key,int fallback,void* m){
 static int ally_setup(void* bot){
  if(!doubles_enabled||!bot||!bot_has_human_mate(bot))return 0;
  void* rules=rooted(rules_root);
- if(!rules||!BYTE(rules,0x78)||BYTE(rules,0x79))return 0;
+ if(!rules||BYTE(rules,0x68)||!BYTE(rules,0x78)||BYTE(rules,0x79))return 0;
  int used=INT(rules,0x7c)==INT(bot,0x28)?INT(rules,0x9c):0;
  return used>=0&&used<2;
 }
@@ -291,14 +316,19 @@ static void show_button(void* page,int offset,int show){
 }
 static void layout(void* page){
  if(!page)return;
- show_button(page,0x40,1);show_button(page,0x48,solo_stage==0);
- show_button(page,0x50,solo_stage!=0);show_button(page,0x58,solo_stage==4);
- if(solo_stage==0){
+ int extras=solo_stage==3;
+ show_button(page,0x40,1);show_button(page,0x48,solo_stage==0||extras);
+ show_button(page,0x50,solo_stage==2||solo_stage==4);show_button(page,0x58,!extras);
+ if(extras){
+  label(text_component(page,0x40),"Bomb 4v4");label(text_component(page,0x48),"Bomb 2v2");
+  label(PTR(page,0x38),online_selector?"Online - Extras":"Solo - Extras");
+ }else if(solo_stage==0){
   label(text_component(page,0x40),"4v4");label(text_component(page,0x48),"2v2");
-  label(PTR(page,0x38),online_selector?"Online - Modo de jogo":"Solo - Modo de jogo");
+  label(text_component(page,0x58),"Extras");
+  label(PTR(page,0x38),online_selector?"Online - Game mode":"Solo - Game mode");
  }else{
-  label(text_component(page,0x40),"Beach");
-  set_text(text_component(page,0x48),rooted(night_text_root));
+  label(text_component(page,0x40),"Beach");label(text_component(page,0x50),"Indoor");
+  label(text_component(page,0x58),"Extras");
   label(PTR(page,0x38),solo_stage==2?"Solo 2v2":"Solo 4v4");
  }
 }
@@ -311,12 +341,12 @@ EXPORT void solo_awake_hook(void* o,void* m){
  solo_stage=0;layout(o);
 }
 EXPORT void* solo_entry_hook(void* o,void* m){
- online_selector=0;
+ online_selector=0;online_bomb_v28=0;
  solo_stage=0;doubles_requested=0;layout(rooted(page_root));
  return solo_entry_trampoline(o,m);
 }
 EXPORT void* online_entry_hook(void* o,void* m){
- root_set(&online_start_root,o);online_selector=1;solo_stage=0;
+ root_set(&online_start_root,o);online_selector=1;solo_stage=0;online_bomb_v28=0;
  doubles_requested=0;layout(rooted(page_root));
  return solo_entry_trampoline(o,m);
 }
@@ -325,6 +355,7 @@ static void* select_online(int format,void* m){
  return online_entry_trampoline(rooted(online_start_root),m);
 }
 EXPORT void main_menu_hook(void* o,void* argument,void* m){
+ if(offline()||!FN(0x61efc0,_Bool(*)(void*))(0))customization_reset_v28();
  /* Entering another game from the main menu must not inherit doubles. Keep
   * the current match's speed if the user merely opens and closes the menu. */
  customization_close_v19();graphics_close_v24();landing_clear_v20();celebration_reset_v21();
@@ -335,22 +366,26 @@ EXPORT void main_menu_hook(void* o,void* argument,void* m){
  graphics_start_v24();
 }
 EXPORT void* solo_day_hook(void* o,void* m){
- if(online_selector)return select_online(4,m);
+ if(solo_stage==3){if(online_selector){online_bomb_v28=1;return select_online(4,m);}solo_stage=4;return solo_bomb_v28_trampoline(o,m);}
+ if(online_selector){online_bomb_v28=0;return select_online(4,m);}
  if(solo_stage==0){choose(o,4);return completed();}
  return solo_day_trampoline(o,m);
 }
 EXPORT void* solo_night_hook(void* o,void* m){
- if(online_selector)return select_online(2,m);
+ if(solo_stage==3){if(online_selector){online_bomb_v28=1;return select_online(2,m);}solo_stage=2;return solo_bomb_v28_trampoline(o,m);}
+ if(online_selector){online_bomb_v28=0;return select_online(2,m);}
  if(solo_stage==0){choose(o,2);return completed();}
  return completed(); /* Night is retired; this button only selects 2v2 now. */
 }
+EXPORT void* solo_bomb_v28_hook(void* o,void* m){choose(o,3);return completed();}
 EXPORT void* solo_back_hook(void* o,void* m){
+ if(solo_stage==3){choose(o,0);return completed();}
  if(online_selector){online_selector=0;return solo_back_trampoline(o,m);}
  if(solo_stage){doubles_requested=0;choose(o,0);return completed();}
  doubles_requested=0;return solo_back_trampoline(o,m);
 }
 EXPORT void* solo_start_hook(void* o,void* env,_Bool bomb,void* m){
- doubles_requested=solo_stage==2&&!bomb;
+ doubles_requested=solo_stage==2;
  return solo_start_trampoline(o,env,bomb,m);
 }
 
@@ -393,6 +428,7 @@ static void configure_team(void* team,int index,int enable){
  if(!enable)return;
  if(enable==4){
   float sign=index?1.0f:-1.0f;
+  void* rules=rooted(rules_root);int bomb=rules&&BYTE(rules,0x68);
   for(int i=0;i<4;i++){
    AreaSave* a=&s->areas[i];int role=(i-s->slots[0]+4)%4;
    V3 pos=a->position,def=a->default_position,sz=a->size;
@@ -400,6 +436,7 @@ static void configure_team(void* team,int index,int enable){
    pos.z=sign*(role==0?7.0f:role==2?1.5f:4.0f);
    def.x=pos.x;def.z=pos.z;
    sz.x=role==0?9.0f:3.0f;sz.z=role==0?4.0f:role==2?3.0f:8.0f;
+   if(bomb){pos.x*=.4f;pos.z*=.5f;def.x=pos.x;def.z=pos.z;sz.x*=.44444445f;sz.z*=.5f;}
    *(V3*)((char*)a->area+0x18)=sz;BYTE(a->area,0x39)=role==0;
    position_set(transform(a->area),pos);position_set(PTR(a->area,0x30),def);
   }
@@ -427,9 +464,9 @@ static void prepare_match(void* o){
  FLT(o,0x40)=.9f;
  hand_serve_reset();root_set(&local_player_root,0);
  root_set(&rules_root,o);reception_pending=0;reception_context=0;
- serve_flight_team=-1;serve_fault=0;deferred_serve_point=-1;player_airborne=0;root_set(&jumping_player_root,0);
- doubles_enabled=(doubles_requested&&offline()||online_mode())&&!BYTE(o,0x68);
- quartet_enabled=!doubles_enabled&&(offline()||network_physics())&&!BYTE(o,0x68);
+ serve_flight_team=-1;serve_fault=0;deferred_serve_point=-1;player_airborne=0;root_set(&jumping_player_root,0);accepted_position_valid_v28=0;accepted_block_v28=0;
+ doubles_enabled=(doubles_requested&&offline()||online_mode());
+ quartet_enabled=!doubles_enabled&&(offline()||network_physics());
  doubles_spawned=0;doubles_team_counts[0]=doubles_team_counts[1]=0;
  void* teams=PTR(o,0x60);
  if(teams&&*(U64*)((char*)teams+0x18)==2){
@@ -483,7 +520,7 @@ EXPORT void bot_body_hook(void* bot,void* m){
  * the returned position leaves the court transform and human serve intact. */
 EXPORT V3 bot_serve_position_hook(void* serve_transform,void* m){
  V3 fallback=FN(0xb74de0,GetVec)(serve_transform,m);
- void* rules=rooted(rules_root);if(!rules||BYTE(rules,0x68))return fallback;
+ void* rules=rooted(rules_root);if(!rules)return fallback;
  int team=INT(rules,0x7c);if(team<0||team>1)return fallback;
  void* sides=PTR(rules,0x60);void* side=sides?PTR(sides,0x20+8*team):0;
  void* list=side?PTR(side,0x30):0;void* array=list?PTR(list,0x10):0;int n=list?INT(list,0x18):0;
@@ -533,6 +570,7 @@ EXPORT void* pass_target_hook(void* bot,void* m){
 #include "graphics_v24.c"
 #include "hand_visuals_v21.c"
 #include "sleeves_v24.c"
+#include "customization_v28.c"
 #include "input_v19.c"
 #include "bots_v20.c"
 #include "landing_v20.c"
@@ -542,6 +580,7 @@ EXPORT void* pass_target_hook(void* bot,void* m){
 #include "gameplay_v19.c"
 #include "ball_style_v26.c"
 #include "elbow_v27.c"
+#include "settings_audio_v28.c"
 #ifdef MODE_PROBE
 /* Built only in the disposable validation binary. Commands are consumed on
  * Unity's main thread, never invoked by an external thread. */

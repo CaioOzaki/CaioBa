@@ -34,6 +34,9 @@ class BallStyleEngineV26(Engine):
    self.destroyed.append(a);self.dead.add(a);self.ret()
   elif r==0xa1b2f0:
    assert a not in self.dead;self.enabled[a]=bool(b);self.ret()
+  elif r==0xa1b1e0:self.ret(self.enabled.get(a,False))
+  elif r in (0x9558b0,0x956610,0x9550e0,0x955090,0x956900):
+   assert a in self.instance and a not in self.dead;self.ret()
   elif r==0x9566d0:
    assert a in self.instance and a not in self.dead
    # Vector2 is 8 bytes and passes by value in RDX on Windows x64. Passing
@@ -46,13 +49,15 @@ class BallStyleEngineV26(Engine):
   if name is None:self.ptr(self.envstat,0);return 0
   env=self.alloc();self.ptr(env+0x18,self.string(name));self.ptr(self.envstat,env);return env
  def ball(self,ready=True):
-  ball=self.alloc();t=self.alloc();self.transforms[ball]=t
+  ball=self.alloc();t=self.alloc();self.transforms[ball]=t;self.ptr(ball+0x38,t)
   dedicated=self.alloc();regular=self.alloc();renderer=self.alloc();fallback=self.alloc();shared=self.alloc()
   self.children[t,'VisualVolleyball/RegularMesh']=regular;self.renderers[regular]=fallback
+  self.children[t,'RegularMesh']=regular
   if ready:self.children[t,'VisualVolleyball/RegularMesh/DavidVolleyball']=dedicated
+  if ready:self.children[t,'RegularMesh/DavidVolleyball']=dedicated
   self.renderers[dedicated]=renderer;self.assigned[renderer]=shared;self.original[renderer]=shared
   return dict(ball=ball,t=t,dedicated=dedicated,regular=regular,renderer=renderer,fallback=fallback,shared=shared)
- def ready(self,rec):self.children[rec['t'],'VisualVolleyball/RegularMesh/DavidVolleyball']=rec['dedicated']
+ def ready(self,rec):self.children[rec['t'],'VisualVolleyball/RegularMesh/DavidVolleyball']=rec['dedicated'];self.children[rec['t'],'RegularMesh/DavidVolleyball']=rec['dedicated']
  def apply(self,rec):self.call('ball_appearance_v26',rec['ball'])
  def destroyball(self,rec):
   for key in ('ball','t','dedicated','regular','renderer','fallback'):self.dead.add(rec[key])

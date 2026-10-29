@@ -4,7 +4,7 @@ static unsigned custom_overlay;
 static const char* face_names_v19[9]={"Cool","Nerd","Smirk","Goofy","Crying","Surprised","Gigachad","Glam","Pleading"};
 static const char* outfit_names_v19[9]={"Black Tank","White Tank","Black Suit","White Suit","White Tee","Black Tee","Blue Tee","Forest Tee","Wine Tee"};
 static void ensure_preferences_v19(void){
- if(preferences_loaded)return;preferences_loaded=1;
+ if(preferences_loaded)return;preferences_loaded=1;customization_preferences_v28();
  int old=FN(0xa12690,int(*)(void*,int,void*))(str("Cloudcourt.Skin"),0,0);
  if(old<0||old>3)old=0;
  int face=FN(0xa12690,int(*)(void*,int,void*))(str("Cloudcourt.Face"),old,0);
@@ -34,7 +34,7 @@ static void map_label_v19(void){
  ensure_preferences_v19();void* t=menu_transform_v19();if(t)child_label_v19(t,"Pages/Online/CC_MapLabel",preferred_map?"Beach":"Indoor");
 }
 static void customization_refresh_v19(void){
- void* panel=customization_panel_v19();if(!panel)return;int style=preferred_style();
+ void* panel=customization_panel_v19();if(!panel)return;int style=preferred_style();customization_mirror_refresh_v28(panel);
  child_label_v19(panel,"CC_FaceLabel",face_names_v19[style%9]);
  child_label_v19(panel,"CC_OutfitLabel",outfit_names_v19[style/9]);
  child_label_v19(panel,"CC_HandToneLabel",hand_tone_names_v21[preferred_hand_tone_v21]);
@@ -72,8 +72,9 @@ static void customization_close_v19(void){
  void* panel=rooted(custom_overlay);if(alive(panel))FN(0x94f700,void(*)(void*,_Bool,void*))(gameobject(panel),0,0);
 }
 static int customization_button_v19(void* button){
+ if(customization_button_v28(button))return 1;
  if(named(button,"CC_CustomizeOpen")){
-  graphics_close_v24();
+  graphics_close_v24();settings_close_v28();
   void* panel=customization_panel_v19();if(panel){customization_refresh_v19();FN(0x94f700,void(*)(void*,_Bool,void*))(gameobject(panel),1,0);}return 1;
  }
  if(named(button,"CC_CustomizeBack")){customization_close_v19();return 1;}
@@ -93,3 +94,4 @@ static int customization_button_v19(void* button){
  FN(0xa12870,void(*)(void*,int,void*))(str("Cloudcourt.Outfit"),outfit,0);
  select_appearance(-1,0);customization_refresh_v19();return 1;
 }
+

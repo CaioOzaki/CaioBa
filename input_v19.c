@@ -95,6 +95,7 @@ static void ui_click_v19(void* button){
  }
  void* source=rooted(ui_v19_click_source);
  FN(0xebc2d0,void(*)(void*,void*,void*))(source,rooted(ui_v19_click_clip),0);
+ FN(0xebc760,void(*)(void*,float,void*))(source,.55f*audio_gain_v28(3),0);
  FN(0xebbe30,void(*)(void*,void*))(source,0);
 }
 

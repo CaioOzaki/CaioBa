@@ -20,11 +20,12 @@ static int spawn_trigger_v24(void* h){return FN(0x3130b0,_Bool(*)(void*,void*))(
 static int offline(void){return 0;}
 static unsigned waiting_ball_root,attack_receiver[2],wing_turn[2],rules_root,local_player_root,jumping_player_root;
 static int doubles_enabled,quartet_enabled,doubles_spawned,doubles_team_counts[2];
-static int net_first_touch,net_serve_team,net_touch_team,net_touch_count,net_rally_active;
+static int net_first_touch,net_serve_team,net_touch_team,net_touch_count,net_rally_active,net_last_id_v28,accepted_position_valid_v28,accepted_block_v28;
 static int reception_pending,reception_context,serve_flight_team,serve_fault,deferred_serve_point,player_airborne;
 static int pending_valid;static void* pending_ball;static void* spinning_ball;static float pending_time;
 typedef struct {unsigned controller;unsigned char held;} Trigger;
 static Trigger spawn_triggers_v25[2];
+static void customization_reset_v28(void){} /* Cosmetics tested independently. */
 static void ball_style_reset_v26(void){} /* Ball material lifecycle has its own integrated tests. */
 static void lobby_session_reset_v26(void);
 static void online_session_reset_v26(void);
@@ -40,13 +41,14 @@ EXPORT void dirty(void* rules,void* ball,void* hand){
  for(int i=0;i<2;i++){root_set(&spawn_triggers_v25[i].controller,hand);spawn_triggers_v25[i].held=1;}
  doubles_enabled=quartet_enabled=doubles_spawned=doubles_team_counts[0]=doubles_team_counts[1]=1;
  net_first_touch=net_touch_count=net_rally_active=reception_pending=reception_context=serve_fault=player_airborne=pending_valid=1;
+ net_last_id_v28=42;accepted_position_valid_v28=accepted_block_v28=1;
  net_serve_team=net_touch_team=serve_flight_team=deferred_serve_point=0;pending_ball=spinning_ball=ball;pending_time=1;
 }
 EXPORT int clean(void){
  return !waiting_ball_root&&!attack_receiver[0]&&!attack_receiver[1]&&!wing_turn[0]&&!wing_turn[1]&&!bot_roster_rules_v20&&!bot_roster_mask_v20&&!bot_spawn_context_v20&&!rules_root&&!local_player_root&&!jumping_player_root&&!pending_teams[0].player&&pending_teams[0].team==-1&&
  !spawn_triggers_v25[0].controller&&!spawn_triggers_v25[1].controller&&!spawn_triggers_v25[0].held&&!spawn_triggers_v25[1].held&&
  !doubles_enabled&&!quartet_enabled&&!doubles_spawned&&!doubles_team_counts[0]&&!doubles_team_counts[1]&&
- !net_first_touch&&!net_touch_count&&!net_rally_active&&net_serve_team==-1&&net_touch_team==-1&&serve_flight_team==-1&&deferred_serve_point==-1&&
+ !accepted_position_valid_v28&&!accepted_block_v28&&net_last_id_v28==-1&&!net_first_touch&&!net_touch_count&&!net_rally_active&&net_serve_team==-1&&net_touch_team==-1&&serve_flight_team==-1&&deferred_serve_point==-1&&
  !reception_pending&&!reception_context&&!serve_fault&&!player_airborne&&!pending_valid&&!pending_ball&&!spinning_ball&&!pending_time;
 }
 EXPORT void roomscale(void* body){clamp_local_player_v26(body);}

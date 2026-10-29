@@ -69,3 +69,7 @@ EXPORT int points_per_set_hook(void* m){
 }
 /* Original Settings.sets is the wins required, not the maximum sets played. */
 EXPORT int sets_to_win_hook(void* m){return 2;}
+
+static void landing_bomb_v28(void* ball,V3 p,int outside){
+ landing_prepare_v20(ball,p);landing_pending_out_v20=outside;
+}

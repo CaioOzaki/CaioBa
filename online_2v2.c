@@ -7,17 +7,15 @@ TRAMP(void,choose_team,(void* player,int team,void* m))
 TRAMP(void,online_awake,(void* page,void* m))
 TRAMP(void,client_motion,(void* ball,V3 pos,V3 velocity,_Bool hit,int touch,int team,int context,void* m))
 TRAMP(void,client_end,(void* rules,int team,V3 pos,void* m))
-static int net_first_touch=0,net_serve_team=-1;
-static int net_touch_team=-1,net_touch_count=0,net_rally_active=0;
 static void lobby_session_reset_v26(void);
 static void pending_teams_reset_v26(void);
 static void online_session_reset_v26(void){
- ball_style_reset_v26();
+ ball_style_reset_v26();customization_reset_v28();accepted_position_valid_v28=0;accepted_block_v28=0;
  /* Menu entry ends this mod's match epoch. Persistent controllers and room
   * pages survive scene unload, so alive() alone cannot validate their caches. */
  lobby_session_reset_v26();pending_teams_reset_v26();hand_serve_reset();
  bots_roster_reset_v20(0);root_set(&rules_root,0);root_set(&local_player_root,0);
- net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;
+ net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;net_last_id_v28=-1;
  reception_pending=0;reception_context=0;serve_flight_team=-1;serve_fault=0;deferred_serve_point=-1;
  player_airborne=0;root_set(&jumping_player_root,0);
  pending_valid=0;pending_ball=0;spinning_ball=0;pending_time=0;
@@ -54,7 +52,7 @@ static int online_reception(void* player){
 static void set_mod_version(void* app){
  online_version_ready=0;
  if(app){
-  void* version=FN(0x14b790,void*(*)(const char*))(online_format==2?"Cloudcourt-2v2-v24":"Cloudcourt-4v4-v24");
+  void* version=FN(0x14b790,void*(*)(const char*))(online_bomb_v28?(online_format==2?"Cloudcourt-Bomb-2v2-v28":"Cloudcourt-Bomb-4v4-v28"):(online_format==2?"Cloudcourt-2v2-v28":"Cloudcourt-4v4-v28"));
   managed_field(app,0x28,version);online_version_ready=1;
  }
 }
@@ -78,7 +76,7 @@ EXPORT _Bool connect_default_hook(void* m){
 EXPORT void clear_teams_hook(void* rules,void* m){
  clear_teams_trampoline(rules,m);
  bots_roster_reset_v20(rules);
- if(online_version_ready&&!offline()){prepare_match(rules);net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;}
+ if(online_version_ready&&!offline()){prepare_match(rules);net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;net_last_id_v28=-1;}
 }
 static int team_population(int team,void* exclude){
  void* list=online_players();void* items=list?PTR(list,0x10):0;
@@ -122,30 +120,37 @@ EXPORT void net_new_rally_hook(void* rules,int team,void* m){
   /* Clients do not execute host Go(). Bind a new scene's rules before any
    * local eligibility/serve helpers read the previous match's rooted rules. */
   if(rooted(rules_root)!=rules)prepare_match(rules);
-  net_first_touch=1;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=1;}
+  net_first_touch=1;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=1;net_last_id_v28=-1;}
  FN(0x253e30,void(*)(void*,void*))(rules,0);
 }
 EXPORT void client_motion_hook(void* ball,V3 pos,V3 velocity,_Bool hit,int touch,int team,int context,void* m){
  /* Reject corrupt network frames before they reach Rigidbody/AI prediction. */
  if(!ball||!finitev(pos)||!finitev(velocity))return;
- int encoded=network_physics()&&hit&&((unsigned)context&0xf8000000u)==0x50000000u;
+ unsigned prefix=(unsigned)context&0xf8000000u;
+ int encoded=network_physics()&&hit&&(prefix==0x50000000u||prefix==0x58000000u);
+ int block_wire=network_physics()&&hit&&(prefix==0x48000000u||prefix==0x58000000u);
  V3 spin=encoded?decode_spin(context):(V3){0,0,0};
- if(encoded)context&=7;
+ if(encoded||block_wire)context&=7;
+ accepted_position_v28=pos;accepted_position_valid_v28=hit!=0;accepted_block_v28=block_wire;
  client_motion_trampoline(ball,pos,velocity,hit,touch,team,context,m);
+ accepted_position_valid_v28=0;accepted_block_v28=0;
  serve_feedback_motion_v21(ball,pos,velocity,hit,touch,team,context);
  if(network_physics()){
   if(encoded)activate_spin(ball,spin);
   else {if(spinning_ball==ball)spinning_ball=0;setspin(ball,(V3){0,0,0});}
  }
  if(network_physics()&&!lobby_is_ball(ball)&&hit&&team>=0&&team<2){
-  net_touch_count=net_touch_team==team?net_touch_count+1:1;net_touch_team=team;
+  void* rules=rooted(rules_root);
+  int block=rules&&!BYTE(rules,0x68)&&!net_first_touch&&net_serve_team<0&&net_touch_team==1-team&&(block_wire||v28_block_at(rules,touch,team,pos));
+  net_touch_count=block?(v28_indoor()?0:1):net_touch_team==team?net_touch_count+1:1;
+  net_touch_team=team;net_last_id_v28=block?-1:touch;
   net_serve_team=net_first_touch?team:-1;net_first_touch=0;
  }
 }
 EXPORT void client_end_hook(void* rules,int team,V3 pos,void* m){
  int wire=team,reason=0,marker=0,outside=0,packed=(team&0xff00)==0x4300;
  if(packed){reason=(team>>1)&15;marker=(team&0x40)!=0;outside=(team&0x80)!=0;team&=1;}
- if(network_physics()){net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;}
+ if(network_physics()){net_first_touch=0;net_serve_team=-1;net_touch_team=-1;net_touch_count=0;net_rally_active=0;net_last_id_v28=-1;}
  client_end_trampoline(rules,team,pos,m);
  if(packed&&((unsigned)wire&0xff000000u)==0x24000000u)celebration_point_wire_v24(rules,team,wire);
  else if(network_physics())celebration_point_wire_v24(rules,team,0);

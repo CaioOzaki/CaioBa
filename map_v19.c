@@ -20,7 +20,7 @@ EXPORT _Bool create_room_map_hook(void* name,void* options,void* lobby,void* exp
   BYTE(options,0x12)=online_format==2?4:8;
   void* properties=PTR(options,0x20);
   if(!properties){properties=map_new_properties_v19();if(properties)managed_field(options,0x20,properties);}
-  if(properties)FN(0x7b3520,void(*)(void*,void*,void*,void*))(properties,str("Cloudcourt.Map"),str(preferred_map==1?"Scene":"IndoorArenaScene"),0);
+  if(properties)FN(0x7b3520,void(*)(void*,void*,void*,void*))(properties,str("Cloudcourt.Map"),str(online_bomb_v28||preferred_map==1?"Scene":"IndoorArenaScene"),0);
  }
  return FN(0x60b4c0,_Bool(*)(void*,void*,void*,void*,void*))(name,options,lobby,expected_users,m);
 }
@@ -35,6 +35,6 @@ EXPORT int online_room_map_v19(void){
 }
 EXPORT void* online_environment_map_hook(void* system,void* original,void* on_finished,void* m){
  (void)original;
- void* environment=str(online_room_map_v19()?"Scene":"IndoorArenaScene");
+ void* environment=str(online_bomb_v28||online_room_map_v19()?"Scene":"IndoorArenaScene");
  return FN(0x251940,void*(*)(void*,void*,void*,void*))(system,environment,on_finished,m);
 }

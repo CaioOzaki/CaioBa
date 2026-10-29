@@ -105,6 +105,7 @@ static int has_team_membership(void* player){
 }
 EXPORT void client_choose_hook(void* player,int value,void* m){
  if(!player)return;
+ if(appearance_receive_v28(player,value))return;
  if(value==0x5c220000){serve_feedback_remote_v21(player);return;}
  int modern=((unsigned)value&0xfffffc00u)==0x5c190000u;
  int team=0,skin=0,change=0,tone=0,v21=appearance_decode_v21(value,&team,&skin,&change,&tone);
@@ -148,10 +149,12 @@ static void select_appearance(int skin,int change){
  int team=INT(player,0x28);if(team<0||team>1)return;
  if(change)team=1-team;
  send_mod_choice(player,appearance_pack_pose_v21(team,preferred_skin,change,preferred_hand_tone_v21,local_hand_pose_v21()));
+ send_mod_choice(player,appearance_pack_v28());
 }
 EXPORT void button_press_hook(void* button,void* m){
  if(!ui_button_valid_v19(button))return;
  ui_click_v19(button);
+ if(settings_button_v28(button))return;
  if(graphics_button_v24(button))return;
  if(customization_button_v19(button))return;
  if(named(button,"CC_LobbyClose")){lobby_selector_hide_v21();return;}

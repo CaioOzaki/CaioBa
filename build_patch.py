@@ -36,6 +36,9 @@ entries += [('landing_collision',0x77ee90),('bot_ik',0xb64980)]
 entries += [('graphics_adaptive_start',0x2641d0),('graphics_adaptive_apply',0x264080),('graphics_ovr_update',0x457fd0)]
 entries += [('hand_input_v25',0x3130b0)]
 entries += [('elbow_bend_v27',0xeeabe0)]
+from fix_rules_bomb_v28 import V28_ENTRIES,patch_rules_bomb_v28
+entries += V28_ENTRIES
+entries += [('settings_refresh_v28',0xef27c0),('audio_music_v28',0x26cdc0),('audio_music_now_v28',0x26cc60),('audio_stop_v28',0x26d2d0),('audio_options_v28',0x26c060),('audio_update_v28',0x26d700),('audio_effect_v28',0x26d0b0)]
 from fix_lobby_v21 import LOBBY_ENTRIES_V21,patch_lobby_calls_v21
 entries += LOBBY_ENTRIES_V21
 if 'probe_start_hook' in exports:entries += [('probe_start',0xef74f0),('probe_solo',0xef4620)]
@@ -105,6 +108,7 @@ for idx,(name,start,content,flags) in enumerate(sections):
 for item in patches:
     offset=p.get_offset_from_rva(item['rva'])
     result[offset:offset+item['length']]=b'\xe9'+struct.pack('<i',item['hook']-item['rva']-5)+b'\x90'*(item['length']-5)
+patch_rules_bomb_v28(result,p,patches,exports,delta)
 callsite=0xeed250
 callbytes=p.get_data(callsite,5)
 assert callbytes==b'\xe8'+struct.pack('<i',0x77e5c0-callsite-5)
@@ -155,6 +159,9 @@ check=pefile.PE(data=result)
 assert check.OPTIONAL_HEADER.DATA_DIRECTORY[3].Size==len(exception_bytes)
 assert len(check.DIRECTORY_ENTRY_EXCEPTION)==len(exceptions)
 for item in patches:
+    if item.get('kind')=='branch_neutralized':
+        assert check.get_data(item['rva'],item['length'])==b'\x90'*item['length']
+        continue
     assert check.get_data(item['rva'],1)==(b'\xe8' if item.get('kind')=='call' else b'\xe9')
     assert check.get_section_by_rva(item['hook']).Characteristics&0x20000000
 for section in check.sections:
@@ -165,7 +172,7 @@ with tempfile.NamedTemporaryFile(dir=target.parent,prefix='cloudcourt-build-',su
     staged.write(result);staged_path=pathlib.Path(staged.name)
 assert staged_path.resolve().parent==target.resolve().parent
 os.replace(staged_path,target)
-manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v24 / Cloudcourt-4v4-v24','status':'v27 player viewer-right/anatomical-left outward elbow correction; original analytic solve and tracked wrist retained; v26 features/v24 wire retained; physical validation pending'}
+manifest={'original_sha256':hashlib.sha256(original).hexdigest(),'modified_sha256':hashlib.sha256(result).hexdigest(),'patches':patches,'exports':{k:v+delta for k,v in exports.items()},'extra_aslr_relocations':extra_reloc,'new_exception_entries':qe.Size//12,'offline_only':False,'network_version':'Cloudcourt-2v2-v28 / Cloudcourt-4v4-v28 / Cloudcourt-Bomb-2v2-v28 / Cloudcourt-Bomb-4v4-v28','status':'v28 spawned ball visuals, block rules, Bomb formats online/offline, customization mirror/hats/arms, categorized settings and original CC0 lofi; physical validation pending'}
 (R/'analysis/native-patch-manifest.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))
 

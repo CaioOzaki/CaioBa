@@ -42,6 +42,7 @@ static void play_serve_whistle_v21(void* ball){
  }
  void* source=rooted(serve_whistle_source_v21);
  FN(0xebc2d0,void(*)(void*,void*,void*))(source,rooted(serve_whistle_clip_v21),0);
+ FN(0xebc760,void(*)(void*,float,void*))(source,.32f*audio_gain_v28(2),0);
  FN(0xebbe30,void(*)(void*,void*))(source,0);
 }
 static void serve_feedback_spawn_v21(void* ball){

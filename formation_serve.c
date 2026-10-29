@@ -23,7 +23,7 @@ static void* team_member_for_role(void* team,int role,void* exclude){
 }
 static int quartet_setup(void* bot){
  if(!quartet_enabled||!bot)return 0;
- void* rules=rooted(rules_root);if(!rules||!BYTE(rules,0x78)||BYTE(rules,0x79)||serve_flight_team==INT(bot,0x28))return 0;
+ void* rules=rooted(rules_root);if(!rules||BYTE(rules,0x68)||!BYTE(rules,0x78)||BYTE(rules,0x79)||serve_flight_team==INT(bot,0x28))return 0;
  int used=INT(rules,0x7c)==INT(bot,0x28)?INT(rules,0x9c):0;
  return used>=0&&used<2;
 }
