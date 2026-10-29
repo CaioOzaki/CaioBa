@@ -1,7 +1,7 @@
 # Cloudcourt repository instructions
 
 - Read REPOSITORY-POLICY.md. Keep current release plus previous two, one V<number>/
-  folder per release. Current: V28/,V27/,V26/. Advance that window every release.
+  folder per release. Current: V29/,V28/,V27/. Advance that window every release.
 - Source in each folder must match its own release. Preserve its internal relative
   dependencies, original/verified licensed assets and notices.
 - Root contains navigation and policy only; no accumulated old delivery files.
