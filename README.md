@@ -1,22 +1,22 @@
 # Cloudcourt VR
 
-Current release: **V29**. The repository retains the current version and its two
+Current release: **V30**. The repository retains the current version and its two
 predecessors as our permanent policy.
 
 | Folder | Version |
 | --- | --- |
-| [V29](V29/) | Current release |
+| [V30](V30/) | Current release |
+| [V29](V29/) | Previous release |
 | [V28](V28/) | Previous release |
-| [V27](V27/) | Previous release |
 
-Each version folder contains its matching source and required shared components,
-including any older feature filenames still needed to build that release. Follow
-the README and release notes inside the folder.
+Each folder contains its matching source and required shared dependencies.
+Older suffixes on component filenames identify their origin, not extra versions.
+Keep every folder intact when rebuilding with separately owned compatible game
+inputs. Local ZIP installers, backups and derived validation reports stay local.
 
 Cloudcourt is a PC VR modification for a separately owned compatible Volleyball
-Fever Steam build9216628. Local ZIP installers/backups and derived validation
-reports stay on the computer. Original game binaries/assets and binary patches
-are excluded from this source repository. Physical Quest3 and real two-PC
-confirmation of V29 remain pending.
+Fever Steam build 9216628. No original game binary, extracted game asset, binary
+patch, ZIP or private machine metadata is included in this source repository.
+Physical Quest 3 and real two-PC confirmation of V30 remain pending.
 
 See [repository policy](REPOSITORY-POLICY.md).

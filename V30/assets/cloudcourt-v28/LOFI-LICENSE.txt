@@ -1,0 +1,9 @@
+Cloudcourt v28 original lofi playlist
+
+Boardwalk Afterglow
+Soft Court Lights
+Sea Glass
+
+All music and sounds in these tracks are synthesized by build_settings_audio_v28.py from oscillators and deterministic noise. No third-party recording, sample, melody, or audio file is used.
+
+To the extent possible under law, the creators waive copyright and related rights to these generated recordings and compositions under CC0 1.0 Universal. https://creativecommons.org/publicdomain/zero/1.0/

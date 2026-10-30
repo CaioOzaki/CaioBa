@@ -1,0 +1,9 @@
+Cloudcourt v30 original lofi music
+
+- Window Rain (80 BPM)
+- Sunday Rally (76 BPM)
+- Neon Coastline (84 BPM)
+
+Compositions and recordings were generated locally by build_music_v30.py using synthesized oscillators and deterministic noise. No third-party music, samples, recordings, or melodies were used.
+
+To the extent possible under law, the creator dedicates these compositions and recordings to the public domain under CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/

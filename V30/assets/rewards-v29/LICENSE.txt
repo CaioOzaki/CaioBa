@@ -1,0 +1,5 @@
+Cloudcourt v29 achievement art
+
+The PNG artwork and color designs in this folder were authored procedurally for Cloudcourt. They contain no sampled original-game images, third-party artwork, or original-game geometry. Artwork may be used, modified, and redistributed with the Cloudcourt mod under CC0-1.0.
+
+The preview lettering uses the existing CloudcourtBubble font; keep that font's existing license notice if distributing the font itself. No font binary is copied into this folder.

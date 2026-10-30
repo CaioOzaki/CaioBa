@@ -1,0 +1,5 @@
+Cloudcourt original procedural emoji faces
+
+The four player-01-rosto.png through player-04-rosto.png images were authored by the project using the pure Pillow face(emoji=True) drawing function in create_caioba_characters.py. Their pixels consist solely of original geometric shapes and colors. They contain no original-game texture, photograph, external image sample, logo or font glyph.
+
+These four images are dedicated to the public domain under CC0-1.0 and may be used, modified and redistributed. The original generator and exact byte regeneration provide their provenance.
